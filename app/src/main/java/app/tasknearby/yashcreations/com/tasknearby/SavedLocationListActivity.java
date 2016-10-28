@@ -1,6 +1,6 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +10,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,10 +22,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import app.tasknearby.yashcreations.com.tasknearby.database.TasksContract;
 
 
-public class SavedLocationListActivity extends ActionBarActivity {
+public class SavedLocationListActivity extends AppCompatActivity {
 
     CursorAdapter mLocationAdapter;
     Cursor cursor;
@@ -54,16 +57,18 @@ public class SavedLocationListActivity extends ActionBarActivity {
             }
 
             @Override
-            public void bindView(View view, final Context context, Cursor cursor) {
+            public void bindView(View view, final Context context, final Cursor cursor) {
 
                 TextView locNameView = (TextView) view.findViewById(R.id.location_name);
                 final String location = cursor.getString(Constants.COL_PLACE_NAME);
+                final LatLng latLng = new LatLng(cursor.getDouble(Constants.COL_LAT),cursor.getDouble(Constants.COL_LON)) ;
                 locNameView.setText(location);
                 locNameView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = SavedLocationListActivity.this.getIntent();
                         intent.putExtra(Constants.savedLocation, location);
+                        intent.putExtra(Constants.LatLngExtra,latLng);
                         SavedLocationListActivity.this.setResult(RESULT_OK, intent);
                         finish();
                     }
@@ -80,9 +85,10 @@ public class SavedLocationListActivity extends ActionBarActivity {
 
             public void hideLocation(final String location,final Context context)
             {
-                final AlertDialog.Builder alertDialog=new AlertDialog.Builder(context)
+                final AlertDialog.Builder builder=new AlertDialog.Builder(context)
                         .setTitle("Delete Location")
-                        .setMessage("\"" + location + "\" will be deleted.")
+                        .setIcon(R.drawable.ic_delete_blue400)
+                        .setMessage("Delete \"" + location + "\" ?")
                         .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -100,13 +106,13 @@ public class SavedLocationListActivity extends ActionBarActivity {
                                 mLocationAdapter.swapCursor(cursor);
                             }
                         });
-                alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
                 });
-                alertDialog.show();
+                builder.show();
             }
         };
 
