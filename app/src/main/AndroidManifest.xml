@@ -12,22 +12,38 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/MainScreenTheme"
-            android:logo="@mipmap/icon_hd">
+            android:theme="@style/TealTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <!-- <data android:scheme="http"
+                     android:host="www.example.com"
+                     android:pathPrefix="/gizmos" />
+                --> <!-- note that the leading "/" is required for pathPrefix-->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data
+                    android:host="yash_apps"
+                    android:scheme="tasknearby" />
             </intent-filter>
         </activity>
 
@@ -54,26 +70,16 @@
         <activity
             android:name=".SettingsActivity"
             android:label="Settings"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/TealTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="app.tasknearby.yashcreations.com.tasknearby.MainActivity" />
         </activity>
 
         <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-        <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAS-E2WRKbq-QWk07Z3mFs-0CBs3yKDTO0" />
-
-
-        <!--RELEASE VERSION KEY-->
-        <!--android:value="AIzaSyAS-E2WRKbq-QWk07Z3mFs-0CBs3yKDTO0"-->
-        <!--DEBUG VERSION KEY-->
-        <!--android:value="AIzaSyCQ29q4cPRleTbpSwJf0iRMOauuev4foDg"-->
-
+            android:value="@string/common_api_key" />
 
         <activity
             android:name=".SavedLocationListActivity"
@@ -93,21 +99,25 @@
         </activity>
         <activity
             android:name=".AlarmActivity"
-            android:label="@string/title_activity_alarm" />
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_alarm"
+            android:launchMode="singleInstance"
+            android:showOnLockScreen="true"
+            android:theme="@style/TealTheme" />
 
         <service
             android:name=".service.FusedLocationService"
             android:enabled="true"
             android:exported="false" />
-
         <service
-            android:name=".service.ActivityDetectionIntentService"
+            android:name=".service.ActivityDetectionService"
             android:enabled="true" />
 
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/TealTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="app.tasknearby.yashcreations.com.tasknearby.MainActivity" />
@@ -116,10 +126,33 @@
             android:name=".HelpActivity"
             android:label="@string/title_activity_help"
             android:parentActivityName=".MainActivity">
+        <activity
+            android:name=".NewTaskActivity"
+            android:label="@string/title_activity_new_task"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/TealTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="app.tasknearby.yashcreations.com.tasknearby.MainActivity" />
         </activity>
-    </application>
+        <activity
+            android:name=".TaskDetailActivity"
+            android:label="@string/title_activity_task_detail"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="app.tasknearby.yashcreations.com.tasknearby.MainActivity" />
+        </activity>
 
+        <receiver
+            android:name=".MainActivity$OnBootStarter"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+    </application>
 </manifest>
