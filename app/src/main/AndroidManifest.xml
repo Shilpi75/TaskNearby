@@ -112,6 +112,9 @@
         <service
             android:name=".service.ActivityDetectionService"
             android:enabled="true" />
+        <service
+            android:name=".service.NotificationClickHandler"
+            android:enabled="true" />
 
         <activity
             android:name=".AboutActivity"

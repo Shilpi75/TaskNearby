@@ -89,13 +89,17 @@ proguard/
 *.log
 
 # Android Studio Navigation editor temp files
-.navigation/
-
-# Android Studio captures folder
-
-captures/
-projectFilesBackup/
 .navigation
 
+# Android Studio captures folder
+captures/
+projectFilesBackup/
 
+# File containing API keys.
 app/src/main/res/values/confidentialKeys.xml
+
+# vim partially opened files
+*.swp
+
+# generated apk folder
+release/

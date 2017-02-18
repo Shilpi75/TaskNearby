@@ -1,5 +1,21 @@
+/*
+ * Copyright (C) 2015 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package app.tasknearby.yashcreations.com.tasknearby;
 
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -30,7 +46,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import app.tasknearby.yashcreations.com.tasknearby.database.TasksContract;
 import app.tasknearby.yashcreations.com.tasknearby.service.FusedLocationService;
 
-public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallback,View.OnClickListener {
+public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
     public static final String TAG = AlarmActivity.class.getSimpleName();
 
@@ -38,7 +54,8 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
     private Cursor cursor;
     private Vibrator vibrator;
     private Utility utility = new Utility();
-    private FirebaseAnalytics mAnalytics ;
+    private FirebaseAnalytics mAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -78,7 +95,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
             mLocNameTV.setText(cursor.getString(Constants.COL_LOCATION_NAME));
             ((MapFragment) getFragmentManager().findFragmentById(R.id.alarm_map)).getMapAsync(this);
         }
-        mAnalytics.logEvent(Constants.ANALYTICS_KEY_ALARM_TRIGGERED,new Bundle());
+        mAnalytics.logEvent(Constants.ANALYTICS_KEY_ALARM_TRIGGERED, new Bundle());
     }
 
     @Override
@@ -108,9 +125,13 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
                         new String[]{cursor.getString(Constants.COL_TASK_ID)}
                 );
                 cursor.close();
-                mAnalytics.logEvent(Constants.ANALYTICS_KEY_ALARM_SNOOZED,new Bundle());
+                mAnalytics.logEvent(Constants.ANALYTICS_KEY_ALARM_SNOOZED, new Bundle());
                 finish();
                 break;
+        }
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (null != notificationManager) {
+            notificationManager.cancel(0);
         }
     }
 
@@ -139,8 +160,31 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
         Log.e(TAG, "onStart: ");
         super.onStart();
         FusedLocationService.isAlarmRunning = true;
-        long pattern[] = {1000, 1000};
-        vibrator.vibrate(pattern, 0);
+
+        String prefString = PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_vibrate_key), "100");
+        Log.d(TAG, "Stored value is : " + prefString);
+        int vibratePref = Integer.parseInt(prefString);
+        int repeat = 0;
+        long[] pattern;
+        switch (vibratePref) {
+            case 100:
+                pattern = new long[]{1000, 1000};
+                break;
+            case 5:
+                pattern = new long[]{1000, 1000, 1000, 1000, 1000, 1000};
+                repeat = -1;
+                break;
+            case 3:
+                pattern = new long[]{1000, 1000, 1000, 1000};
+                repeat = -1;
+                break;
+            default:
+                pattern = new long[]{};
+                repeat = -1;
+                break;
+        }
+
+        vibrator.vibrate(pattern, repeat);
         PlaySoundTask m = new PlaySoundTask();
         m.execute();
     }
@@ -170,7 +214,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
         super.onDestroy();
     }
 
-    public class PlaySoundTask extends AsyncTask<Void,Void,Void> {
+    public class PlaySoundTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void[] objects) {
             int alarmTone = R.raw.alarm;
@@ -201,126 +245,3 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
     }
 
 }
-
-/*
-
-
-
-
-
-
-
-
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Window window = this.getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-
-
-        mMarkDoneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mMediaPlayer.isPlaying())
-                    mMediaPlayer.stop();
-
-                ContentValues taskValues = new ContentValues();
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_TASK_NAME, cursor.getString(Constants.COL_TASK_NAME));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_NAME, cursor.getString(Constants.COL_LOCATION_NAME));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_COLOR, cursor.getInt(Constants.COL_TASK_COLOR));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_ALARM, cursor.getString(Constants.COL_ALARM));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_MIN_DISTANCE, cursor.getInt(Constants.COL_MIN_DISTANCE));
-                taskValues.put(TasksContract.TaskEntry.COLUMN_DONE_STATUS, "true");
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_SNOOZE_TIME, cursor.getString(Constants.COL_SNOOZE));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_REMIND_DISTANCE, cursor.getString(Constants.COL_REMIND_DIS));
-
-                AlarmActivity.this.getContentResolver().update(
-                        TasksContract.TaskEntry.CONTENT_URI,
-                        taskValues, TasksContract.TaskEntry._ID + "=?",
-                        new String[]{cursor.getString(Constants.COL_TASK_ID)}
-                );
-                cursor.close();
-                finish();
-            }
-        });
-
-        mSnoozeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mMediaPlayer.isPlaying())
-                    mMediaPlayer.stop();
-
-                ContentValues taskValues = new ContentValues();
-
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_TASK_NAME, cursor.getString(Constants.COL_TASK_NAME));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_NAME, cursor.getString(Constants.COL_LOCATION_NAME));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_COLOR, cursor.getInt(Constants.COL_TASK_COLOR));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_ALARM, cursor.getString(Constants.COL_ALARM));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_MIN_DISTANCE, cursor.getInt(Constants.COL_MIN_DISTANCE));
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_DONE_STATUS, cursor.getString(Constants.COL_DONE));
-                taskValues.put(TasksContract.TaskEntry.COLUMN_SNOOZE_TIME, System.currentTimeMillis());
-//                taskValues.put(TasksContract.TaskEntry.COLUMN_REMIND_DISTANCE, cursor.getString(Constants.COL_REMIND_DIS));
-
-                AlarmActivity.this.getContentResolver().update(
-                        TasksContract.TaskEntry.CONTENT_URI,
-                        taskValues, TasksContract.TaskEntry._ID + "=?",
-                        new String[]{cursor.getString(Constants.COL_TASK_ID)}
-                );
-                cursor.close();
-                finish();
-            }
-        });
-    }
-
-
-
-
-    @Override
-    protected void onPause() {
-        Log.e("sd", "OnPause........=====>");
-//        vibrator.cancel();
-//        if (mMediaPlayer.isPlaying())
-//            mMediaPlayer.stop();
-//        finish();
-//        FusedLocationService.isAlarmRunning = false ;
-        super.onPause();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.e("TAG", "onStart:================> " );
-        long pattern[] = {1000, 1000 } ;
-        vibrator.vibrate(pattern, 0);
-        PlaySoundTask m = new PlaySoundTask();
-        m.execute();
-    }
-    @Override
-    protected void onStop() {
-        Log.e("TAG", "=======================>onStop: " );
-        super.onStop();
-//        if (cursor != null && !cursor.isClosed())
-//            cursor.close();
-        if (vibrator.hasVibrator())
-            vibrator.cancel();
-        if (mMediaPlayer.isPlaying())
-            mMediaPlayer.stop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.e("TAG", "OnDestroy======================");
-        if (cursor != null && !cursor.isClosed())
-            cursor.close();
-        if (vibrator.hasVibrator())
-            vibrator.cancel();
-        if (mMediaPlayer.isPlaying())
-            mMediaPlayer.stop();
-        super.onDestroy();
-    }
-}
-*/

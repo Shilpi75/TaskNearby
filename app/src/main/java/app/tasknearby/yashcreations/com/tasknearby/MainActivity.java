@@ -64,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             startApp();
-        else
+        else {
             checkPermissions();
+        }
 
         //TODO: Ad code
        /* String android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -73,23 +74,12 @@ public class MainActivity extends AppCompatActivity {
         MobileAds.initialize(this, getString(R.string.admob_app_id));
         AdView mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().addTestDevice(deviceId).build();
-        mAdView.loadAd(adRequest);
+        mAdView.landroid oadAd(adRequest);
         boolean isTestDevice = adRequest.isTestDevice(this);
         Log.e(TAG, "is Admob Test Device ? "+deviceId+" "+isTestDevice);
 */
     }
-//    public void checkPermissions()
-//    {
-//        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED
-//                &&ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED)
-//        {    //Good to go
-//            continueNormalWorking();
-//        }
-//        else{
-//            requestPermission();
-//        }
-//    }
-
+//    http://www.javacreed.com/why-should-we-use-dependency-injection/
     private void checkPermissions() {
         boolean mFinePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         boolean mCoarsePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
@@ -220,28 +210,6 @@ public class MainActivity extends AppCompatActivity {
                 mContext.getString(R.string.pref_status_default));
         return m.equals("enabled");
     }
-    /*public static final String md5(final String s) {
-        try {
-            // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest
-                    .getInstance("MD5");
-            digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
-
-            // Create Hex String
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < messageDigest.length; i++) {
-                String h = Integer.toHexString(0xFF & messageDigest[i]);
-                while (h.length() < 2)
-                    h = "0" + h;
-                hexString.append(h);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG," " + e);
-        }
-        return "";
-    }*/
 
     public static class OnBootStarter extends BroadcastReceiver {
         public OnBootStarter() {
@@ -252,99 +220,13 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "onReceive: BootCompletedReceived");
             boolean mFinePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-             if(mFinePermission && isAppEnabled(context)){
+            if (mFinePermission && isAppEnabled(context)) {
                 Log.e(TAG, "onReceive: Starting service now.");
-                context.startService(new Intent(context,FusedLocationService.class));
-                isServiceRunning = true ;
+                context.startService(new Intent(context, FusedLocationService.class));
+                isServiceRunning = true;
             }
         }
     }
 
 
 }
-/*
-
-//    public static boolean isServiceRunning = false;
-//    private final String TAG = "TaskFragment";
-//    SwitchCompat appSwitch;
-//    Utility utility=new Utility();
-//    GoogleApiClient mGoogleApiClient ;
-
-    mGoogleApiClient = new GoogleApiClient.Builder(this)
-            .addConnectionCallbacks(this)
-    .addApi(LocationServices.API)
-    .build();
-    if(mGoogleApiClient != null)
-            mGoogleApiClient.connect();
-
-
-
-
-
-
-
-    void dialogShower(){
-
-
-
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(30 * 1000);
-        locationRequest.setFastestInterval(5 * 1000);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-
-        builder.setAlwaysShow(true);
-
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                final LocationSettingsStates state = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        Log.e(TAG,"ALLOWED.");
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied. But could be fixed by showing the user
-                        // a dialog.
-                        Log.e(TAG,"RESOLUTION REQUIRED.");
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult(
-                                    MainActivity.this, 1000);
-                        } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        Log.e(TAG, "SETTINGS CHANGE UNAVAILABLE");
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
-                        break;
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        dialogShower();
-        Log.e(TAG,"connected");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Toast.makeText(this,"ERROR",Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onClick(View v) {
-
-    }
-}*/

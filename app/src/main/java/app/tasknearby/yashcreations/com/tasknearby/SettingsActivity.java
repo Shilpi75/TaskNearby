@@ -58,11 +58,14 @@ public class SettingsActivity extends AppCompatActivity {
 
             ListPreference mUnitPreference = (ListPreference) getPreferenceManager().findPreference(getString(R.string.pref_units_key));
             ListPreference mAccuracyPreference = (ListPreference) getPreferenceManager().findPreference(getString(R.string.pref_accuracy_key));
+            ListPreference vibratePreference = (ListPreference) getPreferenceManager().findPreference(getString(R.string.pref_vibrate_key));
+
             RingtonePreference mRingtonePreference = (RingtonePreference) getPreferenceManager().findPreference(getString(R.string.pref_tone_key));
 
             bindPreferenceSummaryToValue(mUnitPreference);
             bindPreferenceSummaryToValue(mAccuracyPreference);
             bindPreferenceSummaryToValue(mRingtonePreference);
+            bindPreferenceSummaryToValue(vibratePreference);
 
             return super.onCreateView(inflater, container, savedInstanceState);
         }

@@ -13,7 +13,7 @@
     <string name="select_from_map">Pick a place</string>
     <string name="or">OR</string>
     <string name="on">On</string>
-    <string name="app_version">v3.5</string>
+    <string name="app_version">v3.6</string>
     <string name="developer">Developer</string>
     <string name="off">Off</string>
     <string name="alarm">Alarm</string>
@@ -57,6 +57,28 @@
     </string-array>
 
     <string name="pref_units_label">Units</string>
+
+    <!--Vibration pattern for alarm screen preferences-->
+    <string name="pref_vibrate_label">Vibration</string>
+    <string name="pref_vibrate_key">vibrate_alarm</string>
+    <string name="pref_vibrate_default">100</string>
+    <string name="pref_vibrate_disable">No vibration</string>
+    <string name="pref_vibrate_3s">3 seconds</string>
+    <string name="pref_vibrate_10s">10 seconds</string>
+    <string name="pref_vibrate_nonstop">Vibrate until dismissed.</string>
+    <string-array name="pref_vibrate_values">
+        <item>100</item>
+        <item>5</item>
+        <item>3</item>
+        <item>0</item>
+    </string-array>
+
+    <string-array name="pref_vibrate_entries">
+        <item>Vibrate until alarm is dismissed.</item>
+        <item>Vibrate for 5 seconds.</item>
+        <item>Vibrate for 3 seconds.</item>
+        <item>Don\'t vibrate.</item>
+    </string-array>
 
 
     <string name="pref_interval_key">interval</string>

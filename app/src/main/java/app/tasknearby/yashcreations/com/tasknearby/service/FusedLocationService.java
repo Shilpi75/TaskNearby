@@ -1,7 +1,6 @@
 package app.tasknearby.yashcreations.com.tasknearby.service;
 
 import android.Manifest;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,7 +10,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -20,17 +18,14 @@ import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.WindowManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.ActivityRecognition;
@@ -38,19 +33,14 @@ import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.util.ArrayList;
 
 import app.tasknearby.yashcreations.com.tasknearby.AlarmActivity;
-import app.tasknearby.yashcreations.com.tasknearby.MainActivity;
+import app.tasknearby.yashcreations.com.tasknearby.Constants;
 import app.tasknearby.yashcreations.com.tasknearby.R;
 import app.tasknearby.yashcreations.com.tasknearby.TaskDetailActivity;
 import app.tasknearby.yashcreations.com.tasknearby.Utility;
-import app.tasknearby.yashcreations.com.tasknearby.Constants;
 import app.tasknearby.yashcreations.com.tasknearby.database.TasksContract;
 
 /**
@@ -219,13 +209,37 @@ public class FusedLocationService extends Service implements GoogleApiClient.Con
         intent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID));
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification.Builder notificationBuilder = new Notification.Builder(this)
+        //TODO: Remove
+        Intent markDoneIntent = new Intent(this, NotificationClickHandler.class);
+        markDoneIntent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID))
+                .putExtra(Constants.NOTIFICATION_BUTTON_ACTION, 1);
+        PendingIntent markAsDonePI = PendingIntent.getService(this, 1, markDoneIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Intent snoozeIntent = new Intent(this, NotificationClickHandler.class);
+        snoozeIntent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID))
+                .putExtra(Constants.NOTIFICATION_BUTTON_ACTION, 2);
+        PendingIntent snoozePI = PendingIntent.getService(this, 3, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+
+        NotificationCompat.Action markDoneAction = new NotificationCompat.Action.Builder(R.drawable.ic_location,
+                "Mark Done",  markAsDonePI).build();
+        NotificationCompat.Action snoozeAction = new NotificationCompat.Action.Builder(R.drawable.ic_update_grey_500_36dp,
+                "Snooze",  snoozePI).build();
+
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setContentTitle(cursor.getString(Constants.COL_TASK_NAME))
                 .setContentText(cursor.getString(Constants.COL_LOCATION_NAME))
                 .setSmallIcon(getNotificationIcon())
                 .setContentIntent(pIntent)
                 .setAutoCancel(false)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setVibrate(new long[]{0, 500, 100, 500})
+                .addAction(markDoneAction)
+                .addAction(snoozeAction)
+                ;
 
         if (Build.VERSION.SDK_INT < 16)
             notificationManager.notify(0, notificationBuilder.getNotification());

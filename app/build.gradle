@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
     defaultConfig {
         applicationId 'app.tasknearby.yashcreations.com.tasknearby'
-        minSdkVersion 11
-        targetSdkVersion 25
-        versionCode 7
-        versionName "3.5"
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 8
+        versionName "3.6"
     }
     buildTypes {
         release {
@@ -21,19 +21,22 @@ android {
     }
 }
 
+def supportLibVersion = "27.0.1"
+def playServicesVersion = "11.6.0"
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.android.support:cardview-v7:25.1.1'
-    compile 'com.android.support:gridlayout-v7:25.1.1'
-    compile 'com.android.support:design:25.1.1'
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
+    compile "com.android.support:cardview-v7:$supportLibVersion"
+    compile "com.android.support:gridlayout-v7:$supportLibVersion"
+    compile "com.android.support:design:$supportLibVersion"
 
-    compile 'com.google.android.gms:play-services-location:10.0.1'
-    compile 'com.google.android.gms:play-services-maps:10.0.1'
-    compile 'com.google.android.gms:play-services-places:10.0.1'
+    compile "com.google.android.gms:play-services-location:$playServicesVersion"
+    compile "com.google.android.gms:play-services-maps:$playServicesVersion"
+    compile "com.google.android.gms:play-services-places:$playServicesVersion"
 
-    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile "com.google.firebase:firebase-core:$playServicesVersion"
 //    compile 'com.google.firebase:firebase-ads:9.4.0'
 
 }

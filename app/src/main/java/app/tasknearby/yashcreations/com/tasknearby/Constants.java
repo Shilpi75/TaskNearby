@@ -68,4 +68,6 @@ public class Constants {
     public static final String ANALYTICS_KEY_ALARM_TRIGGERED = "key_alarm_triggered" ;
     public static final String ANALYTICS_KEY_ALARM_SNOOZED = "key_alarm_snoozed" ;
 
+    public static final String NOTIFICATION_BUTTON_ACTION = "NotificationButtonAction";
+
 }
