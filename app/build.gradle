@@ -41,3 +41,49 @@ dependencies {
 
 }
 apply plugin: 'com.google.gms.google-services'
+
+/**
+ * Code quality checks.
+ */
+apply plugin: 'findbugs'
+apply plugin: 'checkstyle'
+
+// Performs checkstyle checks.
+// https://tinyurl.com/ybf2p648
+task checkstyleCheck(type: Checkstyle) {
+    configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    classpath = files()
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    // to fail the build when checkstyle is not passed.
+    ignoreFailures false
+    showViolations true
+}
+
+/**
+ * Read more about findbugs in android project from these links:
+ * https://stackoverflow.com/a/30068813/4857588
+ * https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.FindBugs.html
+ */
+task customFindbugs(type: FindBugs, dependsOn: assemble) {
+    ignoreFailures false
+    effort "default"
+    reportLevel "medium"
+    excludeFilter = new File("${project.rootDir}/config/findbugs/findbugs-exclude-filter.xml")
+    classes = files("${project.projectDir}/build/intermediates/classes")
+    source = fileTree("src/main/java/")
+    classpath = files()
+    reports {
+        xml.enabled false
+        html.enabled true
+        html {
+            setDestination(new File("${project.buildDir}/findbugs/findbugs-output.html"))
+        }
+    }
+}
+
+check.dependsOn checkstyleCheck
+check.dependsOn customFindbugs
+customFindbugs.shouldRunAfter checkstyleCheck
+
