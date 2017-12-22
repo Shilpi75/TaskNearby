@@ -44,11 +44,16 @@ import app.tasknearby.yashcreations.com.tasknearby.Utility;
 import app.tasknearby.yashcreations.com.tasknearby.database.TasksContract;
 
 /**
+ * DEPENDENCY  - ActivityDetectionService
+ * <p>
  * Created by Yash on 28/05/15.
  * <p>
- * FusedLocationService : A service that keeps running in the background to check for upcoming reminders.
- * As soon as the location of the user changes the @method onLocationChanged is called with the new location
- * of the user. This service automatically uses ActivityRecognition API to turn location updates on and off.
+ * FusedLocationService : A service that keeps running in the background to check for upcoming
+ * reminders.
+ * As soon as the location of the user changes the @method onLocationChanged is called with the
+ * new location
+ * of the user. This service automatically uses ActivityRecognition API to turn location updates
+ * on and off.
  */
 
 public class FusedLocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
@@ -75,54 +80,30 @@ public class FusedLocationService extends Service implements GoogleApiClient.Con
         if (utility.checkPlayServices(this)) {
             buildGoogleApiClient();
 
+            // this receiver just receives activity detection data and updates the interval.
             mReceiver = new ActivityDetectionReceiver();
-            LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(Constants.ACTIVITY_DETECTION_INTENT_FILTER));
+            LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter
+                    (Constants.ACTIVITY_DETECTION_INTENT_FILTER));
 
+            // noting the accuracy settings.
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            String pref_string = prefs.getString(getString(R.string.pref_accuracy_key), getString(R.string.pref_accuracy_default));
+            String pref_string = prefs.getString(getString(R.string.pref_accuracy_key), getString
+                    (R.string.pref_accuracy_default));
             if (pref_string.equals(getString(R.string.pref_accuracy_balanced)))
                 ACCURACY = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
 
+            // a location request, that'll be issued to Google play services.
             mLocationRequest = new LocationRequest();
             createLocationRequest(Constants.UPDATE_INTERVAL);
         }
     }
 
+    // called when service starts.
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (mGoogleApiClient != null)
             mGoogleApiClient.connect();
         return START_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    /*GoogleApiClient Connection Handling functions */
-    @Override
-    public void onConnected(Bundle arg0) {
-        startLocationUpdates();
-        startActivityUpdates();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.e(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
-    }
-
-    @Override
-    public void onConnectionSuspended(int arg0) {
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onResult(Status status) {   /*ActivityDetectionResult handler*/
-        if (status.isSuccess())
-            Log.e(TAG, "Activity Detection Initiated Successfully");
-        else
-            Log.e(TAG, "Activity Detection Failed!");
     }
 
     @Override
@@ -145,12 +126,23 @@ public class FusedLocationService extends Service implements GoogleApiClient.Con
                 .build();
     }
 
+    /**
+     * Google API Client callbacks. Called when connected to Google Play Services (hereafter GMS).
+     */
+    @Override
+    public void onConnected(Bundle arg0) {
+        startLocationUpdates();
+        startActivityUpdates();
+    }
+
     protected void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED)
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                    mLocationRequest, this);
         mReceivingLocationUpdates = true;
     }
+
 
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -162,97 +154,6 @@ public class FusedLocationService extends Service implements GoogleApiClient.Con
         mLocationRequest.setFastestInterval(Constants.FASTEST_INTERVAL);
         mLocationRequest.setPriority(ACCURACY);
         mLocationRequest.setSmallestDisplacement(Constants.SMALLEST_DISPLACEMENT);
-    }
-
-    protected void startActivityUpdates() {
-        if (!mGoogleApiClient.isConnected())
-            return;
-        ActivityRecognition.ActivityRecognitionApi
-                .requestActivityUpdates(mGoogleApiClient, Constants.ActDetectionInterval_ms, getPendingIntent())
-                .setResultCallback(this);
-    }
-
-    protected void stopActivityUpdates() {
-        if (!mGoogleApiClient.isConnected())
-            return;
-        ActivityRecognition.ActivityRecognitionApi
-                .removeActivityUpdates(mGoogleApiClient, getPendingIntent())
-                .setResultCallback(this);
-    }
-
-    protected PendingIntent getPendingIntent() {
-        Intent intent = new Intent(this, ActivityDetectionService.class);
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private void updateDatabaseDistance(int placeDistance) {
-
-        ContentValues taskValues = new ContentValues();
-        taskValues.put(TasksContract.TaskEntry.COLUMN_TASK_NAME, cursor.getString(Constants.COL_TASK_NAME));
-        taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_NAME, cursor.getString(Constants.COL_LOCATION_NAME));
-        taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_COLOR, cursor.getInt(Constants.COL_TASK_COLOR));
-        taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_ALARM, cursor.getString(Constants.COL_ALARM));
-        taskValues.put(TasksContract.TaskEntry.COLUMN_MIN_DISTANCE, placeDistance);
-        taskValues.put(TasksContract.TaskEntry.COLUMN_DONE_STATUS, cursor.getString(Constants.COL_DONE));
-
-        this.getContentResolver().update(
-                TasksContract.TaskEntry.CONTENT_URI,
-                taskValues, TasksContract.TaskEntry._ID + "=?",
-                new String[]{cursor.getString(Constants.COL_TASK_ID)}
-        );
-    }
-
-    private void showNotification() {
-        NotificationManager notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
-
-        Intent intent = new Intent(this, TaskDetailActivity.class);
-        intent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID));
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //TODO: Remove
-        Intent markDoneIntent = new Intent(this, NotificationClickHandler.class);
-        markDoneIntent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID))
-                .putExtra(Constants.NOTIFICATION_BUTTON_ACTION, 1);
-        PendingIntent markAsDonePI = PendingIntent.getService(this, 1, markDoneIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        Intent snoozeIntent = new Intent(this, NotificationClickHandler.class);
-        snoozeIntent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID))
-                .putExtra(Constants.NOTIFICATION_BUTTON_ACTION, 2);
-        PendingIntent snoozePI = PendingIntent.getService(this, 3, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-
-        NotificationCompat.Action markDoneAction = new NotificationCompat.Action.Builder(R.drawable.ic_location,
-                "Mark Done",  markAsDonePI).build();
-        NotificationCompat.Action snoozeAction = new NotificationCompat.Action.Builder(R.drawable.ic_update_grey_500_36dp,
-                "Snooze",  snoozePI).build();
-
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setContentTitle(cursor.getString(Constants.COL_TASK_NAME))
-                .setContentText(cursor.getString(Constants.COL_LOCATION_NAME))
-                .setSmallIcon(getNotificationIcon())
-                .setContentIntent(pIntent)
-                .setAutoCancel(false)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setVibrate(new long[]{0, 500, 100, 500})
-                .addAction(markDoneAction)
-                .addAction(snoozeAction)
-                ;
-
-        if (Build.VERSION.SDK_INT < 16)
-            notificationManager.notify(0, notificationBuilder.getNotification());
-        else {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                notificationBuilder.setColor(ContextCompat.getColor(this,R.color.teal));
-            notificationManager.notify(0, notificationBuilder.build());
-        }
-    }
-    private int getNotificationIcon(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            return R.drawable.ic_stat_tasknearby_notif_icon ;
-        return R.mipmap.ic_launcher ;
     }
 
     /****************
@@ -300,15 +201,144 @@ public class FusedLocationService extends Service implements GoogleApiClient.Con
         cursor.close();
     }
 
+
+    /**
+     * Fore every place that we process, a distance from current location is kept in the database.
+     * WHen onLocationChanged is called, the distances need to be updated in the database.
+     */
+    private void updateDatabaseDistance(int placeDistance) {
+
+        ContentValues taskValues = new ContentValues();
+        taskValues.put(TasksContract.TaskEntry.COLUMN_TASK_NAME, cursor.getString(Constants
+                .COL_TASK_NAME));
+        taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_NAME, cursor.getString(Constants
+                .COL_LOCATION_NAME));
+        taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_COLOR, cursor.getInt(Constants
+                .COL_TASK_COLOR));
+        taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_ALARM, cursor.getString(Constants
+                .COL_ALARM));
+        taskValues.put(TasksContract.TaskEntry.COLUMN_MIN_DISTANCE, placeDistance);
+        taskValues.put(TasksContract.TaskEntry.COLUMN_DONE_STATUS, cursor.getString(Constants
+                .COL_DONE));
+
+        this.getContentResolver().update(
+                TasksContract.TaskEntry.CONTENT_URI,
+                taskValues, TasksContract.TaskEntry._ID + "=?",
+                new String[]{cursor.getString(Constants.COL_TASK_ID)}
+        );
+    }
+
+    private void showNotification() {
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService
+                (NOTIFICATION_SERVICE);
+
+        Intent intent = new Intent(this, TaskDetailActivity.class);
+        intent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID));
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent
+                .FLAG_UPDATE_CURRENT);
+
+        //TODO: Remove
+        Intent markDoneIntent = new Intent(this, NotificationClickHandler.class);
+        markDoneIntent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID))
+                .putExtra(Constants.NOTIFICATION_BUTTON_ACTION, 1);
+        PendingIntent markAsDonePI = PendingIntent.getService(this, 1, markDoneIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Intent snoozeIntent = new Intent(this, NotificationClickHandler.class);
+        snoozeIntent.putExtra(Constants.TaskID, cursor.getString(Constants.COL_TASK_ID))
+                .putExtra(Constants.NOTIFICATION_BUTTON_ACTION, 2);
+        PendingIntent snoozePI = PendingIntent.getService(this, 3, snoozeIntent, PendingIntent
+                .FLAG_UPDATE_CURRENT);
+
+
+        NotificationCompat.Action markDoneAction = new NotificationCompat.Action.Builder(R
+                .drawable.ic_location,
+                "Mark Done", markAsDonePI).build();
+        NotificationCompat.Action snoozeAction = new NotificationCompat.Action.Builder(R.drawable
+                .ic_update_grey_500_36dp,
+                "Snooze", snoozePI).build();
+
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setContentTitle(cursor.getString(Constants.COL_TASK_NAME))
+                .setContentText(cursor.getString(Constants.COL_LOCATION_NAME))
+                .setSmallIcon(getNotificationIcon())
+                .setContentIntent(pIntent)
+                .setAutoCancel(false)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setVibrate(new long[]{0, 500, 100, 500})
+                .addAction(markDoneAction)
+                .addAction(snoozeAction);
+
+        if (Build.VERSION.SDK_INT < 16)
+            notificationManager.notify(0, notificationBuilder.getNotification());
+        else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                notificationBuilder.setColor(ContextCompat.getColor(this, R.color.teal));
+            notificationManager.notify(0, notificationBuilder.build());
+        }
+    }
+
+    private int getNotificationIcon() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            return R.drawable.ic_stat_tasknearby_notif_icon;
+        return R.mipmap.ic_launcher;
+    }
+
     public boolean isSnoozed() {
         Log.e(TAG, "isSnoozed: true");
-        if (System.currentTimeMillis() < cursor.getLong(Constants.COL_SNOOZE) + Constants.SNOOZE_TIME_DURATION)
+        if (System.currentTimeMillis() < cursor.getLong(Constants.COL_SNOOZE) + Constants
+                .SNOOZE_TIME_DURATION)
             return true;
         Log.e(TAG, "isSnoozed: false THE ALARM ISN'T SNOOZED");
         return false;
     }
 
-    /* Activity Detection Logic */
+
+    /**
+     * ACTIVITY RECOGNITION LOGIC
+     *
+     *
+     */
+
+    protected void startActivityUpdates() {
+        if (!mGoogleApiClient.isConnected())
+            return;
+        ActivityRecognition.ActivityRecognitionApi
+                .requestActivityUpdates(mGoogleApiClient, Constants.ActDetectionInterval_ms,
+                        getPendingIntent())
+                .setResultCallback(this);
+    }
+
+    protected PendingIntent getPendingIntent() {
+        Intent intent = new Intent(this, ActivityDetectionService.class);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    protected void stopActivityUpdates() {
+        if (!mGoogleApiClient.isConnected())
+            return;
+        ActivityRecognition.ActivityRecognitionApi
+                .removeActivityUpdates(mGoogleApiClient, getPendingIntent())
+                .setResultCallback(this);
+    }
+
+    /**
+     * Contains the status of ActivityRecognition service (from GMS (google play services)).
+     */
+    @Override
+    public void onResult(Status status) {   /*ActivityDetectionResult handler*/
+        if (status.isSuccess())
+            Log.e(TAG, "Activity Detection Initiated Successfully");
+        else
+            Log.e(TAG, "Activity Detection Failed!");
+    }
+
+    /**
+     * {@link ActivityDetectionService} sends the broadcast, which is caught by this receiver.
+     * Activity Detection Logic
+     */
     public class ActivityDetectionReceiver extends BroadcastReceiver {
 
         @Override
@@ -356,6 +386,7 @@ public class FusedLocationService extends Service implements GoogleApiClient.Con
             }
         }
 
+
         void restartLocationUpdates(long newInterval) {
             if ((mLocationRequest != null && mLocationRequest.getInterval() != newInterval)
                     || !mReceivingLocationUpdates) {
@@ -367,7 +398,28 @@ public class FusedLocationService extends Service implements GoogleApiClient.Con
             } else
                 Log.i(TAG, "Update Interval Is same as before.So, not restarting!");
         }
+
     }
 
+    /**
+     * Ignore
+     */
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.e(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result
+                .getErrorCode());
+    }
+    /**
+     * Ignore
+     */
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
 }

@@ -37,7 +37,7 @@ public class TasksFragment extends Fragment implements LoaderManager.LoaderCallb
                              Bundle savedInstanceState)
     {
         rootView = inflater.inflate(R.layout.fragment_main, container,false);
-<<
+
         ListView listview = (ListView) rootView.findViewById(R.id.listView_task);
 
         FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fabMain);
@@ -71,7 +71,7 @@ public class TasksFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public Loader onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sortOrder = TasksContract.TaskEntry.COLUMN_DONE_STATUS + " ASC, " + TasksContract.TaskEntry.COLUMN_MIN_DISTANCE + " ASC ";
         Uri uri = TasksContract.TaskEntry.CONTENT_URI;
         return new CursorLoader(getActivity(), uri, Constants.PROJECTION_TASKS, null, null, sortOrder);

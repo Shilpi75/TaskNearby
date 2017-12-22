@@ -46,14 +46,14 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
     Task mTask;
     LatLng latLng;
     Utility utility;
-    private Typeface mTfRegular ;
+    private Typeface mTfRegular;
 
     public static class Task {
         String mTaskName;
         String mTaskLocation;
         boolean isAlarmEnabled;
         int mRemindDistance;
-        String mExpiryDate ;
+        String mExpiryDate;
         String mTaskColor;
         int mColorCode;
     }
@@ -92,7 +92,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         mTask.mColorCode = R.color.Tangerine;
         mTask.mTaskColor = "Tangerine";
         utility = new Utility();
-        if(!utility.isMetric(this))
+        if (!utility.isMetric(this))
             remindDistanceTV.setText(getString(R.string.default_remind_distance_yd));
 
         mTfRegular = Typeface.createFromAsset(getAssets(), "fonts/RalewayMedium.ttf");
@@ -100,22 +100,24 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         remindDistanceTV.setTypeface(Typeface.DEFAULT_BOLD);
         mExpiryDateTV.setTypeface(Typeface.DEFAULT_BOLD);
 
-        if(getIntent().hasExtra(Constants.KEY_EDIT_TASK_NAME)) {
-            Bundle bundle = getIntent().getExtras() ;
+        if (getIntent().hasExtra(Constants.KEY_EDIT_TASK_NAME)) {
+            Bundle bundle = getIntent().getExtras();
             mTaskNameInput.setText(bundle.getString(Constants.KEY_EDIT_TASK_NAME));
             mLocationNameInput.setVisibility(View.VISIBLE);
             mLocationNameInput.setText(bundle.getString(Constants.KEY_EDIT_TASK_LOCATION));
             alarmCheckBox.setChecked(bundle.getBoolean(Constants.KEY_EDIT_ALARM));
             remindDistanceTV.setText(String.valueOf(bundle.getInt(Constants.KEY_EDIT_REMIND_DIS)));
-            if(utility.isMetric(this))
+            if (utility.isMetric(this))
                 remindDistanceTV.append(" m");
             else
                 remindDistanceTV.append(" yd");
-            mTask.mRemindDistance = bundle.getInt(Constants.KEY_EDIT_REMIND_DIS) ;
-            latLng = utility.getLatLngByPlaceName(this, bundle.getString(Constants.KEY_EDIT_TASK_LOCATION));
+            mTask.mRemindDistance = bundle.getInt(Constants.KEY_EDIT_REMIND_DIS);
+            latLng = utility.getLatLngByPlaceName(this, bundle.getString(Constants
+                    .KEY_EDIT_TASK_LOCATION));
         }
 /*
-        String android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure
+        .ANDROID_ID);
         String deviceId = md5(android_id).toUpperCase();
 
         //TODO: Code for ads
@@ -137,8 +139,9 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                 startActivityForResult(intent, REQUEST_SAVED_PLACES);
                 break;
             case R.id.pick_from_map:
-                if(!utility.isConnected(this))
-                    Toast.makeText(this,getString(R.string.not_connected_internet),Toast.LENGTH_LONG).show();
+                if (!utility.isConnected(this))
+                    Toast.makeText(this, getString(R.string.not_connected_internet), Toast
+                            .LENGTH_LONG).show();
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
                     startActivityForResult(builder.build(this), REQUEST_PLACE_PICKER);
@@ -161,14 +164,17 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         }
 
     }
-    private void showDateSelectionDialog(){
-        Date currentDate = Calendar.getInstance().getTime() ;
-        DatePickerDialog mDPDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+
+    private void showDateSelectionDialog() {
+        Date currentDate = Calendar.getInstance().getTime();
+        DatePickerDialog mDPDialog = new DatePickerDialog(this, new DatePickerDialog
+                .OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Toast.makeText(NewTaskActivity.this, "Date is: " + year + "/" + month + "/" + dayOfMonth,Toast.LENGTH_LONG).show();
+                Toast.makeText(NewTaskActivity.this, "Date is: " + year + "/" + month + "/" +
+                        dayOfMonth, Toast.LENGTH_LONG).show();
             }
-        }, 2013,11,8);
+        }, 2013, 11, 8);
         mDPDialog.show();
 
     }
@@ -195,7 +201,8 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         final AlertDialog dialog = builder.create();
         dialog.show();
 
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View
+                .OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -206,12 +213,15 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                         dis = d.intValue();
                     }
                     mTask.mRemindDistance = dis;
-                    remindDistanceTV.setText(utility.getDistanceDisplayString(NewTaskActivity.this, dis_show));
-                    InputMethodManager imm = (InputMethodManager) NewTaskActivity.this.getSystemService(NewTaskActivity.this.INPUT_METHOD_SERVICE);
+                    remindDistanceTV.setText(utility.getDistanceDisplayString(NewTaskActivity
+                            .this, dis_show));
+                    InputMethodManager imm = (InputMethodManager) NewTaskActivity.this
+                            .getSystemService(NewTaskActivity.this.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                     dialog.dismiss();
                 } catch (NumberFormatException excep) {
-                    Toast.makeText(NewTaskActivity.this, "Please enter the distance correctly!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NewTaskActivity.this, "Please enter the distance correctly!",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -221,13 +231,15 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         mTask.mTaskName = mTaskNameInput.getText().toString();
         mTask.mTaskLocation = mLocationNameInput.getText().toString();
         mTask.isAlarmEnabled = alarmCheckBox.isChecked();
-        Log.e("TAG", "createTask: Alarm checkbox status: "+ alarmCheckBox.isChecked());
+        Log.e("TAG", "createTask: Alarm checkbox status: " + alarmCheckBox.isChecked());
 
         if (TextUtils.isEmpty(mTask.mTaskName)) {
-            Snackbar.make(findViewById(android.R.id.content), "Please enter the task's name!", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(findViewById(android.R.id.content), "Please enter the task's name!",
+                    Snackbar.LENGTH_LONG).show();
             return;
         } else if (TextUtils.isEmpty(mTask.mTaskLocation) || latLng == null) {
-            Snackbar.make(findViewById(android.R.id.content), "Please select the location!", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(findViewById(android.R.id.content), "Please select the location!",
+                    Snackbar.LENGTH_LONG).show();
             return;
         }
         insertLocationIntoDB();
@@ -251,7 +263,8 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         taskValues.put(TasksContract.TaskEntry.COLUMN_TASK_NAME, mTask.mTaskName);
         taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_NAME, mTask.mTaskLocation);
         taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_COLOR, mTask.mColorCode);
-        taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_ALARM, String.valueOf(mTask.isAlarmEnabled))
+        taskValues.put(TasksContract.TaskEntry.COLUMN_LOCATION_ALARM, String.valueOf(mTask
+                .isAlarmEnabled))
         ;
         taskValues.put(TasksContract.TaskEntry.COLUMN_MIN_DISTANCE, currentDistance);
         taskValues.put(TasksContract.TaskEntry.COLUMN_DONE_STATUS, "false");
@@ -262,7 +275,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                 .insert(TasksContract.TaskEntry.CONTENT_URI, taskValues);
     }
 
-    private void insertLocationIntoDB(){
+    private void insertLocationIntoDB() {
         utility.addLocation(
                 this,
                 mLocationNameInput.getText().toString(),
@@ -295,7 +308,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        if(data==null)
+        if (data == null)
             return;
         if (requestCode == REQUEST_PLACE_PICKER) {
             Place place = PlacePicker.getPlace(this, data);
@@ -314,6 +327,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
+
     private void overrideFonts(final Context context, final View v) {
         try {
             if (v instanceof ViewGroup) {
@@ -322,7 +336,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                     View child = vg.getChildAt(i);
                     overrideFonts(context, child);
                 }
-            } else if (v instanceof TextView ) {
+            } else if (v instanceof TextView) {
                 ((TextView) v).setTypeface(mTfRegular);
             }
         } catch (Exception e) {

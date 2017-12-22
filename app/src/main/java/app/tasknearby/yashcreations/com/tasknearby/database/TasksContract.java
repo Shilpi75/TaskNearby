@@ -3,15 +3,34 @@ package app.tasknearby.yashcreations.com.tasknearby.database;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.BaseColumns;
+
+import app.tasknearby.yashcreations.com.tasknearby.BuildConfig;
+
+
+/**
+ * Just see the schema, don't worry about anything else.
+ *
+ * Because this will be changed and migrated to Room.
+ */
 
 /**
  * Created by Yash on 22/04/15.
  */
 public class TasksContract {
 
-    static final String CONTENT_AUTHORITY = "com.yashcreations.tasknearby.app";
+    /**
+     * Unique for every app on device
+     */
+    static final String CONTENT_AUTHORITY = BuildConfig.CONTENT_AUTHORITY;
+
+    /**
+     * Uri used to access the data.
+     */
     static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+
+
     static String PATH_TASKS = "tasks";
     static String PATH_LOCATION = "location";
 

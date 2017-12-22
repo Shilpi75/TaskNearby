@@ -42,6 +42,10 @@ public class TasksProvider extends ContentProvider {
         return retCursor;
     }
 
+    /**
+     * Don't worry about this, this will be removed.
+     * @return
+     */
     static UriMatcher buildUriMatcher() {
 
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);

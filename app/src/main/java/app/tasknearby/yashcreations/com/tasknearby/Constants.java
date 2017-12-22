@@ -2,6 +2,7 @@ package app.tasknearby.yashcreations.com.tasknearby;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.TasksContract;
 
+// DON'T KEEP CONSTANTS LIKE THIS.
 public class Constants {
 
     /****  Database Projections  ****/

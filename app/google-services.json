@@ -19,7 +19,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "app.tasknearby.yashcreations.com.tasknearby",
-            "certificate_hash": "0821E6265EBFEA04992B6A6FDC75106A644E1EC8"
+            "certificate_hash": "0821e6265ebfea04992b6a6fdc75106a644e1ec8"
           }
         },
         {
@@ -44,6 +44,37 @@
               "client_type": 3
             }
           ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454199838904:android:3b7d5f7f4ed4dafb",
+        "android_client_info": {
+          "package_name": "app.tasknearby.yashcreations.com.tasknearby.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "454199838904-8svki98osok55tsd3g3du4hsmsu8291h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOmzGbieId4poefe8l88gvTo_-h1dpQuQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

@@ -18,21 +18,32 @@ import app.tasknearby.yashcreations.com.tasknearby.Constants;
 public class ActivityDetectionService extends IntentService {
     public final String TAG = "ActivityDetection";
 
-    public ActivityDetectionService() { super("ActivityDetectionService"); }
+    public ActivityDetectionService() {
+        super("ActivityDetectionService");
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
     }
 
+    /**
+     * Google play services returns the detected activities to this intent service.
+     *
+     * @param intent
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
 
         ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-        ArrayList<DetectedActivity> detectedActivities = (ArrayList<DetectedActivity>) result.getProbableActivities();
+        ArrayList<DetectedActivity> detectedActivities = (ArrayList<DetectedActivity>) result
+                .getProbableActivities();
 
         Intent localIntent = new Intent(Constants.ACTIVITY_DETECTION_INTENT_FILTER);
         localIntent.putParcelableArrayListExtra(Constants.ReceiverIntentExtra, detectedActivities);
+
+        // local broadcast manager just broadcasts it throughout the app.
+        // Our goal is to pass it to FusedLocationService. It is listening to this Filter.
         LocalBroadcastManager local = LocalBroadcastManager.getInstance(this);
         if (local == null)
             Log.i(TAG, "Local Broadcast Manager is NUll");
