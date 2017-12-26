@@ -19,7 +19,7 @@ android:
 before_install:
   - yes | sdkmanager "platforms;android-27"
 
-script: ./gradlew clean build
+script: ./gradlew app:assemble app:check
 
 branches:
   only:

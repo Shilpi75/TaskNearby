@@ -16,12 +16,17 @@ android {
             // to allow debug and release both to be installed on device.
             // also, a different icon will be set for debug (see project structure).
             applicationIdSuffix '.debug'
-
+            // content providers also need to be different.
+            buildConfigField "String", "CONTENT_AUTHORITY", '"com.yashcreations.tasknearby.app.debug"'
+            resValue "string", "content_authority", "com.yashcreations.tasknearby.app.debug"
         }
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // content provider authority for release version.
+            buildConfigField "String", "CONTENT_AUTHORITY", '"com.yashcreations.tasknearby.app"'
+            resValue "string", "content_authority", "com.yashcreations.tasknearby.app"
         }
     }
     productFlavors { }
