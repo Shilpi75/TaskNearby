@@ -29,6 +29,8 @@ android {
 
 def supportLibVersion = "27.0.2"
 def playServicesVersion = "11.8.0"
+def archRoomVersion = "1.0.0"
+def jodaTimeVersion = "2.9.9.1"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -43,6 +45,16 @@ dependencies {
     compile "com.google.android.gms:play-services-places:$playServicesVersion"
 
     compile "com.google.firebase:firebase-core:$playServicesVersion"
+
+    // Room
+    compile "android.arch.persistence.room:runtime:$archRoomVersion"
+    annotationProcessor "android.arch.persistence.room:compiler:$archRoomVersion"
+
+    // Joda-time
+    compile "net.danlew:android.joda:$jodaTimeVersion"
+
+    // Annotations
+    compile "com.android.support:support-annotations:$supportLibVersion"
 }
 
 // this has to be kept after the dependency block to avoid dependency collisions.
@@ -92,4 +104,3 @@ task customFindbugs(type: FindBugs, dependsOn: assemble) {
 check.dependsOn checkstyleCheck
 check.dependsOn customFindbugs
 customFindbugs.shouldRunAfter checkstyleCheck // because checkstyle runs faster.
-
