@@ -8,7 +8,6 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import app.tasknearby.yashcreations.com.tasknearby.constants.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.Attachment;
 
 /**

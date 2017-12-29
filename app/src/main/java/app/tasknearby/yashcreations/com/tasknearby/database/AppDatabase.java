@@ -5,7 +5,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import app.tasknearby.yashcreations.com.tasknearby.constants.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.database.dao.AttachmentDao;
 import app.tasknearby.yashcreations.com.tasknearby.database.dao.LocationDao;
 import app.tasknearby.yashcreations.com.tasknearby.database.dao.TaskDao;

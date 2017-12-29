@@ -19,8 +19,7 @@ import app.tasknearby.yashcreations.com.tasknearby.database.converters.TimeConve
  * @author shilpi
  */
 
-
-@Entity(tableName = "task",
+@Entity(tableName = "tasks",
         foreignKeys = {@ForeignKey(entity = Location.class, parentColumns = "id", childColumns = "location_id"),
                 @ForeignKey(entity = Attachment.class, parentColumns = "id", childColumns = "attachment_id")})
 @TypeConverters({DateConverter.class, TimeConverter.class})

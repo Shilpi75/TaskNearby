@@ -1,4 +1,4 @@
-package app.tasknearby.yashcreations.com.tasknearby.constants;
+package app.tasknearby.yashcreations.com.tasknearby.database;
 
 import android.support.annotation.IntDef;
 
@@ -39,19 +39,25 @@ public class DbConstants {
     public static final int WEEKLY = 2;
     public static final int MONTHLY = 3;
 
-    // Annotation for Activity Modes.
+    /**
+     * Annotation for Activity Modes.
+     */
     @IntDef({ANYTHING, WALKING, DRIVING})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface ActivityModes{}
+    public @interface ActivityModes { }
 
-    // Annotation for Movement Types.
+    /**
+     * Annotation for Movement Types.
+     */
     @IntDef({BOTH_ENTER_EXIT, ENTER, EXIT})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface MovementTypes{}
+    public @interface MovementTypes { }
 
-    // Annotation for Repeat Types.
+    /**
+     * Annotation for Repeat Types.
+     */
     @IntDef({NO_REPEAT, DAILY, WEEKLY, MONTHLY})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface RepeatTypes{}
+    public @interface RepeatTypes { }
 
 }

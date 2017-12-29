@@ -8,7 +8,6 @@ import android.arch.persistence.room.TypeConverters;
 
 import java.util.Date;
 
-import app.tasknearby.yashcreations.com.tasknearby.constants.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.database.converters.DateConverter;
 
 

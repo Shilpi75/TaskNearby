@@ -8,11 +8,10 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import app.tasknearby.yashcreations.com.tasknearby.constants.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.Task;
 
 /**
- * Created by shilpi on 26/12/17.
+ * @author shilpi
  */
 
 @Dao
@@ -25,7 +24,7 @@ public interface TaskDao {
     public List<Long> insertTasks(List<Task> taskList);
 
     @Update
-    public void updareTask(Task task);
+    public void updateTask(Task task);
 
     @Delete
     public void deleteTask(Task task);
