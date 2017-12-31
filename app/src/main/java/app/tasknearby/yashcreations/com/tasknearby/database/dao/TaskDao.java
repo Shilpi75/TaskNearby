@@ -13,25 +13,24 @@ import app.tasknearby.yashcreations.com.tasknearby.models.Task;
 /**
  * @author shilpi
  */
-
 @Dao
 public interface TaskDao {
 
     @Insert
-    public long insertTask(Task task);
+    long insertTask(Task task);
 
     @Insert
-    public List<Long> insertTasks(List<Task> taskList);
+    List<Long> insertTasks(List<Task> taskList);
 
     @Update
-    public void updateTask(Task task);
+    void updateTask(Task task);
 
     @Delete
-    public void deleteTask(Task task);
+    void deleteTask(Task task);
 
     @Query("SELECT * FROM tasks")
-    public List<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     @Query("SELECT * FROM  tasks WHERE id = :taskId")
-    public Task getTaskWithId(long taskId);
+    Task getTaskWithId(long taskId);
 }

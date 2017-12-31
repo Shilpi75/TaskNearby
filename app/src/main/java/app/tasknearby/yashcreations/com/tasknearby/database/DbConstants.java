@@ -35,9 +35,9 @@ public class DbConstants {
      * Repeat type constants
      */
     public static final int NO_REPEAT = 0;
-    public static final int DAILY = 1;
-    public static final int WEEKLY = 2;
-    public static final int MONTHLY = 3;
+    public static final int REPEAT_DAILY = 1;
+    public static final int REPEAT_WEEKLY = 2;
+    public static final int REPEAT_MONTHLY = 3;
 
     /**
      * Annotation for Activity Modes.
@@ -56,7 +56,7 @@ public class DbConstants {
     /**
      * Annotation for Repeat Types.
      */
-    @IntDef({NO_REPEAT, DAILY, WEEKLY, MONTHLY})
+    @IntDef({NO_REPEAT, REPEAT_DAILY, REPEAT_WEEKLY, REPEAT_MONTHLY})
     @Retention(RetentionPolicy.SOURCE)
     public @interface RepeatTypes { }
 

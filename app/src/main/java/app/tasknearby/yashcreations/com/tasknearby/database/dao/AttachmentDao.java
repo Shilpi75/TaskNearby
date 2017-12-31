@@ -18,20 +18,20 @@ import app.tasknearby.yashcreations.com.tasknearby.models.Attachment;
 public interface AttachmentDao {
 
     @Insert
-    public long insertAttachment(Attachment attachment);
+    long insertAttachment(Attachment attachment);
 
     @Insert
-    public List<Long> insertAttachments(List<Attachment> attachmentList);
+    List<Long> insertAttachments(List<Attachment> attachmentList);
 
     @Update
-    public void updateAttachment(Attachment attachment);
+    void updateAttachment(Attachment attachment);
 
     @Delete
-    public void deleteAttachment(Attachment attachment);
+    void deleteAttachment(Attachment attachment);
 
     @Query("SELECT * FROM attachments ")
-    public List<Attachment> getAllAttachments();
+    List<Attachment> getAllAttachments();
 
     @Query("SELECT * FROM attachments WHERE id = :attachmentId")
-    public Attachment getAttachmentWithId(long attachmentId);
+    Attachment getAttachmentWithId(long attachmentId);
 }

@@ -9,9 +9,11 @@ android {
         targetSdkVersion 27
         versionCode 9
         versionName "3.7"
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
     buildTypes {
-//        def CONTENT_AUTHORITY = "CA"
         debug {
             // to allow debug and release both to be installed on device.
             // also, a different icon will be set for debug (see project structure).
@@ -23,37 +25,44 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors { }
+    productFlavors {}
+    // For Java 8 compatibility.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 def supportLibVersion = "27.0.2"
 def playServicesVersion = "11.8.0"
 def archRoomVersion = "1.0.0"
 def jodaTimeVersion = "2.9.9.1"
+def constraintLayoutVersion = "1.0.2"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile "com.android.support:cardview-v7:$supportLibVersion"
-    compile "com.android.support:gridlayout-v7:$supportLibVersion"
-    compile "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation "com.android.support:gridlayout-v7:$supportLibVersion"
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
 
-    compile "com.google.android.gms:play-services-location:$playServicesVersion"
-    compile "com.google.android.gms:play-services-maps:$playServicesVersion"
-    compile "com.google.android.gms:play-services-places:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-location:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-places:$playServicesVersion"
 
-    compile "com.google.firebase:firebase-core:$playServicesVersion"
+    implementation "com.google.firebase:firebase-core:$playServicesVersion"
 
     // Room
-    compile "android.arch.persistence.room:runtime:$archRoomVersion"
+    implementation "android.arch.persistence.room:runtime:$archRoomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$archRoomVersion"
 
     // Joda-time
-    compile "net.danlew:android.joda:$jodaTimeVersion"
+    implementation "net.danlew:android.joda:$jodaTimeVersion"
 
     // Annotations
-    compile "com.android.support:support-annotations:$supportLibVersion"
+    implementation "com.android.support:support-annotations:$supportLibVersion"
 }
 
 // this has to be kept after the dependency block to avoid dependency collisions.
@@ -70,7 +79,7 @@ apply plugin: 'checkstyle'
 task checkstyleCheck(type: Checkstyle) {
     configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
     classpath = files()
-    source 'src'
+    source 'src/main'
     include '**/*.java'
     exclude '**/gen/**'
     // to fail the build when checkstyle is not passed.

@@ -13,25 +13,24 @@ import app.tasknearby.yashcreations.com.tasknearby.models.Location;
 /**
  * @author shilpi
  */
-
 @Dao
 public interface LocationDao {
 
     @Insert
-    public long insertLocation(Location location);
+    long insertLocation(Location location);
 
     @Insert
-    public List<Long> insertLocations(List<Location> locationList);
+    List<Long> insertLocations(List<Location> locationList);
 
     @Update
-    public void updateLocation(Location location);
+    void updateLocation(Location location);
 
     @Delete
-    public void deleteLocation(Location location);
+    void deleteLocation(Location location);
 
     @Query("SELECT * FROM locations")
-    public List<Location> getAllLocations();
+    List<Location> getAllLocations();
 
     @Query("SELECT * FROM locations WHERE id = :locationId")
-    public Location getLocationWithId(long locationId);
+    Location getLocationWithId(long locationId);
 }

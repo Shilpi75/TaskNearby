@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">@color/grey</color>
+    <color name="colorAccent">@color/teal_A700</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="teal_A700">#00BFA5</color>
+
+    <!--Not being used currently-->
+    <color name="grey">#C7C7C7</color>
+    <color name="amber500">#ffc107</color>
+    <color name="indigoPrimary">#3F51B5</color>
+    <color name="indigoPrimaryDark">#303F9F</color>
+    <color name="pinkAccent">#FF4081</color>
+    <color name="teal500">#009888</color>
+    <color name="teal100">#E0F2F1</color>
+
 </resources>

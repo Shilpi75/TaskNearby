@@ -65,7 +65,7 @@ public class Task {
     private Date nextStartDate;
 
     /**
-     * Repeat type as NO REPEAT(0), DAILY(1), WEEKLY(2), MONTHLY(3).
+     * Repeat type as NO REPEAT(0), REPEAT_DAILY(1), REPEAT_WEEKLY(2), REPEAT_MONTHLY(3).
      */
     @ColumnInfo(name = "repeat_type")
     private int repeatType;
@@ -97,6 +97,7 @@ public class Task {
 
     public Task() {
     }
+
     @Ignore
     public Task(String taskName, long locationId, String imageUri, int isDone,
                 int is_alarm_set, int reminderRange, long attachmentId, LocalTime startTime,

@@ -1,3 +1,45 @@
 <resources>
-    <string name="app_name">TaskNearby</string>
+    <string name="app_name">Task Nearby</string>
+    <string name="title_add_new_task">Add Task</string>
+    <string name="title_edit_task">Edit Task</string>
+
+    <string name="unit_metres">metres</string>
+
+    <!--These are displayed in TaskCreatorActivity. -->
+    <string name="creator_task_name_hint">Remind me about</string>
+    <string name="creator_location_title">Location</string>
+    <string name="creator_pick_place_button">Pick a Place</string>
+    <string name="creator_saved_place_button">Saved Places</string>
+    <string name="creator_or_string">OR</string>
+    <string name="creator_location_name_hint">Location Name</string>
+    <string name="creator_reminder_range">Reminder range :</string>
+    <string name="creator_reminder_range_default">50</string>
+    <string name="creator_alarm_title">Alarm</string>
+    <string name="creator_note_hint">Add a note</string>
+    <string name="creator_time_title">Anytime</string>
+    <string name="creator_time_start_title">From</string>
+    <string name="creator_time_start_default">00:00 AM</string>
+    <string name="creator_time_end_title">To</string>
+    <string name="creator_time_end_default">11:59 PM</string>
+    <string name="creator_date_title">Date Interval</string>
+    <string name="creator_date_start_title">Starts From</string>
+    <string name="creator_date_start_default">Today</string>
+    <string name="creator_date_end_title">Expires on</string>
+    <string name="creator_date_end_default">No Deadline</string>
+    <string name="creator_repeat_default">Does not repeat.</string>
+
+    <string name="creator_repeat_dialog_title">Choose a repeat interval</string>
+    <string-array name="creator_repeat_options">
+        <item>Does not repeat</item>
+        <item>Repeats daily</item>
+        <item>Repeats weekly</item>
+        <item>Repeats monthly</item>
+    </string-array>
+
+    <string name="creator_error_empty_taskname">Please enter a Task Name.</string>
+    <string name="creator_error_empty_location">Please pickup a location where you need to be reminded.</string>
+    <string name="creator_error_empty_range">Please enter a reminder range around your chosen location.</string>
+    <string name="creator_error_image_permission">Permission is required for adding image.</string>
+
+
 </resources>

@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="backdrop_task_creator_height">120dp</dimen>
+</resources>
