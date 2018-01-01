@@ -3,6 +3,7 @@ package app.tasknearby.yashcreations.com.tasknearby;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -28,17 +29,30 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.joda.time.LocalTime;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.Attachment;
+import app.tasknearby.yashcreations.com.tasknearby.models.Location;
+import app.tasknearby.yashcreations.com.tasknearby.models.Task;
+import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 
+/**
+ * Creates a new task and also responsible for editing an old one. For editing, we need to use
+ * the getEditModeIntent() method to get the starting intent.
+ *
+ * @author vermayash8
+ */
 public class TaskCreatorActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = TaskCreatorActivity.class.getSimpleName();
+
+    /**
+     * Since this activity serves both edit and add task operations, when this extra is set in
+     * the calling intent, it will be started in edit mode.
+     */
+    private static final String EXTRA_EDIT_MODE_TASK_ID = "editTaskIdTaskCreatorActivity";
 
     /**
      * Request code constants.
@@ -60,18 +74,46 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private Switch anytimeSwitch;
 
     /**
+     * Tells if the task present is being edited or a new one is being created.
+     */
+    private Task taskBeingEdited = null;
+
+    /**
      * For keeping track of selected location.
      */
     private boolean hasSelectedLocation = false;
     private LatLng mSelectedLocation;
 
+    private TaskRepository mTaskRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_creator);
-
         setActionBar();
+        // Find views and set click listeners.
         initializeViews();
+        mTaskRepository = new TaskRepository(getApplicationContext());
+        // check if activity has been started for editing a task.
+        if (getIntent().hasExtra(EXTRA_EDIT_MODE_TASK_ID)) {
+            long taskId = getIntent().getLongExtra(EXTRA_EDIT_MODE_TASK_ID, -1);
+            taskBeingEdited = mTaskRepository.getTaskWithId(taskId);
+            fillDataForEditing(taskBeingEdited);
+            getSupportActionBar().setTitle(getString(R.string.title_edit_task_reminder));
+        }
+    }
+
+    /**
+     * This will be used to get the intent to start this activity when we need to edit the task.
+     *
+     * @param context context of the calling activity.
+     * @param taskId taskId of the task to be edited.
+     * @return intent that can be used in startActivity.
+     */
+    public static Intent getEditModeIntent(Context context, long taskId) {
+        Intent intent = new Intent(context, TaskCreatorActivity.class);
+        intent.putExtra(EXTRA_EDIT_MODE_TASK_ID, taskId);
+        return intent;
     }
 
     /**
@@ -162,6 +204,52 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     }
 
     /**
+     * When we've a task that is being edited, we've to fill it's attributes into the input fields.
+     *
+     * @param task The task that is being edited.
+     */
+    private void fillDataForEditing(final Task task) {
+        taskNameInput.setText(task.getTaskName());
+        // Set location
+        Location location = mTaskRepository.getLocationById(task.getLocationId());
+        locationNameInput.setText(location.getPlaceName());
+        hasSelectedLocation = true;
+        mSelectedLocation = new LatLng(Double.parseDouble(location.getLatitude()),
+                Double.parseDouble(location.getLongitude()));
+        // Set reminder range
+        reminderRangeInput.setText(String.valueOf(task.getReminderRange()));
+        // TODO: Uncomment after Task model changes.
+        //  noteInput.setText(task.getNote());
+
+        // Setup time.
+        boolean anytime = task.getStartTime().equals(new LocalTime(0, 0))
+                && task.getEndTime().equals(new LocalTime(23, 59));
+        anytimeSwitch.setChecked(anytime);
+        startTimeTv.setText(AppUtils.getReadableTime(task.getStartTime()));
+        endTimeTv.setText(AppUtils.getReadableTime(task.getEndTime()));
+        startTimeTv.setTag(task.getStartTime());
+        endTimeTv.setTag(task.getEndTime());
+
+        // Set date.
+        startDateTv.setText(AppUtils.getReadableDate(this, task.getStartDate()));
+        endDateTv.setText(AppUtils.getReadableDate(this, task.getEndDate()));
+        startDateTv.setTag(task.getStartDate());
+        endDateTv.setTag(task.getEndDate());
+
+        // Repeat options.
+        String[] repeatOptions = getResources().getStringArray(R.array.creator_repeat_options);
+        repeatTv.setTag(task.getRepeatType());
+        repeatTv.setText(repeatOptions[task.getRepeatType()]);
+
+        // Alarm switch
+        alarmSwitch.setChecked(task.getIsAlarmSet() != 0);
+        // Cover image
+        if (task.getImageUri() != null) {
+            coverImageView.setImageURI(Uri.parse(task.getImageUri()));
+        }
+    }
+
+    /**
      * Triggered when FAB is clicked to add image and when permissions are granted. This also
      * checks and requests if required permissions are not available.
      */
@@ -187,25 +275,12 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 (view, hourOfDay, minute) -> {
                     Log.d(TAG, "Time selected, " + hourOfDay + ":" + minute);
                     // storing the time object in the textView itself.
-                    v.setTag(new LocalTime(hourOfDay, minute));
+                    LocalTime localTime = new LocalTime(hourOfDay, minute);
+                    v.setTag(localTime);
                     // set selected Time on textView.
-                    v.setText(getReadableTimeString(hourOfDay, minute));
+                    v.setText(AppUtils.getReadableTime(localTime));
                 }, 12, 0, false); // time at which timepicker opens.
         timePickerDialog.show();
-    }
-
-    /**
-     * Returns a formatted time string in 12-hour format.
-     */
-    private String getReadableTimeString(int hourOfDay, int minute) {
-        String periodSuffix = "AM";
-        if (hourOfDay > 12) {
-            hourOfDay -= 12;
-            periodSuffix = "PM";
-        } else if (hourOfDay == 12) {
-            periodSuffix = "PM";
-        }
-        return String.format(Locale.ENGLISH, "%02d:%02d %s", hourOfDay, minute, periodSuffix);
     }
 
     /**
@@ -218,7 +293,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 dayOfMonth) -> {
             calendar.set(year, month, dayOfMonth);
             v.setTag(calendar.getTime());
-            v.setText(getReadableDateString(calendar.getTime()));
+            v.setText(AppUtils.getReadableDate(this, calendar.getTime()));
             Log.d(TAG, "Date selected: " + calendar.getTime().toString());
         };
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener,
@@ -226,14 +301,6 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 calendar.get(Calendar.MONTH),           // current month (0 indexed)
                 calendar.get(Calendar.DAY_OF_MONTH));   // current day.
         datePickerDialog.show();
-    }
-
-    /**
-     * Returns a formatted date String like "Wed, 26 Dec 2017".
-     */
-    private String getReadableDateString(Date date) {
-        SimpleDateFormat sdfReadable = new SimpleDateFormat("EEE, d MMM yy", Locale.ENGLISH);
-        return sdfReadable.format(date);
     }
 
     @Override
@@ -336,7 +403,19 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         if (!TextUtils.isEmpty(noteInput.getText())) {
             attachment = new Attachment(noteInput.getText().toString());
         }
+
         // TODO: Save to database, all 3 tables.
+        // Create a task + location object here.
+        /*
+        if(taskBeingEdited == null) {
+            // add new task.
+            mTaskRepository.saveTask(task);
+        } else {
+            // update task.
+            task.setId(taskBeingEdited.getId());
+            mTaskRepository.updateTask(task);
+        }
+        */
     }
 
     /**

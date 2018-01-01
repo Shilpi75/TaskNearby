@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> startActivity(new Intent(this, TaskCreatorActivity.class)));
+        // For debugging.
+        fab.setOnClickListener(view -> startActivity(new Intent(this, DetailActivity.class)));
     }
 }

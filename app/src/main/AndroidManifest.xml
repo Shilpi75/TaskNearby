@@ -45,6 +45,12 @@
 
         <!-- adjustResize will pan the view up when keyboard opens up -->
 
+        <activity
+            android:name=".DetailActivity"
+            android:label="Task Detail"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <service
             android:name=".services.ActivityDetectionService"
             android:enabled="true" />
