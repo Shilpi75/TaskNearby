@@ -8,7 +8,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import app.tasknearby.yashcreations.com.tasknearby.models.Task;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 
 /**
  * @author shilpi
@@ -17,20 +17,20 @@ import app.tasknearby.yashcreations.com.tasknearby.models.Task;
 public interface TaskDao {
 
     @Insert
-    long insertTask(Task task);
+    long insertTask(TaskModel task);
 
     @Insert
-    List<Long> insertTasks(List<Task> taskList);
+    List<Long> insertTasks(List<TaskModel> taskList);
 
     @Update
-    void updateTask(Task task);
+    void updateTask(TaskModel task);
 
     @Delete
-    void deleteTask(Task task);
+    void deleteTask(TaskModel task);
 
-    @Query("SELECT * FROM tasks")
-    List<Task> getAllTasks();
+    @Query("SELECT * FROM TaskModel")
+    List<TaskModel> getAllTasks();
 
-    @Query("SELECT * FROM  tasks WHERE id = :taskId")
-    Task getTaskWithId(long taskId);
+    @Query("SELECT * FROM  TaskModel WHERE id = :taskId")
+    TaskModel getTaskWithId(long taskId);
 }

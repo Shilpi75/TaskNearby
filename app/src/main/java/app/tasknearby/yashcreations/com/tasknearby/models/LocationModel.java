@@ -17,7 +17,7 @@ import app.tasknearby.yashcreations.com.tasknearby.database.converters.DateConve
 
 @Entity(tableName = "locations")
 @TypeConverters({DateConverter.class})
-public class Location {
+public class LocationModel {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -39,11 +39,11 @@ public class Location {
     private Date dateAdded;
 
     @Ignore
-    public Location() {
+    public LocationModel() {
 
     }
 
-    public Location(String placeName, double latitude, double longitude, int useCount, int isHidden, Date dateAdded) {
+    public LocationModel(String placeName, double latitude, double longitude, int useCount, int isHidden, Date dateAdded) {
         this.placeName = placeName;
         this.latitude = latitude;
         this.longitude = longitude;

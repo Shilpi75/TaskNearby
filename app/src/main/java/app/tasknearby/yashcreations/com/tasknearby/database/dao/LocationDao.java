@@ -8,7 +8,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import app.tasknearby.yashcreations.com.tasknearby.models.Location;
+import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 
 /**
  * @author shilpi
@@ -17,20 +17,20 @@ import app.tasknearby.yashcreations.com.tasknearby.models.Location;
 public interface LocationDao {
 
     @Insert
-    long insertLocation(Location location);
+    long insertLocation(LocationModel locationModel);
 
     @Insert
-    List<Long> insertLocations(List<Location> locationList);
+    List<Long> insertLocations(List<LocationModel> locationModelList);
 
     @Update
-    void updateLocation(Location location);
+    void updateLocation(LocationModel locationModel);
 
     @Delete
-    void deleteLocation(Location location);
+    void deleteLocation(LocationModel locationModel);
 
-    @Query("SELECT * FROM locations")
-    List<Location> getAllLocations();
+    @Query("SELECT * FROM LocationModel")
+    List<LocationModel> getAllLocations();
 
-    @Query("SELECT * FROM locations WHERE id = :locationId")
-    Location getLocationWithId(long locationId);
+    @Query("SELECT * FROM LocationModel WHERE id = :locationId")
+    LocationModel getLocationWithId(long locationId);
 }

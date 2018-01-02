@@ -31,14 +31,14 @@ import app.tasknearby.yashcreations.com.tasknearby.database.converters.TimeConve
  */
 @Entity(tableName = "tasks",
         foreignKeys = {
-                @ForeignKey(entity = Location.class,
+                @ForeignKey(entity = LocationModel.class,
                         parentColumns = "id",
                         childColumns = "location_id")
         },
         indices = {@Index(value = "location_id")
         })
 @TypeConverters({DateConverter.class, TimeConverter.class})
-public class Task {
+public class TaskModel {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -110,15 +110,15 @@ public class Task {
     private Date dateAdded;
 
 
-    public Task() {
+    public TaskModel() {
     }
 
     @Ignore
-    private Task(String taskName, long locationId, String imageUri, int isDone,
-            int isAlarmSet, int reminderRange, String note, LocalTime startTime,
-            LocalTime endTime, Date startDate, Date endDate, Date nextStartDate,
-            int repeatType, int movementType, int activityType, float lastDistance,
-            Date lastTriggered, Long snoozedAt, Date dateAdded) {
+    private TaskModel(String taskName, long locationId, String imageUri, int isDone,
+                      int isAlarmSet, int reminderRange, String note, LocalTime startTime,
+                      LocalTime endTime, Date startDate, Date endDate, Date nextStartDate,
+                      int repeatType, int movementType, int activityType, float lastDistance,
+                      Date lastTriggered, Long snoozedAt, Date dateAdded) {
         this.taskName = taskName;
         this.locationId = locationId;
         this.imageUri = imageUri;
@@ -458,10 +458,10 @@ public class Task {
         /**
          * Builds and returns the Task object with the required parameters.
          */
-        public Task build() {
+        public TaskModel build() {
             nextStartDate = (nextStartDate == null) ? startDate : nextStartDate;
             // call the private constructor.
-            return new Task(taskName, locationId, imageUri, isDone, isAlarmSet, reminderRange, note,
+            return new TaskModel(taskName, locationId, imageUri, isDone, isAlarmSet, reminderRange, note,
                     startTime, endTime, startDate, endDate, nextStartDate, repeatType, movementType,
                     activityType, lastDistance, lastTriggered, snoozedAt, dateAdded);
         }

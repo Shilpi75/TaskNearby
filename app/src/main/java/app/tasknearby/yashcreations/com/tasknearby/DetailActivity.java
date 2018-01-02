@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 import org.joda.time.LocalTime;
 
-import app.tasknearby.yashcreations.com.tasknearby.models.Location;
-import app.tasknearby.yashcreations.com.tasknearby.models.Task;
+import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
@@ -36,7 +36,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private Button doneButton;
     private ActionBar mActionBar;
 
-    private Task mTask;
+    private TaskModel mTask;
     private TaskRepository mTaskRepository;
 
     @Override
@@ -67,7 +67,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void setData(Task task) {
+    private void setData(TaskModel task) {
         // Set task title on actionBar
         mActionBar.setTitle(task.getTaskName());
         showLocationDetails(task);
@@ -99,21 +99,21 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * Sets the data to reminder range and location name textViews.
      */
-    private void showLocationDetails(Task task) {
+    private void showLocationDetails(TaskModel task) {
         // Reminder range.
         TextView reminderRangeTv = findViewById(R.id.text_reminder_range);
         reminderRangeTv.setText(String.format(getString(R.string.detail_format_reminder_range),
                 task.getReminderRange()));
         // Set locationName.
-        Location location = mTaskRepository.getLocationById(task.getLocationId());
+        LocationModel locationModel = mTaskRepository.getLocationById(task.getLocationId());
         TextView locationNameTv = findViewById(R.id.text_location_name);
-        locationNameTv.setText(location.getPlaceName());
+        locationNameTv.setText(locationModel.getPlaceName());
     }
 
     /**
      * Shows the task's cover image on detail layout.
      */
-    private void showCoverImage(Task task) {
+    private void showCoverImage(TaskModel task) {
         if (task.getImageUri() != null) {
             ((ImageView) findViewById(R.id.image_task_cover))
                     .setImageURI(Uri.parse(task.getImageUri()));
@@ -123,7 +123,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * Sets the user visible time string to the textView.
      */
-    private void showTimeDetails(Task task) {
+    private void showTimeDetails(TaskModel task) {
         // Time range set.
         String timeDisplayString;
         LocalTime startTime = task.getStartTime();
@@ -145,7 +145,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      *
      * @param task The task for which details are being set.
      */
-    private void showDateInterval(Task task) {
+    private void showDateInterval(TaskModel task) {
         // Date range set.
         String dateIntervalString = String.format(getString(R.string.detail_date_format),
                 AppUtils.getReadableDate(this, task.getStartDate()),
@@ -159,7 +159,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      *
      * @param task Task for which details are being set.
      */
-    private void showAlarmStatus(Task task) {
+    private void showAlarmStatus(TaskModel task) {
         String alarmStatus = getString(R.string.detail_alarm_on);
         if (task.getIsAlarmSet() == 0) {
             alarmStatus = getString(R.string.detail_alarm_off);
@@ -171,7 +171,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * Sets the repeat type of the reminder to the UI.
      */
-    private void showRepeatType(Task task) {
+    private void showRepeatType(TaskModel task) {
         String[] repeatArray = getResources().getStringArray(R.array.creator_repeat_options);
         TextView repeatStatusTv = findViewById(R.id.text_repeat);
         repeatStatusTv.setText(repeatArray[task.getRepeatType()]);
@@ -180,7 +180,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * Sets the note to UI.
      */
-    private void showNote(Task task) {
+    private void showNote(TaskModel task) {
         TextView noteView = findViewById(R.id.text_note);
         if (task.getNote() == null || TextUtils.isEmpty(task.getNote())) {
             findViewById(R.id.icon_note).setVisibility(View.GONE);
@@ -192,7 +192,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     /**
      * Sets the text shown on done button.
      */
-    private void setDoneButton(Task task) {
+    private void setDoneButton(TaskModel task) {
         if (task.getIsDone() == 0) {
             Log.i(TAG, "Task has been set as not done.");
             doneButton.setText(R.string.detail_button_mark_done);
@@ -216,9 +216,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      * Shows the directions to the location on Google maps.
      */
     private void showDirections() {
-        Location location = mTaskRepository.getLocationById(mTask.getLocationId());
-        Uri uri = Uri.parse("google.navigation:q=" + location.getLatitude() + ","
-                + location.getLongitude());
+        LocationModel locationModel = mTaskRepository.getLocationById(mTask.getLocationId());
+        Uri uri = Uri.parse("google.navigation:q=" + locationModel.getLatitude() + ","
+                + locationModel.getLongitude());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setPackage("com.google.android.apps.maps");
         startActivity(intent);

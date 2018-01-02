@@ -31,8 +31,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
-import app.tasknearby.yashcreations.com.tasknearby.models.Location;
-import app.tasknearby.yashcreations.com.tasknearby.models.Task;
+import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 
 /**
@@ -73,13 +73,13 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     /**
      * Tells if the task present is being edited or a new one is being created.
      */
-    private Task taskBeingEdited = null;
+    private TaskModel taskBeingEdited = null;
 
     /**
      * For keeping track of selected location.
      */
     private boolean hasSelectedLocation = false;
-    private Location mSelectedLocation;
+    private LocationModel mSelectedLocationModel;
 
     private TaskRepository mTaskRepository;
 
@@ -205,11 +205,11 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      *
      * @param task The task that is being edited.
      */
-    private void fillDataForEditing(final Task task) {
+    private void fillDataForEditing(final TaskModel task) {
         taskNameInput.setText(task.getTaskName());
         // Set location
-        mSelectedLocation = mTaskRepository.getLocationById(task.getLocationId());
-        locationNameInput.setText(mSelectedLocation.getPlaceName());
+        mSelectedLocationModel = mTaskRepository.getLocationById(task.getLocationId());
+        locationNameInput.setText(mSelectedLocationModel.getPlaceName());
         hasSelectedLocation = true;
         // Set reminder range
         reminderRangeInput.setText(String.valueOf(task.getReminderRange()));
@@ -397,15 +397,15 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             note = null;
         }
 
-        mSelectedLocation.setPlaceName(locationName);
+        mSelectedLocationModel.setPlaceName(locationName);
         // TODO:
         // After location picker has been implemented, check if this works in both cases?
         // When picking a location from the saved places, we won't create a new location
         // but instead update the old one. So, if we insert a new location with the same
         // id, will it cause a conflict or update the old one.
-        long locationId = mTaskRepository.saveLocation(mSelectedLocation);
+        long locationId = mTaskRepository.saveLocation(mSelectedLocationModel);
 
-        Task task = new Task.Builder(this, taskName, locationId)
+        TaskModel task = new TaskModel.Builder(this, taskName, locationId)
                 .setReminderRange(reminderRange)
                 .setIsAlarmSet(isAlarmEnabled ? 1 : 0)
                 .setImageUri(imageUri)

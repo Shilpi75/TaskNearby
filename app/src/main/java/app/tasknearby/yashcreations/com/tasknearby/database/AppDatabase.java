@@ -7,14 +7,14 @@ import android.content.Context;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.dao.LocationDao;
 import app.tasknearby.yashcreations.com.tasknearby.database.dao.TaskDao;
-import app.tasknearby.yashcreations.com.tasknearby.models.Location;
-import app.tasknearby.yashcreations.com.tasknearby.models.Task;
+import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 
 /**
  * @author shilpi
  */
 
-@Database(entities = {Task.class, Location.class}, version = 1)
+@Database(entities = {TaskModel.class, LocationModel.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
