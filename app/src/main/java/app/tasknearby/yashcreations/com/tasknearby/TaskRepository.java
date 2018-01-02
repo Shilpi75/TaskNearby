@@ -3,14 +3,10 @@ package app.tasknearby.yashcreations.com.tasknearby;
 import android.content.Context;
 import android.util.Log;
 
-import org.joda.time.LocalTime;
-
 import java.util.Date;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.AppDatabase;
-import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
-import app.tasknearby.yashcreations.com.tasknearby.models.Attachment;
 import app.tasknearby.yashcreations.com.tasknearby.models.Location;
 import app.tasknearby.yashcreations.com.tasknearby.models.Task;
 
@@ -24,44 +20,53 @@ public class TaskRepository {
 
     private static final String TAG = TaskRepository.class.getSimpleName();
 
-    private Context mContext;
+    /**
+     * AppDatabase instance.
+     */
+    private AppDatabase mDatabase;
 
+    /**
+     * Constructor for getting the instance of AppDatabase using context.
+     *
+     * @param context using which AppDatabase will be retrieved.
+     */
     public TaskRepository(Context context) {
-        this.mContext = context;
+        mDatabase = AppDatabase.getAppDatabase(context);
+        // TODO: Remove mock data call.
+        dummyTask = new Task.Builder(context, "Check reception plannings", 0)
+                .setIsAlarmSet(0)
+                .setIsDone(1)
+                .setStartDate(new Date(12200000))
+                .setEndDate(new Date(34))
+                .setNote("This is a note")
+                .build();
     }
 
     /**
      * Fetches all the tasks from database.
      */
     public List<Task> getAllTasks() {
-        return AppDatabase.getAppDatabase(mContext).taskDao().getAllTasks();
+          return mDatabase.taskDao().getAllTasks();
+//         TODO: Remove mock data.
+//        return Arrays.asList(dummyTask, dummyTask);
     }
 
     /**
      * Fetches the task with the given id.
      */
     public Task getTaskWithId(long taskId) {
-//        return AppDatabase.getAppDatabase(mContext).taskDao().getTaskWithId(taskId);
+        // return mDatabase.taskDao().getTaskWithId(taskId);
         // TODO: After database starts working, remove this mock data call.
-        return new Task("Check reception plannings", 0, null, 0,
-                0, 70, 0, new LocalTime(10, 20),
-                new LocalTime(17, 00), new Date(1000000), new Date(), new Date(),
-                DbConstants.REPEAT_DAILY, DbConstants.ANYTHING, DbConstants.BOTH_ENTER_EXIT,
-                120, null, 0L, new Date());
+        return dummyTask;
     }
 
     /**
-     * Returns a location object with the given id from the database.
+     * Saves the task to the database.
+     *
+     * @return the id of the saved task.
      */
-    public Location getLocationById(long locationId) {
-//        return AppDatabase.getAppDatabase(mContext).locationDao().getLocationWithId(locationId);
-        return new Location("Hyatt Residency, New Delhi, 110042", "23.0", "77.0",
-                1, 0, new Date());
-    }
-
-    public Attachment getAttachmentById(long attachmentId) {
-//      return AppDatabase.getAppDatabase(mContext).attachmentDao().getAttachmentWithId(attachmentId);
-        return new Attachment("Check for music, food and creatives also.");
+    public long saveTask(Task task) {
+        return mDatabase.taskDao().insertTask(task);
     }
 
     /**
@@ -69,7 +74,7 @@ public class TaskRepository {
      */
     public void updateTask(Task task) {
         Log.i(TAG, "Update called for task: " + task.getTaskName());
-        AppDatabase.getAppDatabase(mContext).taskDao().updateTask(task);
+        mDatabase.taskDao().updateTask(task);
     }
 
     /**
@@ -77,6 +82,35 @@ public class TaskRepository {
      */
     public void removeTask(Task task) {
         Log.i(TAG, "Requested deletion of task: " + task.getTaskName());
-        AppDatabase.getAppDatabase(mContext).taskDao().deleteTask(task);
+        mDatabase.taskDao().deleteTask(task);
     }
+
+    /**
+     * Returns a location object with the given id from the database.
+     */
+    public Location getLocationById(long locationId) {
+        // return mDatabase.locationDao().getLocationWithId(locationId);
+        return mockLocation;
+    }
+
+    /**
+     * Returns all locations present in the database.
+     */
+    public List<Location> getAllLocations() {
+        return mDatabase.locationDao().getAllLocations();
+    }
+
+    /**
+     * Saves the location to the database.
+     */
+    public long saveLocation(Location location) {
+        return mDatabase.locationDao().insertLocation(location);
+    }
+
+    /**
+     * Mock task which will be used for debugging.
+     */
+    private Task dummyTask;
+    private Location mockLocation = new Location("Hyatt Residency, New Delhi, 110042", 23.0,
+            77.0, 1, 0, new Date());
 }

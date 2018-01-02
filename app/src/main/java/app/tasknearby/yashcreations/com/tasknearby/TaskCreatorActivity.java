@@ -25,15 +25,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.joda.time.LocalTime;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
-import app.tasknearby.yashcreations.com.tasknearby.models.Attachment;
 import app.tasknearby.yashcreations.com.tasknearby.models.Location;
 import app.tasknearby.yashcreations.com.tasknearby.models.Task;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
@@ -82,7 +79,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * For keeping track of selected location.
      */
     private boolean hasSelectedLocation = false;
-    private LatLng mSelectedLocation;
+    private Location mSelectedLocation;
 
     private TaskRepository mTaskRepository;
 
@@ -211,16 +208,13 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private void fillDataForEditing(final Task task) {
         taskNameInput.setText(task.getTaskName());
         // Set location
-        Location location = mTaskRepository.getLocationById(task.getLocationId());
-        locationNameInput.setText(location.getPlaceName());
+        mSelectedLocation = mTaskRepository.getLocationById(task.getLocationId());
+        locationNameInput.setText(mSelectedLocation.getPlaceName());
         hasSelectedLocation = true;
-        mSelectedLocation = new LatLng(Double.parseDouble(location.getLatitude()),
-                Double.parseDouble(location.getLongitude()));
         // Set reminder range
         reminderRangeInput.setText(String.valueOf(task.getReminderRange()));
-        // TODO: Uncomment after Task model changes.
-        //  noteInput.setText(task.getNote());
-
+        // Set note
+        noteInput.setText(task.getNote());
         // Setup time.
         boolean anytime = task.getStartTime().equals(new LocalTime(0, 0))
                 && task.getEndTime().equals(new LocalTime(23, 59));
@@ -324,6 +318,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         switch (requestCode) {
             case REQUEST_CODE_LOCATION_SELECTION:
                 // TODO: will be implemented.
+                hasSelectedLocation = true; // Check this too.
                 break;
             case REQUEST_CODE_CAMERA_IMAGE:
             case REQUEST_CODE_GALLERY_IMAGE_PICKER:
@@ -369,7 +364,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         }
         String taskName = taskNameInput.getText().toString();
         String locationName = locationNameInput.getText().toString();
-        String reminderRange = reminderRangeInput.getText().toString();
+        int reminderRange = Integer.parseInt(reminderRangeInput.getText().toString());
         boolean isAlarmEnabled = alarmSwitch.isChecked();
         String imageUri = null;
         Uri selectedImageUri = (Uri) coverImageView.getTag();
@@ -397,17 +392,32 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         // repeat mode.
         int repeatType = (int) repeatTv.getTag();
 
-        // Attachment will refer to the file and notes that are attached.
-        // It will be null when note is not added.
-        Attachment attachment = null;
-        if (!TextUtils.isEmpty(noteInput.getText())) {
-            attachment = new Attachment(noteInput.getText().toString());
+        String note = noteInput.getText().toString();
+        if (TextUtils.isEmpty(note)) {
+            note = null;
         }
 
-        // TODO: Save to database, all 3 tables.
-        // Create a task + location object here.
-        /*
-        if(taskBeingEdited == null) {
+        mSelectedLocation.setPlaceName(locationName);
+        // TODO:
+        // After location picker has been implemented, check if this works in both cases?
+        // When picking a location from the saved places, we won't create a new location
+        // but instead update the old one. So, if we insert a new location with the same
+        // id, will it cause a conflict or update the old one.
+        long locationId = mTaskRepository.saveLocation(mSelectedLocation);
+
+        Task task = new Task.Builder(this, taskName, locationId)
+                .setReminderRange(reminderRange)
+                .setIsAlarmSet(isAlarmEnabled ? 1 : 0)
+                .setImageUri(imageUri)
+                .setNote(note)
+                .setStartTime(startTime)
+                .setEndTime(endTime)
+                .setStartDate(startDate)
+                .setEndDate(endDate)
+                .setRepeatType(repeatType)
+                .build();
+
+        if (taskBeingEdited == null) {
             // add new task.
             mTaskRepository.saveTask(task);
         } else {
@@ -415,7 +425,6 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             task.setId(taskBeingEdited.getId());
             mTaskRepository.updateTask(task);
         }
-        */
     }
 
     /**
@@ -456,6 +465,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_save) {
             saveTask();
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

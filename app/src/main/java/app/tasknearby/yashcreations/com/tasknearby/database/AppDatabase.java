@@ -5,10 +5,8 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import app.tasknearby.yashcreations.com.tasknearby.database.dao.AttachmentDao;
 import app.tasknearby.yashcreations.com.tasknearby.database.dao.LocationDao;
 import app.tasknearby.yashcreations.com.tasknearby.database.dao.TaskDao;
-import app.tasknearby.yashcreations.com.tasknearby.models.Attachment;
 import app.tasknearby.yashcreations.com.tasknearby.models.Location;
 import app.tasknearby.yashcreations.com.tasknearby.models.Task;
 
@@ -16,7 +14,7 @@ import app.tasknearby.yashcreations.com.tasknearby.models.Task;
  * @author shilpi
  */
 
-@Database(entities = {Task.class, Location.class, Attachment.class}, version = 1)
+@Database(entities = {Task.class, Location.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
@@ -24,8 +22,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
 
     public abstract LocationDao locationDao();
-
-    public abstract AttachmentDao attachmentDao();
 
     public static AppDatabase getAppDatabase(Context context) {
         if (INSTANCE == null) {

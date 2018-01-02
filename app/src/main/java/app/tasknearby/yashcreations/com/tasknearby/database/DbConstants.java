@@ -20,7 +20,7 @@ public class DbConstants {
     /**
      * Activity based alarm constants.
      */
-    public static final int ANYTHING = 0;
+    public static final int ACTIVITY_ANYTHING = 0;
     public static final int WALKING = 1;
     public static final int DRIVING = 2;
 
@@ -42,7 +42,7 @@ public class DbConstants {
     /**
      * Annotation for Activity Modes.
      */
-    @IntDef({ANYTHING, WALKING, DRIVING})
+    @IntDef({ACTIVITY_ANYTHING, WALKING, DRIVING})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActivityModes { }
 

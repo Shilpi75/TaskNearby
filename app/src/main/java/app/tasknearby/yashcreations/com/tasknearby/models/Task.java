@@ -4,23 +4,39 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.joda.time.LocalTime;
 
 import java.util.Date;
 
+import app.tasknearby.yashcreations.com.tasknearby.R;
+import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.database.converters.DateConverter;
 import app.tasknearby.yashcreations.com.tasknearby.database.converters.TimeConverter;
 
 /**
+ * Models the 'Task' object. Each tasks has the attributes present in this class. It serves as an
+ * entity that will be stored by {@link android.arch.persistence.room.Room} into the SQLite
+ * database.
+ *
  * @author shilpi
  */
-
 @Entity(tableName = "tasks",
-        foreignKeys = {@ForeignKey(entity = Location.class, parentColumns = "id", childColumns = "location_id"),
-                @ForeignKey(entity = Attachment.class, parentColumns = "id", childColumns = "attachment_id")})
+        foreignKeys = {
+                @ForeignKey(entity = Location.class,
+                        parentColumns = "id",
+                        childColumns = "location_id")
+        },
+        indices = {@Index(value = "location_id")
+        })
 @TypeConverters({DateConverter.class, TimeConverter.class})
 public class Task {
 
@@ -45,8 +61,8 @@ public class Task {
     @ColumnInfo(name = "reminder_range")
     private int reminderRange;
 
-    @ColumnInfo(name = "attachment_id")
-    private long attachmentId;
+    @ColumnInfo(name = "note")
+    private String note;
 
     @ColumnInfo(name = "start_time")
     private LocalTime startTime;
@@ -76,7 +92,7 @@ public class Task {
     private int movementType;
 
     /**
-     * Activity Type as ANYTHING(0), WALKING(1), DRIVING(2).
+     * Activity Type as ACTIVITY_ANYTHING(0), WALKING(1), DRIVING(2).
      */
     @ColumnInfo(name = "activity_type")
     private int activityType;
@@ -98,18 +114,18 @@ public class Task {
     }
 
     @Ignore
-    public Task(String taskName, long locationId, String imageUri, int isDone,
-                int is_alarm_set, int reminderRange, long attachmentId, LocalTime startTime,
-                LocalTime endTime, Date startDate, Date endDate, Date nextStartDate,
-                int repeatType, int movementType, int activityType, float lastDistance,
-                Date lastTriggered, Long snoozedAt, Date dateAdded) {
+    private Task(String taskName, long locationId, String imageUri, int isDone,
+            int isAlarmSet, int reminderRange, String note, LocalTime startTime,
+            LocalTime endTime, Date startDate, Date endDate, Date nextStartDate,
+            int repeatType, int movementType, int activityType, float lastDistance,
+            Date lastTriggered, Long snoozedAt, Date dateAdded) {
         this.taskName = taskName;
         this.locationId = locationId;
         this.imageUri = imageUri;
         this.isDone = isDone;
-        this.isAlarmSet = is_alarm_set;
+        this.isAlarmSet = isAlarmSet;
         this.reminderRange = reminderRange;
-        this.attachmentId = attachmentId;
+        this.note = note;
         this.startTime = startTime;
         this.endTime = endTime;
         this.startDate = startDate;
@@ -148,11 +164,12 @@ public class Task {
         this.locationId = locationId;
     }
 
+    @Nullable
     public String getImageUri() {
         return imageUri;
     }
 
-    public void setImageUri(String imageUri) {
+    public void setImageUri(@Nullable String imageUri) {
         this.imageUri = imageUri;
     }
 
@@ -180,51 +197,56 @@ public class Task {
         this.reminderRange = reminderRange;
     }
 
-    public long getAttachmentId() {
-        return attachmentId;
+    public String getNote() {
+        return note;
     }
 
-    public void setAttachmentId(long attachmentId) {
-        this.attachmentId = attachmentId;
+    public void setNote(String note) {
+        this.note = note;
     }
 
+    @NonNull
     public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalTime startTime) {
+    public void setStartTime(@NonNull LocalTime startTime) {
         this.startTime = startTime;
     }
 
+    @NonNull
     public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime) {
+    public void setEndTime(@NonNull LocalTime endTime) {
         this.endTime = endTime;
     }
 
+    @NonNull
     public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(@NonNull Date startDate) {
         this.startDate = startDate;
     }
 
+    @Nullable
     public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(@Nullable Date endDate) {
         this.endDate = endDate;
     }
 
+    @NonNull
     public Date getNextStartDate() {
         return nextStartDate;
     }
 
-    public void setNextStartDate(Date nextStartDate) {
+    public void setNextStartDate(@NonNull Date nextStartDate) {
         this.nextStartDate = nextStartDate;
     }
 
@@ -232,7 +254,7 @@ public class Task {
         return repeatType;
     }
 
-    public void setRepeatType(int repeatType) {
+    public void setRepeatType(@DbConstants.RepeatTypes int repeatType) {
         this.repeatType = repeatType;
     }
 
@@ -240,7 +262,7 @@ public class Task {
         return movementType;
     }
 
-    public void setMovementType(int movementType) {
+    public void setMovementType(@DbConstants.MovementTypes int movementType) {
         this.movementType = movementType;
     }
 
@@ -248,7 +270,7 @@ public class Task {
         return activityType;
     }
 
-    public void setActivityType(int activityType) {
+    public void setActivityType(@DbConstants.ActivityModes int activityType) {
         this.activityType = activityType;
     }
 
@@ -280,7 +302,170 @@ public class Task {
         return dateAdded;
     }
 
-    public void setDateAdded(Date dateAdded) {
+    public void setDateAdded(@NonNull Date dateAdded) {
         this.dateAdded = dateAdded;
     }
+
+    /**
+     * Builder class for Task object. TaskName and locationId are the compulsory arguments. Others
+     * have a default value.
+     */
+    public static class Builder {
+
+        private String taskName;
+        private long locationId;
+        // Assigning default values to the remaining.
+        private String imageUri = null;
+        private int isDone = 0;
+        private int isAlarmSet = 1;
+        private int reminderRange;
+        private String note = null;
+        private LocalTime startTime = new LocalTime(0, 0); // 00:00
+        private LocalTime endTime = new LocalTime(23, 59); // 23:59
+        private Date startDate = new Date();
+        private Date endDate = null;
+        /**
+         * If we set nextStartDate here, then we'll have to update it whenever we update startDate.
+         * Setting it in the setStartDate() method will overwrite it if it has already been set
+         * by the setNextStartDate() method. Therefore, we're initially setting it as null so
+         * that we can set it equal to startDate if it's still null at the time of building.
+         */
+        private Date nextStartDate = null;
+        private int repeatType = DbConstants.NO_REPEAT;
+        private int movementType = DbConstants.BOTH_ENTER_EXIT;
+        private int activityType = DbConstants.ACTIVITY_ANYTHING;
+        private float lastDistance = Integer.MAX_VALUE;
+        private Date lastTriggered = null;
+        private long snoozedAt = -1L;
+        private Date dateAdded = new Date();
+
+        /**
+         * Instantiates the builder object.
+         */
+        public Builder(@NonNull Context context, @NonNull String taskName, long locationId) {
+            this.taskName = taskName;
+            this.locationId = locationId;
+            setReminderRangeFromSettings(context);
+        }
+
+        /**
+         * Used for setting the default value of the reminder range.
+         */
+        private void setReminderRangeFromSettings(Context context) {
+            // Setting reminder range from settings (shared preferences).
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            int reminderRangeDefault =
+                    Integer.parseInt(context.getString(R.string.pref_distance_range_default));
+            reminderRange = prefs.getInt(context.getString(R.string.pref_distance_range_key),
+                    reminderRangeDefault);
+        }
+
+        public Builder setTaskName(@NonNull String taskName) {
+            this.taskName = taskName;
+            return this;
+        }
+
+        public Builder setLocationId(long locationId) {
+            this.locationId = locationId;
+            return this;
+        }
+
+        public Builder setImageUri(String imageUri) {
+            this.imageUri = imageUri;
+            return this;
+        }
+
+        public Builder setIsDone(int isDone) {
+            this.isDone = isDone;
+            return this;
+        }
+
+        public Builder setIsAlarmSet(int isAlarmSet) {
+            this.isAlarmSet = isAlarmSet;
+            return this;
+        }
+
+        public Builder setReminderRange(int reminderRange) {
+            this.reminderRange = reminderRange;
+            return this;
+        }
+
+        public Builder setNote(@Nullable String note) {
+            this.note = note;
+            return this;
+        }
+
+        public Builder setStartTime(@NonNull LocalTime startTime) {
+            this.startTime = startTime;
+            return this;
+        }
+
+        public Builder setEndTime(@NonNull LocalTime endTime) {
+            this.endTime = endTime;
+            return this;
+        }
+
+        public Builder setStartDate(@NonNull Date startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        public Builder setEndDate(Date endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+
+        public Builder setNextStartDate(@NonNull Date nextStartDate) {
+            this.nextStartDate = nextStartDate;
+            return this;
+        }
+
+        public Builder setRepeatType(@DbConstants.RepeatTypes int repeatType) {
+            this.repeatType = repeatType;
+            return this;
+        }
+
+        public Builder setMovementType(@DbConstants.MovementTypes int movementType) {
+            this.movementType = movementType;
+            return this;
+        }
+
+        public Builder setActivityType(@DbConstants.ActivityModes int activityType) {
+            this.activityType = activityType;
+            return this;
+        }
+
+        public Builder setLastDistance(float lastDistance) {
+            this.lastDistance = lastDistance;
+            return this;
+        }
+
+        public Builder setLastTriggered(@Nullable Date lastTriggered) {
+            this.lastTriggered = lastTriggered;
+            return this;
+        }
+
+        public Builder setSnoozedAt(long snoozedAt) {
+            this.snoozedAt = snoozedAt;
+            return this;
+        }
+
+        public Builder setDateAdded(Date dateAdded) {
+            this.dateAdded = dateAdded;
+            return this;
+        }
+
+        /**
+         * Builds and returns the Task object with the required parameters.
+         */
+        public Task build() {
+            nextStartDate = (nextStartDate == null) ? startDate : nextStartDate;
+            // call the private constructor.
+            return new Task(taskName, locationId, imageUri, isDone, isAlarmSet, reminderRange, note,
+                    startTime, endTime, startDate, endDate, nextStartDate, repeatType, movementType,
+                    activityType, lastDistance, lastTriggered, snoozedAt, dateAdded);
+        }
+
+    }
+
 }

@@ -96,7 +96,7 @@ captures/
 projectFilesBackup/
 
 # File containing API keys.
-app/src/main/res/values/confidentialKeys.xml
+app/src/main/res/values/keys.xml
 
 # vim partially opened files
 *.swp

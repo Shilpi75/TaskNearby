@@ -25,9 +25,9 @@ public class Location {
     @ColumnInfo(name = "place_name")
     private String placeName;
 
-    private String latitude;
+    private double latitude;
 
-    private String longitude;
+    private double longitude;
 
     @ColumnInfo(name = "use_count")
     private int useCount;
@@ -43,7 +43,7 @@ public class Location {
 
     }
 
-    public Location(String placeName, String latitude, String longitude, int useCount, int isHidden, Date dateAdded) {
+    public Location(String placeName, double latitude, double longitude, int useCount, int isHidden, Date dateAdded) {
         this.placeName = placeName;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -68,19 +68,19 @@ public class Location {
         this.placeName = placeName;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 

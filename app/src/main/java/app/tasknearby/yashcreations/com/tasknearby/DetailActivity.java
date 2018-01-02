@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -181,7 +182,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      */
     private void showNote(Task task) {
         TextView noteView = findViewById(R.id.text_note);
-        noteView.setText(mTaskRepository.getAttachmentById(task.getAttachmentId()).getContent());
+        if (task.getNote() == null || TextUtils.isEmpty(task.getNote())) {
+            findViewById(R.id.icon_note).setVisibility(View.GONE);
+            noteView.setVisibility(View.GONE);
+        }
+        noteView.setText(task.getNote());
     }
 
     /**
@@ -270,4 +275,4 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 }
 
-// TODO: Also show the state of reminder, i.e. Snoozed etc. and edit, delete options.
+// TODO: Also show the state of reminder, i.e. Snoozed etc.
