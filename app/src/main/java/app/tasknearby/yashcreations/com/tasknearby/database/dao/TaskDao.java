@@ -20,7 +20,7 @@ public interface TaskDao {
     long insertTask(TaskModel task);
 
     @Insert
-    List<Long> insertTasks(List<TaskModel> taskList);
+    List<Long> insertTasks(List<TaskModel> tasks);
 
     @Update
     void updateTask(TaskModel task);
@@ -28,9 +28,9 @@ public interface TaskDao {
     @Delete
     void deleteTask(TaskModel task);
 
-    @Query("SELECT * FROM TaskModel")
+    @Query("SELECT * FROM tasks")
     List<TaskModel> getAllTasks();
 
-    @Query("SELECT * FROM  TaskModel WHERE id = :taskId")
+    @Query("SELECT * FROM  tasks WHERE id = :taskId")
     TaskModel getTaskWithId(long taskId);
 }

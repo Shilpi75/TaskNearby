@@ -79,7 +79,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * For keeping track of selected location.
      */
     private boolean hasSelectedLocation = false;
-    private LocationModel mSelectedLocationModel;
+    private LocationModel mSelectedLocation;
 
     private TaskRepository mTaskRepository;
 
@@ -208,8 +208,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private void fillDataForEditing(final TaskModel task) {
         taskNameInput.setText(task.getTaskName());
         // Set location
-        mSelectedLocationModel = mTaskRepository.getLocationById(task.getLocationId());
-        locationNameInput.setText(mSelectedLocationModel.getPlaceName());
+        mSelectedLocation = mTaskRepository.getLocationById(task.getLocationId());
+        locationNameInput.setText(mSelectedLocation.getPlaceName());
         hasSelectedLocation = true;
         // Set reminder range
         reminderRangeInput.setText(String.valueOf(task.getReminderRange()));
@@ -397,13 +397,13 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             note = null;
         }
 
-        mSelectedLocationModel.setPlaceName(locationName);
+        mSelectedLocation.setPlaceName(locationName);
         // TODO:
         // After location picker has been implemented, check if this works in both cases?
         // When picking a location from the saved places, we won't create a new location
         // but instead update the old one. So, if we insert a new location with the same
         // id, will it cause a conflict or update the old one.
-        long locationId = mTaskRepository.saveLocation(mSelectedLocationModel);
+        long locationId = mTaskRepository.saveLocation(mSelectedLocation);
 
         TaskModel task = new TaskModel.Builder(this, taskName, locationId)
                 .setReminderRange(reminderRange)

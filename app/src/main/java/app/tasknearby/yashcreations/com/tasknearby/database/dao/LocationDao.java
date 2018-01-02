@@ -20,7 +20,7 @@ public interface LocationDao {
     long insertLocation(LocationModel locationModel);
 
     @Insert
-    List<Long> insertLocations(List<LocationModel> locationModelList);
+    List<Long> insertLocations(List<LocationModel> locations);
 
     @Update
     void updateLocation(LocationModel locationModel);
@@ -28,9 +28,9 @@ public interface LocationDao {
     @Delete
     void deleteLocation(LocationModel locationModel);
 
-    @Query("SELECT * FROM LocationModel")
+    @Query("SELECT * FROM locations")
     List<LocationModel> getAllLocations();
 
-    @Query("SELECT * FROM LocationModel WHERE id = :locationId")
+    @Query("SELECT * FROM locations WHERE id = :locationId")
     LocationModel getLocationWithId(long locationId);
 }
