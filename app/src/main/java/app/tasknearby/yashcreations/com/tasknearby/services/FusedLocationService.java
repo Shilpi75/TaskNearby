@@ -1,18 +1,16 @@
 package app.tasknearby.yashcreations.com.tasknearby.services;
 
 import android.Manifest;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.IBinder;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -23,21 +21,14 @@ import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
 
-import org.joda.time.LocalTime;
-
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
+import app.tasknearby.yashcreations.com.tasknearby.MainActivity;
 import app.tasknearby.yashcreations.com.tasknearby.R;
 import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
-import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
-import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
-import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 
 /**
  * Set location updates on based on detected activities.
@@ -75,7 +66,6 @@ public class FusedLocationService extends Service {
     private LocationCallback mLocationCallback;
     private ActivityRecognitionClient mActivityRecognitionClient;
     private ActivityDetectionReceiver mActivityDetectionReceiver;
-    private TaskRepository mTaskRepository;
 
 
     @Override
@@ -107,7 +97,7 @@ public class FusedLocationService extends Service {
         super.onStartCommand(intent, flags, startId);
         startLocationUpdates();
         startActivityDetection();
-
+        startServiceInForeground();
         return START_NOT_STICKY;
     }
 
@@ -120,6 +110,7 @@ public class FusedLocationService extends Service {
         super.onDestroy();
         stopLocationUpdates();
         stopActivityDetection();
+        stopServiceInForeground();
     }
 
     @Nullable
@@ -162,6 +153,7 @@ public class FusedLocationService extends Service {
         if (!task.isSuccessful()) {
             Log.e(TAG, "Location Update Request Failed");
         }
+        Log.i(TAG, " Location Update request success!");
 
     }
 
@@ -169,6 +161,7 @@ public class FusedLocationService extends Service {
      * Stops location updates.
      */
     public void stopLocationUpdates() {
+        Log.d(TAG, "Loction update stop.");
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
@@ -210,6 +203,34 @@ public class FusedLocationService extends Service {
             createLocationRequest(updateInterval);
             startLocationUpdates();
         }
+    }
+
+    /**
+     * Starts service in foreground.
+     */
+    public void startServiceInForeground() {
+
+        // TODO: Change accordingly later.
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification =
+                new Notification.Builder(this)
+                        .setContentTitle("task nearby")
+                        .setContentText("task nearby")
+                        .setSmallIcon(R.drawable.ic_launcher_background)
+                        .setContentIntent(pendingIntent)
+                        .build();
+
+        startForeground(101, notification);
+    }
+
+    /**
+     * Stops foreground service.
+     */
+    public void stopServiceInForeground() {
+        stopForeground(true);
     }
 
     /**
