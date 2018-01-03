@@ -8,10 +8,14 @@
         android:key="@string/pref_unit_key"
         android:title="@string/pref_unit_title" />
 
+    <!--
+    TODO: Add it later. (Take care of metrics).
     <EditTextPreference
         android:defaultValue="@string/pref_distance_range_default"
         android:key="@string/pref_distance_range_key"
         android:title="@string/pref_distance_range_title" />
+
+   -->
 
     <RingtonePreference
         android:key="@string/pref_alarm_tone_key"

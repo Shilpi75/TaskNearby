@@ -1,8 +1,11 @@
 package app.tasknearby.yashcreations.com.tasknearby.utils;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.google.android.gms.tasks.Task;
 
 import org.joda.time.DateTimeComparator;
 import org.joda.time.LocalTime;
@@ -12,6 +15,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
+import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
+import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 
 /**
  * Contains utility functions used throughout the app.
@@ -51,4 +57,17 @@ public final class AppUtils {
         }
     }
 
+    public static boolean isSnoozed(long lastSnoozedTime) {
+        return (lastSnoozedTime != -1);
+    }
+
+    public static boolean isTaskActiveAtTime(TaskModel task, LocalTime time) {
+        LocalTime startTime = task.getStartTime();
+        LocalTime endTime = task.getEndTime();
+        return ((startTime.compareTo(time) <= 0) && (endTime.compareTo(time) >= 0));
+    }
+
+    public static boolean isSnoozedTaskEligible(long lastSnoozedTime, long snoozeTime) {
+        return (lastSnoozedTime + snoozeTime <= System.currentTimeMillis());
+    }
 }

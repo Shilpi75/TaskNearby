@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import java.util.Date;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
@@ -33,4 +34,11 @@ public interface TaskDao {
 
     @Query("SELECT * FROM  tasks WHERE id = :taskId")
     TaskModel getTaskWithId(long taskId);
+
+    /**
+     * Query to fetch the tasks not marked as done and active for today.
+     */
+    @Query("SELECT * FROM tasks WHERE is_done = 0 AND (end_date IS NULL || end_date >= :today) " +
+            "AND start_date <= :today")
+    List<TaskModel> getNotDoneTasksForToday(long today);
 }

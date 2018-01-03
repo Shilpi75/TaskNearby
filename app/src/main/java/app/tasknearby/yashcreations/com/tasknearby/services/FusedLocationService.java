@@ -7,9 +7,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.IBinder;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -24,7 +27,17 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
 
+import org.joda.time.LocalTime;
+
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import app.tasknearby.yashcreations.com.tasknearby.R;
+import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
+import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
+import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 
 /**
  * Set location updates on based on detected activities.
@@ -62,6 +75,7 @@ public class FusedLocationService extends Service {
     private LocationCallback mLocationCallback;
     private ActivityRecognitionClient mActivityRecognitionClient;
     private ActivityDetectionReceiver mActivityDetectionReceiver;
+    private TaskRepository mTaskRepository;
 
 
     @Override
@@ -93,6 +107,7 @@ public class FusedLocationService extends Service {
         super.onStartCommand(intent, flags, startId);
         startLocationUpdates();
         startActivityDetection();
+
         return START_NOT_STICKY;
     }
 
@@ -128,16 +143,8 @@ public class FusedLocationService extends Service {
      * Creates a callback for receiving location events.
      */
     public void createLocationCallback() {
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                // TODO: What to do on getting location result.
-                // TODO: Database update, alarm and notification.
-            }
-        };
+        mLocationCallback = new LocationResultCallback(getApplicationContext());
     }
-
 
     /**
      * Checks for device settings and starts location updates.
@@ -152,7 +159,7 @@ public class FusedLocationService extends Service {
         }
         Task<Void> task = mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                 mLocationCallback, Looper.myLooper());
-        if(!task.isSuccessful()){
+        if (!task.isSuccessful()) {
             Log.e(TAG, "Location Update Request Failed");
         }
 

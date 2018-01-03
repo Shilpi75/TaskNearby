@@ -88,7 +88,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_action_done:
-                invertDoneStatus();
+                if (doneButton.getText().equals(getString(R.string.detail_button_mark_done))) {
+                    markTaskAsDone(mTask);
+                } else {
+                    resetTask(mTask);
+                }
                 break;
             case R.id.fab_directions:
                 showDirections();
@@ -204,15 +208,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     /**
-     * Updates the task when "mark done" or "reset" is pressed.
-     */
-    private void invertDoneStatus() {
-        mTask.setIsDone(1 - mTask.getIsDone());
-        mTaskRepository.updateTask(mTask);
-        setDoneButton(mTask);
-    }
-
-    /**
      * Shows the directions to the location on Google maps.
      */
     private void showDirections() {
@@ -272,6 +267,30 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         // Ideally we should not finish here and call the activity for result.
         // If successful, update the views. This has been left as a final touch.
         finish();
+    }
+
+    /**
+     * Resets the task and sets the Done button.
+     *
+     * @param task
+     */
+    private void resetTask(TaskModel task) {
+        task.setSnoozedAt(-1L);
+        task.setLastTriggered(null);
+        task.setIsDone(0);
+        mTaskRepository.updateTask(task);
+        setDoneButton(task);
+    }
+
+    /**
+     * Sets the task as done and sets the Done button.
+     *
+     * @param task
+     */
+    private void markTaskAsDone(TaskModel task) {
+        task.setIsDone(1);
+        mTaskRepository.updateTask(task);
+        setDoneButton(task);
     }
 }
 

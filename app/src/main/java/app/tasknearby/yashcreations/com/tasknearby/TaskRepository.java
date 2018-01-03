@@ -113,4 +113,12 @@ public class TaskRepository {
     private TaskModel dummyTask;
     private LocationModel mockLocationModel = new LocationModel("Hyatt Residency, New Delhi, 110042", 23.0,
             77.0, 1, 0, new Date());
+
+    /**
+     * Query to fetch the tasks not marked as done and active for today.
+     */
+    public List<TaskModel> getNotDoneTasksForToday(){
+        Date today = new Date();
+        return mDatabase.taskDao().getNotDoneTasksForToday(today.getTime());
+    }
 }

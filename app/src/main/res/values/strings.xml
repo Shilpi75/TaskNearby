@@ -109,18 +109,20 @@
     <string name="pref_snooze_time_key">snooze_time</string>
     <string name="pref_snooze_title">Snooze time</string>
     <string-array name="pref_snooze_time_entries">
-        <item>Disable Snooze.</item>
         <item>Snooze for 1 minute.</item>
         <item>Snooze for 3 minutes.</item>
         <item>Snooze for 5 minutes.</item>
+        <item>Snooze for 10 minutes.</item>
+        <item>Snooze for 20 minutes.</item>
     </string-array>
     <string-array name="pref_snooze_time_values">
-        <item>-1</item>
         <item>60</item>
         <item>180</item>
         <item>300</item>
+        <item>600</item>
+        <item>1200</item>
     </string-array>
-    <string name="pref_snooze_time_default">180</string>
+    <string name="pref_snooze_time_default">300</string>
 
     <!-- Power Saver Mode -->
     <string name="pref_power_saver_key">power_saver</string>
