@@ -46,7 +46,7 @@ public class TaskRepository {
      * Fetches all the tasks from database.
      */
     public List<TaskModel> getAllTasks() {
-          return mDatabase.taskDao().getAllTasks();
+        return mDatabase.taskDao().getAllTasks();
 //         TODO: Remove mock data.
 //        return Arrays.asList(dummyTask, dummyTask);
     }
@@ -89,7 +89,7 @@ public class TaskRepository {
      * Returns a location object with the given id from the database.
      */
     public LocationModel getLocationById(long locationId) {
-        // return mDatabase.locationDao().getLocationWithId(locationId);
+//         return mDatabase.locationDao().getLocationWithId(locationId);
         return mockLocationModel;
     }
 
@@ -108,10 +108,18 @@ public class TaskRepository {
     }
 
     /**
+     * Updates the location from the database.
+     */
+    public void updateLocation(LocationModel locationModel) {
+        mDatabase.locationDao().updateLocation(locationModel);
+    }
+
+    /**
      * Mock task which will be used for debugging.
      */
     private TaskModel dummyTask;
-    private LocationModel mockLocationModel = new LocationModel("Hyatt Residency, New Delhi, 110042", 23.0,
+    private LocationModel mockLocationModel = new LocationModel("Hyatt Residency, New Delhi, " +
+            "110042", 23.0,
             77.0, 1, 0, new Date());
 
     /**

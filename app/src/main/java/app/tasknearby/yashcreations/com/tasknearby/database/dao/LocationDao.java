@@ -28,7 +28,7 @@ public interface LocationDao {
     @Delete
     void deleteLocation(LocationModel locationModel);
 
-    @Query("SELECT * FROM locations")
+    @Query("SELECT * FROM locations WHERE is_hidden = 0")
     List<LocationModel> getAllLocations();
 
     @Query("SELECT * FROM locations WHERE id = :locationId")

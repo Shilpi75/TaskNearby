@@ -25,6 +25,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
 import org.joda.time.LocalTime;
 
 import java.util.Calendar;
@@ -54,6 +59,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     /**
      * Request code constants.
      */
+    private static final int REQUEST_CODE_PLACE_PICKER = 0;
     private static final int REQUEST_CODE_LOCATION_SELECTION = 1;
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 2;
     private static final int REQUEST_CODE_CAMERA_IMAGE = 3;
@@ -133,9 +139,11 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 addTaskImage();
                 break;
             case R.id.button_saved_places:
-                // TODO: start saved places activity for result here.
+                Intent savedPlacesIntent = new Intent(this, SavedPlacesActivity.class);
+                startActivityForResult(savedPlacesIntent, REQUEST_CODE_LOCATION_SELECTION);
+                break;
             case R.id.button_place_picker:
-                // TODO: start place picker activity for result here.
+                onPlacePickerRequested();
                 break;
             case R.id.text_start_time:
             case R.id.text_end_time:
@@ -197,6 +205,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
 
         // textView to repeat reminders.
         repeatTv = findViewById(R.id.text_repeat_selection);
+        repeatTv.setTag(DbConstants.NO_REPEAT);
         repeatTv.setOnClickListener(this);
     }
 
@@ -313,12 +322,40 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    /**
+     * Triggered when the user clicks on the Pick Place button.
+     */
+    private void onPlacePickerRequested() {
+        PlacePicker.IntentBuilder placePickerIntent = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(placePickerIntent.build(this),
+                    REQUEST_CODE_PLACE_PICKER);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle this repairable exception.
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            case REQUEST_CODE_PLACE_PICKER:
+                if (resultCode == RESULT_OK) {
+                    onPlacePickerSuccess(data);
+                }
+                break;
             case REQUEST_CODE_LOCATION_SELECTION:
-                // TODO: will be implemented.
-                hasSelectedLocation = true; // Check this too.
+                if (resultCode == RESULT_OK) {
+                    onSavedPlacesSuccess(data);
+                } else if (resultCode == SavedPlacesActivity.RESULT_USE_PLACE_PICKER) {
+                    // We're showing a button in saved places activity when no places are being
+                    // shown to allow the users to select pick a place option from there only.
+                    // Didn't want to implement the same place picker calling functionality there,
+                    // so using this way.
+                    onPlacePickerRequested();
+                }
                 break;
             case REQUEST_CODE_CAMERA_IMAGE:
             case REQUEST_CODE_GALLERY_IMAGE_PICKER:
@@ -334,6 +371,42 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 Log.w(TAG, "Unknown request code in onActivityResult.");
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * Initializes the location with place picker returned data. Also sets that to the UI.
+     */
+    private void onPlacePickerSuccess(Intent data) {
+        Place place = PlacePicker.getPlace(this, data);
+        // Create a new location object.
+        mSelectedLocation = new LocationModel(place.getName().toString(),
+                place.getLatLng().latitude,
+                place.getLatLng().longitude,
+                0, 0, new Date());
+        hasSelectedLocation = true;
+        onLocationSelected();
+    }
+
+    /**
+     * Gets the result from saved places selection activity and sets the location.
+     */
+    private void onSavedPlacesSuccess(Intent data) {
+        if (data == null || !data.hasExtra(SavedPlacesActivity.EXTRA_LOCATION_ID)) {
+            Log.w(TAG, "No location id was returned by SavedPlacesActivity");
+            return;
+        }
+        long locationId = data.getLongExtra(SavedPlacesActivity.EXTRA_LOCATION_ID, -1);
+        mSelectedLocation = mTaskRepository.getLocationById(locationId);
+        hasSelectedLocation = true;
+        onLocationSelected();
+    }
+
+    /**
+     * Sets the selected location's name to the input textView.
+     */
+    private void onLocationSelected() {
+        locationNameInput.setText(mSelectedLocation.getPlaceName());
+        findViewById(R.id.text_input_location_name).setVisibility(View.VISIBLE);
     }
 
     /**

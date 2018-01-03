@@ -3,6 +3,7 @@
     <string name="title_add_new_task">Add Task</string>
     <string name="title_edit_task_reminder">Edit Reminder</string>
     <string name="title_settings">Settings</string>
+    <string name="title_saved_places">Saved Places</string>
 
     <string name="unit_metres">metres</string>
 
@@ -57,6 +58,13 @@
     <string name="menu_item_delete">Delete</string>
     <string name="menu_item_edit">Edit</string>
     <string name="detail_delete_dialog_message">Delete this reminder?</string>
+
+    <!-- Saved places activity -->
+    <string name="msg_no_saved_places">You\'ve not saved any places.\nClick this button to pick a place from map.</string>
+    <string name="msg_dialog_delete_place">Delete saved location \"</string>
+
+    <string name="dialog_action_delete">Delete</string>
+    <string name="dialog_cancel">Cancel</string>
 
     <!-- Preferences -->
     <!-- Unit-->
