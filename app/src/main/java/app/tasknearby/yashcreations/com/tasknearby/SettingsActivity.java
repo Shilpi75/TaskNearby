@@ -1,5 +1,7 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -16,6 +18,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_alarm_tone_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_distance_range_key;
@@ -136,7 +140,17 @@ public class SettingsActivity extends AppCompatActivity {
 
             } else if (preference instanceof SwitchPreference) {
                 if (preference.getKey().equals(getString(pref_power_saver_key))) {
-                    //TODO: check if power saver is on/off. Restart location service accordingly.
+                    // Stop the service.
+                    Intent serviceIntent = new Intent(getActivity(), FusedLocationService.class);
+                    getActivity().stopService(serviceIntent);
+
+                    // Check if app is enabled.
+                    SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String appStatus = defaultPref.getString(getString(R.string.pref_status_key), getString(R.string.pref_status_default));
+                    if(appStatus.equals(getString(R.string.pref_status_enabled))){
+                        // Start the service again.
+                        getActivity().startService(serviceIntent);
+                    }
                 }
 
             } else {

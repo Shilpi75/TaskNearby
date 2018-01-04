@@ -8,9 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.os.Looper;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -22,13 +25,15 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 import app.tasknearby.yashcreations.com.tasknearby.MainActivity;
 import app.tasknearby.yashcreations.com.tasknearby.R;
-import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
 
 /**
  * Set location updates on based on detected activities.
@@ -66,12 +71,15 @@ public class FusedLocationService extends Service {
     private LocationCallback mLocationCallback;
     private ActivityRecognitionClient mActivityRecognitionClient;
     private ActivityDetectionReceiver mActivityDetectionReceiver;
-
+    private boolean isReceivingLocationUpdates;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Update variable.
+        isReceivingLocationUpdates = false;
 
         // Creating LocationCallback, LocationRequest and LocationSettingsRequest objects.
         createLocationCallback();
@@ -108,9 +116,13 @@ public class FusedLocationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        // Unregister the listener.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mActivityDetectionReceiver);
+        // Stop service and updates.
         stopLocationUpdates();
         stopActivityDetection();
         stopServiceInForeground();
+
     }
 
     @Nullable
@@ -125,9 +137,8 @@ public class FusedLocationService extends Service {
     public void createLocationRequest(long updateInterval) {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(updateInterval);
-        // TODO: Get the values from Settings.
         mLocationRequest.setFastestInterval(FASTEST_LOCATION_UPDATE_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        setLocationRequestPriority(mLocationRequest);
     }
 
     /**
@@ -150,10 +161,17 @@ public class FusedLocationService extends Service {
         }
         Task<Void> task = mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                 mLocationCallback, Looper.myLooper());
-        if (!task.isSuccessful()) {
-            Log.e(TAG, "Location Update Request Failed");
-        }
-        Log.i(TAG, " Location Update request success!");
+        task.addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    // Update the variable.
+                    isReceivingLocationUpdates = true;
+                } else {
+                    Log.e(TAG, "Location Update Request failed.");
+                }
+            }
+        });
 
     }
 
@@ -161,8 +179,16 @@ public class FusedLocationService extends Service {
      * Stops location updates.
      */
     public void stopLocationUpdates() {
-        Log.d(TAG, "Loction update stop.");
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        if (isReceivingLocationUpdates) {
+            Log.d(TAG, "Loction update stop.");
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback).addOnSuccessListener
+                    (new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            isReceivingLocationUpdates = false;
+                        }
+                    });
+        }
     }
 
     /**
@@ -231,6 +257,20 @@ public class FusedLocationService extends Service {
      */
     public void stopServiceInForeground() {
         stopForeground(true);
+    }
+
+    /**
+     * Sets the priority for location updates based on power saving mode setting.
+     */
+    public void setLocationRequestPriority(LocationRequest locationRequest) {
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean powerSaverMode = defaultPref.getBoolean(getString(R.string.pref_power_saver_key),
+                false);
+        if (powerSaverMode) {
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        } else {
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        }
     }
 
     /**
