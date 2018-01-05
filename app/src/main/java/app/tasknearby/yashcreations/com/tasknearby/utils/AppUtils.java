@@ -1,7 +1,10 @@
 package app.tasknearby.yashcreations.com.tasknearby.utils;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -69,5 +72,27 @@ public final class AppUtils {
 
     public static boolean isSnoozedTaskEligible(long lastSnoozedTime, long snoozeTime) {
         return (lastSnoozedTime + snoozeTime <= System.currentTimeMillis());
+    }
+
+    public static void sendFeedbackEmail(Context context) {
+        Intent mailIntent = new Intent(Intent.ACTION_SENDTO);
+        mailIntent.setType("text/plain");
+        mailIntent.setData(Uri.parse("mailto:"));
+        mailIntent.putExtra(Intent.EXTRA_EMAIL, context.getResources().getStringArray(R.array.email_ids));
+        mailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.email_subject));
+        context.startActivity(mailIntent);
+    }
+
+    public static void rateApp(Context context) {
+        String packageName = context.getPackageName();
+        String appUrl = context.getString(R.string.play_store_base_url) + packageName;
+        try {
+            Intent rateIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.rating_base_url) +
+                    packageName));
+            context.startActivity(rateIntent);
+        }catch (ActivityNotFoundException e){
+            Intent playStoreIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl));
+            context.startActivity(playStoreIntent);
+        }
     }
 }

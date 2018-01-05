@@ -9,6 +9,9 @@
     <color name="white">#FFFFFF</color>
     <color name="teal_A700">#00BFA5</color>
 
+    <color name="dark_grey">#999999</color>
+    <color name="orange500">#FF5722</color>
+    <color name="light_blue">#99ccff</color>
     <!--Not being used currently-->
     <color name="grey">#C7C7C7</color>
     <color name="amber500">#ffc107</color>

@@ -17,24 +17,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".TaskCreatorActivity"
             android:label="@string/title_add_new_task"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_settings"
@@ -48,7 +46,6 @@
             android:label="Task Detail"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".SavedPlacesActivity"
             android:exported="true"
@@ -67,6 +64,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />
 
+        <activity android:name=".AboutActivity"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>
