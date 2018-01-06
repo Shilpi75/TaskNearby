@@ -25,6 +25,8 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
  */
 public class LocationResultCallback extends LocationCallback {
 
+    /* TODO: Check for date compare issue. */
+
     private Context mContext;
     private TaskRepository mTaskRepository;
 

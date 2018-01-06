@@ -69,6 +69,9 @@
     <string name="alarm_show_map">Show Map</string>
     <string name="alarm_show_image">Show Image</string>
 
+    <string name="distance_format_m">%s m</string>
+    <string name="distance_format_yd">%s yd</string>
+
     <string name="suffix_m">m</string>
     <string name="suffix_yd">yd</string>
     <string name="dialog_action_delete">Delete</string>
@@ -158,6 +161,12 @@
         <item>disabled</item>
     </string-array>
     <string name="pref_status_enabled">enabled</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 
     <!-- Feedback -->
     <string name="email_subject">Task Nearby App</string>

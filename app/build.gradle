@@ -58,6 +58,13 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$archRoomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$archRoomVersion"
 
+    // LiveData and ViewModel
+    implementation "android.arch.lifecycle:extensions:$archRoomVersion"
+    // Default
+//    annotationProcessor "android.arch.lifecycle:compiler:$archRoomVersion"
+    // Recommended with Java 8
+    implementation "android.arch.lifecycle:common-java8:$archRoomVersion"
+
     // Joda-time
     implementation "net.danlew:android.joda:$jodaTimeVersion"
 

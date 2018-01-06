@@ -13,6 +13,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!--Makes the status bar translucent(API level >= 19) so that NavDrawer can open over it.-->
+    <style name="TranslucentTheme" parent="AppTheme.NoActionBar" />
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />

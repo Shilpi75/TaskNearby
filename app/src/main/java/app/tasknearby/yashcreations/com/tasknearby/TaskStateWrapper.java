@@ -44,7 +44,7 @@ public class TaskStateWrapper {
         return state;
     }
 
-    public void setState(int state) {
+    public void setState(@TaskStateUtil.TaskState int state) {
         this.state = state;
     }
 

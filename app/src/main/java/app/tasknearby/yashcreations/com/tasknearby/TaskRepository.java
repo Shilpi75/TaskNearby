@@ -1,8 +1,11 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -33,11 +36,20 @@ public class TaskRepository {
     public TaskRepository(Context context) {
         mDatabase = AppDatabase.getAppDatabase(context);
         // TODO: Remove mock data call.
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+        Date endDate = null;
+        try {
+            endDate = sdf.parse("05/01/2018");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         dummyTask = new TaskModel.Builder(context, "Check reception plannings", 0)
                 .setIsAlarmSet(0)
-                .setIsDone(1)
-                .setStartDate(new Date(12200000))
-                .setEndDate(new Date(34))
+                .setIsDone(0)
+                .setStartDate(new Date())
+                .setEndDate(endDate)
 //                .setNote("This is a note")
                 .setLastDistance(23.0f)
                 .build();
@@ -56,9 +68,9 @@ public class TaskRepository {
      * Fetches the task with the given id.
      */
     public TaskModel getTaskWithId(long taskId) {
-        // return mDatabase.taskDao().getTaskWithId(taskId);
+         return mDatabase.taskDao().getTaskWithId(taskId);
         // TODO: After database starts working, remove this mock data call.
-        return dummyTask;
+//        return dummyTask;
     }
 
     /**
@@ -129,5 +141,9 @@ public class TaskRepository {
     public List<TaskModel> getNotDoneTasksForToday(){
         Date today = new Date();
         return mDatabase.taskDao().getNotDoneTasksForToday(today.getTime());
+    }
+
+    public LiveData<List<TaskModel>> getAllTasksWithUpdates() {
+        return mDatabase.taskDao().getAllTasksWithUpdates();
     }
 }

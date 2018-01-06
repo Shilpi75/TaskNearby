@@ -166,8 +166,8 @@ public class SettingsActivity extends AppCompatActivity {
         public void initializeViews() {
             mUnitPreference = (ListPreference) getPreferenceManager().findPreference(getString
                     (pref_unit_key));
-            mDistancePreference = (EditTextPreference) getPreferenceManager().findPreference
-                    (getString(pref_distance_range_key));
+//            mDistancePreference = (EditTextPreference) getPreferenceManager().findPreference
+//                    (getString(pref_distance_range_key));
             mAlarmTonePreference = (RingtonePreference) getPreferenceManager().findPreference
                     (getString(pref_alarm_tone_key));
             mSnoozePreference = (ListPreference) getPreferenceManager().findPreference(getString
@@ -181,7 +181,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
             bindPreferenceSummaryToValue(mUnitPreference);
-            bindPreferenceSummaryToValue(mDistancePreference);
+//            bindPreferenceSummaryToValue(mDistancePreference);
             bindPreferenceSummaryToValue(mAlarmTonePreference);
             bindPreferenceSummaryToValue(mSnoozePreference);
             bindPreferenceSummaryToValue(mVibratePreference);

@@ -1,5 +1,6 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +38,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      * Views.
      */
     private Button doneButton;
-    private ActionBar mActionBar;
     private TextView taskNameTv, taskStateTv;
 
 
@@ -55,20 +55,27 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         long taskId = this.getIntent().getLongExtra(EXTRA_TASK_ID, -1);
         if (taskId == -1) {
             Log.e(TAG, "No taskId has been passed to DetailActivity.");
-            // TODO: uncomment return statment when main activity has been made.
-//            return;
+            return;
         }
         mTask = mTaskRepository.getTaskWithId(taskId);
         setData(mTask);
     }
 
+    public static Intent getStartingIntent(Context context, long taskId,
+            @TaskStateUtil.TaskState int state) {
+        Intent intent = new Intent(context, DetailActivity.class);
+        intent.putExtra(EXTRA_TASK_ID, taskId);
+        intent.putExtra(EXTRA_TASK_STATE, state);
+        return intent;
+    }
+
     private void setActionBar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mActionBar = getSupportActionBar();
-        if (mActionBar != null) {
-            mActionBar.setDisplayHomeAsUpEnabled(true);
-            mActionBar.setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
         }
     }
 
@@ -287,10 +294,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private void resetTask(TaskModel task) {
         task.setIsDone(0);
         int state = TaskStateUtil.getTaskState(this, task);
-        if(state == TaskStateUtil.STATE_EXPIRED){
+        if (state == TaskStateUtil.STATE_EXPIRED) {
             task.setIsDone(1);
-            Toast.makeText(this, "This task has expired. You can edit the dates.", Toast.LENGTH_SHORT).show();
-        }else{
+            Toast.makeText(this, "This task has expired. You can edit the dates.", Toast
+                    .LENGTH_SHORT).show();
+        } else {
             task.setSnoozedAt(-1L);
             task.setLastTriggered(null);
             Toast.makeText(this, "Task has been reset.", Toast.LENGTH_SHORT).show();
@@ -314,8 +322,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         setTaskState(TaskStateUtil.STATE_DONE);
     }
 
-    private void setTaskState(int state){
-        taskStateTv.setText(TaskStateUtil.stateToString(state));
+    private void setTaskState(int state) {
+        taskStateTv.setText(TaskStateUtil.stateToString(this, state));
     }
 
 }

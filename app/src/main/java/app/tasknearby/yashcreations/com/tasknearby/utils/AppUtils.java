@@ -3,14 +3,12 @@ package app.tasknearby.yashcreations.com.tasknearby.utils;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.android.gms.tasks.Task;
-
 import org.joda.time.DateTimeComparator;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.text.SimpleDateFormat;
@@ -18,8 +16,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
-import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
-import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 
 /**
@@ -60,6 +56,27 @@ public final class AppUtils {
         }
     }
 
+    /**
+     * Compares given dates. Returns -1 if date 1 is smaller than date 2. 0 if equal and 1 if
+     * greater.
+     */
+    public static int compareDate(Date date1, Date date2) {
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//        String s1 = sdf.format(date1);
+//        String s2 = sdf.format(date2);
+//        try {
+//            date1 = sdf.parse(s1);
+//            date2 = sdf.parse(s2);
+//        } catch (ParseException pe) {
+//            pe.printStackTrace();
+//            throw new IllegalArgumentException("Unable to parse date.");
+//        }
+//        return date1.compareTo(date2);
+        LocalDate ld1 = LocalDate.fromDateFields(date1);
+        LocalDate ld2 = LocalDate.fromDateFields(date2);
+        return ld1.compareTo(ld2);
+    }
+
     public static boolean isSnoozed(long lastSnoozedTime) {
         return (lastSnoozedTime != -1);
     }
@@ -78,7 +95,8 @@ public final class AppUtils {
         Intent mailIntent = new Intent(Intent.ACTION_SENDTO);
         mailIntent.setType("text/plain");
         mailIntent.setData(Uri.parse("mailto:"));
-        mailIntent.putExtra(Intent.EXTRA_EMAIL, context.getResources().getStringArray(R.array.email_ids));
+        mailIntent.putExtra(Intent.EXTRA_EMAIL, context.getResources().getStringArray(R.array
+                .email_ids));
         mailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.email_subject));
         context.startActivity(mailIntent);
     }
@@ -87,10 +105,11 @@ public final class AppUtils {
         String packageName = context.getPackageName();
         String appUrl = context.getString(R.string.play_store_base_url) + packageName;
         try {
-            Intent rateIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.rating_base_url) +
+            Intent rateIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R
+                    .string.rating_base_url) +
                     packageName));
             context.startActivity(rateIntent);
-        }catch (ActivityNotFoundException e){
+        } catch (ActivityNotFoundException e) {
             Intent playStoreIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl));
             context.startActivity(playStoreIntent);
         }

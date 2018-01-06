@@ -53,15 +53,21 @@ public class TaskStateUtil {
 
         // Check task's start date.
         Date startDate = task.getStartDate();
+
+        // NOTE: We need to compare dates by getting the DateOnlyInstance because Date also contains
+        // information about the time and comparing them with .compare() also compares time.
+        // This causes a reminder expiring today to be told as expired.
+
         // If start date > today, return upcoming.Else, proceed.
-        if (startDate.compareTo(new Date()) > 0)
+        if (AppUtils.compareDate(startDate, new Date()) > 0)
             return STATE_UPCOMING;
 
         // Check end date.
         Date endDate = task.getEndDate();
         // If end date < today, retun expired. Else, proceed.
-        if (endDate != null && endDate.compareTo(new Date()) < 0)
+        if (endDate != null && AppUtils.compareDate(endDate, new Date()) < 0) {
             return STATE_EXPIRED;
+        }
 
         // Check start time.
         LocalTime startTime = task.getStartTime();
@@ -80,7 +86,7 @@ public class TaskStateUtil {
         SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(context);
         long snoozeTime = Long.parseLong(defaultPref.getString(context.getString(R.string
                 .pref_snooze_time_key), context.getString(R.string.pref_snooze_time_default)));
-        if (task.getSnoozedAt() != -1 && task.getSnoozedAt() + snoozeTime > System
+        if (task.getSnoozedAt() != -1 && task.getSnoozedAt() + snoozeTime < System
                 .currentTimeMillis())
             return STATE_ACTIVE_SNOOZED;
 
@@ -131,7 +137,7 @@ public class TaskStateUtil {
      * It returns a sorted list of tasks wrapped with their state.
      */
     public static ArrayList<TaskStateWrapper> getTasksStateListWrapper(Context context,
-                                                                       List<TaskModel> tasks) {
+            List<TaskModel> tasks) {
 
         // Get the state lists.
         ArrayList<List<TaskModel>> statesList = getTaskListState(context, tasks);
@@ -190,7 +196,7 @@ public class TaskStateUtil {
         }
     }
 
-    public static String stateToString(int taskState) {
+    public static String stateToString(Context context, @TaskState int taskState) {
         switch (taskState) {
             case STATE_ACTIVE_SNOOZED:
                 return "Snoozed";

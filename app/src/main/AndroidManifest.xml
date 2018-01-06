@@ -21,7 +21,14 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/TranslucentTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".TaskCreatorActivity"
             android:label="@string/title_add_new_task"
@@ -34,22 +41,14 @@
             android:name=".SettingsActivity"
             android:label="@string/title_settings"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
-        <!-- adjustResize will pan the view up when keyboard opens up -->
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".DetailActivity"
             android:label="Task Detail"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
         <activity
             android:name=".AlarmActivity"
             android:excludeFromRecents="true"
@@ -69,22 +68,23 @@
             android:parentActivityName=".TaskCreatorActivity"
             android:theme="@style/AppTheme" />
 
-        <service
-            android:name=".services.ActivityDetectionService"
-            android:enabled="true" />
-
-        <service
-            android:name=".services.FusedLocationService"
-            android:enabled="true" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/places_api_key" />
-
         <activity
             android:name=".AboutActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme"></activity>
+
+        <service
+            android:name=".services.ActivityDetectionService"
+            android:enabled="true"
+            android:stopWithTask="false" />
+        <service
+            android:name=".services.FusedLocationService"
+            android:enabled="true"
+            android:stopWithTask="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/places_api_key" />
     </application>
 
 </manifest>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_all_tasks"
+            android:icon="@drawable/ic_list_grey_700_24dp"
+            android:checked="true"
+            android:title="All Tasks" />
+        <item
+            android:id="@+id/nav_show_map"
+            android:icon="@drawable/ic_map_grey_700_24dp"
+            android:title="Show Map"
+            android:checkable="false"/>
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings_grey_700_24dp"
+            android:title="Settings"
+            android:checkable="false"/>
+    </group>
+
+    <item android:title="About"
+        android:checkable="false">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_rate_review_grey_700_24dp"
+                android:title="Rate us"
+                android:checkable="false"/>
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@drawable/ic_menu_feedback_grey_700_24dp"
+                android:title="Send Feedback"
+                android:checkable="false"/>
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_menu_info_grey_700_24dp"
+                android:title="About"
+                android:checkable="false"/>
+        </menu>
+    </item>
+
+    <item android:title="Premium">
+        <menu>
+            <item
+                android:id="@+id/premium"
+                android:checkable="false"
+                android:icon="@drawable/ic_menu_satisfied_blue_a200_24dp"
+                android:title="Unlock Premium" />
+        </menu>
+    </item>
+</menu>
+
