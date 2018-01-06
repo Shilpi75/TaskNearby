@@ -179,5 +179,27 @@
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_16dp"
             app:layout_constraintTop_toTopOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/text_task_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Expired"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintStart_toStartOf="@+id/guide_ver_72dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_note" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/text_task_state"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_16dp"
+            app:layout_constraintTop_toTopOf="@+id/text_task_state"
+            app:srcCompat="@drawable/ic_check_grey_24dp" />
+
+ </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -15,12 +15,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.joda.time.LocalTime;
 
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -29,13 +31,15 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      */
     private static final String TAG = DetailActivity.class.getSimpleName();
     private static final String EXTRA_TASK_ID = "taskIdForDetail";
+    private static final String EXTRA_TASK_STATE = "taskStateForDetail";
 
     /**
      * Views.
      */
     private Button doneButton;
     private ActionBar mActionBar;
-    private TextView taskNameTv;
+    private TextView taskNameTv, taskStateTv;
+
 
     private TaskModel mTask;
     private TaskRepository mTaskRepository;
@@ -84,6 +88,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         setDoneButton(task);
         // Set the directions FAB.
         findViewById(R.id.fab_directions).setOnClickListener(this);
+        // Set task status.
+        int taskState = getIntent().getIntExtra(EXTRA_TASK_STATE, 0);
+        taskStateTv = findViewById(R.id.text_task_state);
+        setTaskState(taskState);
     }
 
     @Override
@@ -277,11 +285,19 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      * @param task
      */
     private void resetTask(TaskModel task) {
-        task.setSnoozedAt(-1L);
-        task.setLastTriggered(null);
         task.setIsDone(0);
-        mTaskRepository.updateTask(task);
-        setDoneButton(task);
+        int state = TaskStateUtil.getTaskState(this, task);
+        if(state == TaskStateUtil.STATE_EXPIRED){
+            task.setIsDone(1);
+            Toast.makeText(this, "This task has expired. You can edit the dates.", Toast.LENGTH_SHORT).show();
+        }else{
+            task.setSnoozedAt(-1L);
+            task.setLastTriggered(null);
+            Toast.makeText(this, "Task has been reset.", Toast.LENGTH_SHORT).show();
+            setTaskState(state);
+            mTaskRepository.updateTask(task);
+            setDoneButton(task);
+        }
     }
 
     /**
@@ -293,7 +309,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         task.setIsDone(1);
         mTaskRepository.updateTask(task);
         setDoneButton(task);
+        Toast.makeText(this, "Task has been marked done.", Toast.LENGTH_SHORT).show();
+        // Update the task state.
+        setTaskState(TaskStateUtil.STATE_DONE);
     }
+
+    private void setTaskState(int state){
+        taskStateTv.setText(TaskStateUtil.stateToString(state));
+    }
+
 }
 
-// TODO: Also show the state of reminder, i.e. Snoozed etc.

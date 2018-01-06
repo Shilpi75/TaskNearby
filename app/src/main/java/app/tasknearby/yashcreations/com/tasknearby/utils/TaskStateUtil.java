@@ -163,20 +163,20 @@ public class TaskStateUtil {
         });
 
         // Sort upcoming tasks and add it to the result list.
-        Collections.sort(statesList.get(STATE_UPCOMING),new DateAddedComparator());
+        Collections.sort(statesList.get(STATE_UPCOMING), new DateAddedComparator());
         for (TaskModel task : statesList.get(STATE_UPCOMING)) {
             resultList.add(new TaskStateWrapper(task, STATE_UPCOMING));
         }
 
         // Sort expired tasks and add it to the result list.
         Collections.sort(statesList.get(STATE_EXPIRED), new DateAddedComparator());
-        for(TaskModel task : statesList.get(STATE_EXPIRED)){
+        for (TaskModel task : statesList.get(STATE_EXPIRED)) {
             resultList.add(new TaskStateWrapper(task, STATE_EXPIRED));
         }
 
         // Sort done tasks and add it to the result list.
         Collections.sort(statesList.get(STATE_DONE), new DateAddedComparator());
-        for (TaskModel task : statesList.get(STATE_DONE)){
+        for (TaskModel task : statesList.get(STATE_DONE)) {
             resultList.add(new TaskStateWrapper(task, STATE_DONE));
         }
 
@@ -188,5 +188,21 @@ public class TaskStateUtil {
         public int compare(TaskModel o1, TaskModel o2) {
             return o2.getDateAdded().compareTo(o1.getDateAdded());
         }
+    }
+
+    public static String stateToString(int taskState) {
+        switch (taskState) {
+            case STATE_ACTIVE_SNOOZED:
+                return "Snoozed";
+            case STATE_ACTIVE_NOT_SNOOZED:
+                return "Active";
+            case STATE_EXPIRED:
+                return "Expired";
+            case STATE_UPCOMING:
+                return "Upcoming";
+            case STATE_DONE:
+                return "Done";
+        }
+        return "Invalid";
     }
 }
