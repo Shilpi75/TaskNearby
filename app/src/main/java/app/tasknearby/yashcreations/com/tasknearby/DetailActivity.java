@@ -35,6 +35,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      */
     private Button doneButton;
     private ActionBar mActionBar;
+    private TextView taskNameTv;
 
     private TaskModel mTask;
     private TaskRepository mTaskRepository;
@@ -62,14 +63,15 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         setSupportActionBar(toolbar);
         mActionBar = getSupportActionBar();
         if (mActionBar != null) {
-            mActionBar.setHomeButtonEnabled(true);
+            mActionBar.setDisplayHomeAsUpEnabled(true);
             mActionBar.setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
         }
     }
 
     private void setData(TaskModel task) {
         // Set task title on actionBar
-        mActionBar.setTitle(task.getTaskName());
+        taskNameTv = findViewById(R.id.text_task_name);
+        taskNameTv.setText(task.getTaskName());
         showLocationDetails(task);
         showCoverImage(task);
         showTimeDetails(task);
