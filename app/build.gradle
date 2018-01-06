@@ -63,6 +63,7 @@ dependencies {
 
     // Annotations
     implementation "com.android.support:support-annotations:$supportLibVersion"
+
 }
 
 // this has to be kept after the dependency block to avoid dependency collisions.

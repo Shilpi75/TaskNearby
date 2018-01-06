@@ -30,14 +30,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 
 import app.tasknearby.yashcreations.com.tasknearby.MainActivity;
 import app.tasknearby.yashcreations.com.tasknearby.R;
 
 /**
  * Set location updates on based on detected activities.
- * TODO: Make it a foreground service.
  *
  * @author shilpi
  */
@@ -53,16 +51,16 @@ public class FusedLocationService extends Service {
     /**
      * Constants for activity detection.
      */
-    public static final long ACTIVITY_DETECTION_INTERVAL = 2000;                // 2 seconds.
+    public static final long ACTIVITY_DETECTION_INTERVAL = 2 * 1000;                // 2 seconds.
 
     /**
      * Constants for update time intervals for different detected activities.
      */
-    public static final long DRIVING_LOCATION_UPDATE_INTERVAL = 5000;           // 5 seconds.
-    public static final long RUNNING_LOCATOIN_UPDATE_INTERVAL = 10000;          // 10 seconds.
-    public static final long FAST_RUNNING_LOCATION_UPDATE_INTERVAL = 5000;      // 5 seconds.
-    public static final long WALKING_LOCATION_UPDATE_INTERVAL = 15000;          // 15 seconds.
-    public static final long UNKNOWN_LOCATION_UPDATE_INTERVAL = 10000;          // 10 seconds.
+    public static final long DRIVING_LOCATION_UPDATE_INTERVAL = 5 * 1000;           // 5 seconds.
+    public static final long RUNNING_LOCATION_UPDATE_INTERVAL = 10 * 1000;          // 10 seconds.
+    public static final long FAST_RUNNING_LOCATION_UPDATE_INTERVAL = 5 * 1000;      // 5 seconds.
+    public static final long WALKING_LOCATION_UPDATE_INTERVAL = 15 * 1000;          // 15 seconds.
+    public static final long UNKNOWN_LOCATION_UPDATE_INTERVAL = 10 * 1000;          // 10 seconds.
 
     public static final String TAG = FusedLocationService.class.getSimpleName();
 
@@ -94,11 +92,6 @@ public class FusedLocationService extends Service {
 
     /**
      * Invoked when another component (such as an activity) requests that the service be started.
-     *
-     * @param intent
-     * @param flags
-     * @param startId
-     * @return
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -161,6 +154,7 @@ public class FusedLocationService extends Service {
         }
         Task<Void> task = mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                 mLocationCallback, Looper.myLooper());
+
         task.addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -201,9 +195,7 @@ public class FusedLocationService extends Service {
     }
 
     /**
-     * Returns a pending intent.
-     *
-     * @return
+     * Returns a pending intent for ActivityDetection.
      */
     public PendingIntent getActivityDetectionPendingIntent() {
         Intent intent = new Intent(this, ActivityDetectionService.class);
@@ -220,8 +212,6 @@ public class FusedLocationService extends Service {
 
     /**
      * Restarts location updates with new update interval.
-     *
-     * @param updateInterval
      */
     public void restartLocationUpdates(long updateInterval) {
         if (mLocationRequest != null && mLocationRequest.getInterval() != updateInterval) {
@@ -289,8 +279,6 @@ public class FusedLocationService extends Service {
 
         /**
          * Adjusts location updates based on the detected activity of the device.
-         *
-         * @param detectedActivityList
          */
         public void adjustLocationUpdates(ArrayList<DetectedActivity> detectedActivityList) {
 
@@ -314,7 +302,7 @@ public class FusedLocationService extends Service {
                         if (confidence > 60) {
                             restartLocationUpdates(FAST_RUNNING_LOCATION_UPDATE_INTERVAL);
                         } else if (confidence > 50) {
-                            restartLocationUpdates(RUNNING_LOCATOIN_UPDATE_INTERVAL);
+                            restartLocationUpdates(RUNNING_LOCATION_UPDATE_INTERVAL);
                         }
                         break;
 

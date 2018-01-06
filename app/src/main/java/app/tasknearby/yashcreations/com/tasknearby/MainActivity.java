@@ -1,14 +1,10 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 
 /**
  * Shows the list of tasks segregated into categories when the app loads. This activity also
@@ -28,11 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         // For debugging.
-        fab.setOnClickListener(view -> startActivity(new Intent(this, DetailActivity.class)));
+        fab.setOnClickListener(view -> startActivity(new Intent(this, AlarmActivity.class)));
 
-        // For debugging.
-        Intent intent = new Intent(this, FusedLocationService.class);
-        startService(intent);
+//        startService(new Intent(this, FusedLocationService.class));
 
     }
 

@@ -52,9 +52,8 @@
             style="@style/taskCreatorItemStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Check flowers, music and catering too for the reception party."
             android:paddingTop="8dp"
+            android:text="Check flowers, music and catering too for the reception party."
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintEnd_toStartOf="@+id/guide_ver_end_16dp"
             app:layout_constraintStart_toStartOf="@+id/guide_ver_72dp"
@@ -71,6 +70,7 @@
             android:paddingTop="8dp"
             android:text="Repeats daily"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/guide_ver_72dp"
             app:layout_constraintTop_toBottomOf="@+id/text_alarm" />
 
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Fri, 12 Dec 17  to  Forever"
-            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintStart_toStartOf="@+id/guide_ver_72dp"
             app:layout_constraintTop_toBottomOf="@+id/text_time_range" />
 
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="01:00 PM to 04:00 PM"
-            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintStart_toStartOf="@+id/guide_ver_72dp"
             app:layout_constraintTop_toBottomOf="@+id/text_location_name" />
 
@@ -152,6 +152,7 @@
             android:id="@+id/icon_replay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/text_repeat"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_16dp"
             app:layout_constraintTop_toTopOf="@+id/text_repeat"

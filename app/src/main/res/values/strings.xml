@@ -65,7 +65,12 @@
     <!-- Saved places activity -->
     <string name="msg_no_saved_places">You\'ve not saved any places.\nClick this button to pick a place from map.</string>
     <string name="msg_dialog_delete_place">Delete saved location \"</string>
+    <string name="alarm_action_set_as_notification"><u>Set as Notification only</u></string>
+    <string name="alarm_show_map">Show Map</string>
+    <string name="alarm_show_image">Show Image</string>
 
+    <string name="suffix_m">m</string>
+    <string name="suffix_yd">yd</string>
     <string name="dialog_action_delete">Delete</string>
     <string name="dialog_cancel">Cancel</string>
 
@@ -95,10 +100,10 @@
     <string name="pref_alarm_tone_title">Alarm Tone</string>
 
     <!-- Vibration -->
-    <string name="pref_vibrate_key">vibration</string>
+    <string name="pref_vibrate_key">vibrate_alarm</string>
     <string name="pref_vibrate_title">Vibration</string>
     <string-array name="pref_vibrate_values">
-        <item>-1</item>
+        <item>100</item>
         <item>5</item>
         <item>3</item>
         <item>0</item>
@@ -109,7 +114,7 @@
         <item>Vibrate for 3 seconds.</item>
         <item>Don\'t vibrate.</item>
     </string-array>
-    <string name="pref_vibrate_default">-1</string>
+    <string name="pref_vibrate_default">100</string>
 
     <!-- Voice Alarm -->
     <string name="pref_voice_alarm_key">voice_alarm</string>

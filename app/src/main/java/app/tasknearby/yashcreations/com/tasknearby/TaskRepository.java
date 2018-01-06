@@ -38,7 +38,8 @@ public class TaskRepository {
                 .setIsDone(1)
                 .setStartDate(new Date(12200000))
                 .setEndDate(new Date(34))
-                .setNote("This is a note")
+//                .setNote("This is a note")
+                .setLastDistance(23.0f)
                 .build();
     }
 
