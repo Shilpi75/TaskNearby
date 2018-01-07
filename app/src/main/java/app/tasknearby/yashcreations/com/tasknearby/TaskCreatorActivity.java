@@ -30,6 +30,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.util.Calendar;
@@ -234,8 +235,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         endTimeTv.setTag(task.getEndTime());
 
         // Set date.
-        startDateTv.setText(AppUtils.getReadableDate(this, task.getStartDate()));
-        endDateTv.setText(AppUtils.getReadableDate(this, task.getEndDate()));
+        startDateTv.setText(AppUtils.getReadableLocalDate(this, task.getStartDate()));
+        endDateTv.setText(AppUtils.getReadableLocalDate(this, task.getEndDate()));
         startDateTv.setTag(task.getStartDate());
         endDateTv.setTag(task.getEndDate());
 
@@ -382,7 +383,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         mSelectedLocation = new LocationModel(place.getName().toString(),
                 place.getLatLng().latitude,
                 place.getLatLng().longitude,
-                0, 0, new Date());
+                0, 0, new LocalDate());
         hasSelectedLocation = true;
         onLocationSelected();
     }
@@ -485,8 +486,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 .setNote(note)
                 .setStartTime(startTime)
                 .setEndTime(endTime)
-                .setStartDate(startDate)
-                .setEndDate(endDate)
+                .setStartDate(LocalDate.fromDateFields(startDate))
+                .setEndDate(LocalDate.fromDateFields(endDate))
                 .setRepeatType(repeatType)
                 .build();
 

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
 
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.lang.annotation.Retention;
@@ -52,20 +53,20 @@ public class TaskStateUtil {
             return STATE_DONE;
 
         // Check task's start date.
-        Date startDate = task.getStartDate();
+        LocalDate startDate = task.getStartDate();
 
         // NOTE: We need to compare dates by getting the DateOnlyInstance because Date also contains
         // information about the time and comparing them with .compare() also compares time.
         // This causes a reminder expiring today to be told as expired.
 
         // If start date > today, return upcoming.Else, proceed.
-        if (AppUtils.compareDate(startDate, new Date()) > 0)
+        if (startDate.compareTo(new LocalDate()) > 0)
             return STATE_UPCOMING;
 
         // Check end date.
-        Date endDate = task.getEndDate();
+        LocalDate endDate = task.getEndDate();
         // If end date < today, retun expired. Else, proceed.
-        if (endDate != null && AppUtils.compareDate(endDate, new Date()) < 0) {
+        if (endDate != null && endDate.compareTo(new LocalDate()) < 0) {
             return STATE_EXPIRED;
         }
 
@@ -195,6 +196,7 @@ public class TaskStateUtil {
             return o2.getDateAdded().compareTo(o1.getDateAdded());
         }
     }
+
 
     public static String stateToString(Context context, @TaskState int taskState) {
         switch (taskState) {

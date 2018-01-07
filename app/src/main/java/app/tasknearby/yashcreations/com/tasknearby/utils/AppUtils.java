@@ -56,10 +56,22 @@ public final class AppUtils {
         }
     }
 
+    public static String getReadableLocalDate(Context context, LocalDate date) {
+        if (date == null) {
+            return context.getString(R.string.detail_date_forever);
+        } else if(date.compareTo(new LocalDate()) == 0){
+            return context.getString(R.string.detail_date_today);
+        }else{
+            return date.toString("EEE, d MMM YY");
+        }
+
+    }
+
     /**
      * Compares given dates. Returns -1 if date 1 is smaller than date 2. 0 if equal and 1 if
      * greater.
      */
+
     public static int compareDate(Date date1, Date date2) {
 //        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 //        String s1 = sdf.format(date1);

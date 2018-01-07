@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.util.Date;
@@ -68,13 +69,13 @@ public class TaskModel {
     private LocalTime endTime;
 
     @ColumnInfo(name = "start_date")
-    private Date startDate;
+    private LocalDate startDate;
 
     @ColumnInfo(name = "end_date")
-    private Date endDate;
+    private LocalDate endDate;
 
     @ColumnInfo(name = "next_start_date")
-    private Date nextStartDate;
+    private LocalDate nextStartDate;
 
     /**
      * Repeat type as NO REPEAT(0), REPEAT_DAILY(1), REPEAT_WEEKLY(2), REPEAT_MONTHLY(3).
@@ -98,13 +99,13 @@ public class TaskModel {
     private float lastDistance;
 
     @ColumnInfo(name = "last_triggered")
-    private Date lastTriggered;
+    private LocalDate lastTriggered;
 
     @ColumnInfo(name = "snoozed_at")
     private Long snoozedAt;
 
     @ColumnInfo(name = "date_added")
-    private Date dateAdded;
+    private LocalDate dateAdded;
 
 
     public TaskModel() {
@@ -113,9 +114,10 @@ public class TaskModel {
     @Ignore
     private TaskModel(String taskName, long locationId, String imageUri, int isDone,
                       int isAlarmSet, int reminderRange, String note, LocalTime startTime,
-                      LocalTime endTime, Date startDate, Date endDate, Date nextStartDate,
+                      LocalTime endTime, LocalDate startDate, LocalDate endDate, LocalDate
+                                  nextStartDate,
                       int repeatType, int movementType, int activityType, float lastDistance,
-                      Date lastTriggered, Long snoozedAt, Date dateAdded) {
+                      LocalDate lastTriggered, Long snoozedAt, LocalDate dateAdded) {
         this.taskName = taskName;
         this.locationId = locationId;
         this.imageUri = imageUri;
@@ -221,29 +223,29 @@ public class TaskModel {
     }
 
     @NonNull
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(@NonNull Date startDate) {
+    public void setStartDate(@NonNull LocalDate startDate) {
         this.startDate = startDate;
     }
 
     @Nullable
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(@Nullable Date endDate) {
+    public void setEndDate(@Nullable LocalDate endDate) {
         this.endDate = endDate;
     }
 
     @NonNull
-    public Date getNextStartDate() {
+    public LocalDate getNextStartDate() {
         return nextStartDate;
     }
 
-    public void setNextStartDate(@NonNull Date nextStartDate) {
+    public void setNextStartDate(@NonNull LocalDate nextStartDate) {
         this.nextStartDate = nextStartDate;
     }
 
@@ -279,11 +281,11 @@ public class TaskModel {
         this.lastDistance = lastDistance;
     }
 
-    public Date getLastTriggered() {
+    public LocalDate getLastTriggered() {
         return lastTriggered;
     }
 
-    public void setLastTriggered(Date lastTriggered) {
+    public void setLastTriggered(LocalDate lastTriggered) {
         this.lastTriggered = lastTriggered;
     }
 
@@ -295,11 +297,11 @@ public class TaskModel {
         this.snoozedAt = snoozedAt;
     }
 
-    public Date getDateAdded() {
+    public LocalDate getDateAdded() {
         return dateAdded;
     }
 
-    public void setDateAdded(@NonNull Date dateAdded) {
+    public void setDateAdded(@NonNull LocalDate dateAdded) {
         this.dateAdded = dateAdded;
     }
 
@@ -319,22 +321,22 @@ public class TaskModel {
         private String note = null;
         private LocalTime startTime = new LocalTime(0, 0); // 00:00
         private LocalTime endTime = new LocalTime(23, 59); // 23:59
-        private Date startDate = new Date();
-        private Date endDate = null;
+        private LocalDate startDate = new LocalDate();
+        private LocalDate endDate = null;
         /**
          * If we set nextStartDate here, then we'll have to update it whenever we update startDate.
          * Setting it in the setStartDate() method will overwrite it if it has already been set
          * by the setNextStartDate() method. Therefore, we're initially setting it as null so
          * that we can set it equal to startDate if it's still null at the time of building.
          */
-        private Date nextStartDate = null;
+        private LocalDate nextStartDate = null;
         private int repeatType = DbConstants.NO_REPEAT;
         private int movementType = DbConstants.BOTH_ENTER_EXIT;
         private int activityType = DbConstants.ACTIVITY_ANYTHING;
         private float lastDistance = Integer.MAX_VALUE;
-        private Date lastTriggered = null;
+        private LocalDate lastTriggered = null;
         private long snoozedAt = -1L;
-        private Date dateAdded = new Date();
+        private LocalDate dateAdded = new LocalDate();
 
         /**
          * Instantiates the builder object.
@@ -352,7 +354,8 @@ public class TaskModel {
             // Setting reminder range from settings (shared preferences).
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-            reminderRange = Integer.parseInt(prefs.getString(context.getString(R.string.pref_distance_range_key),
+            reminderRange = Integer.parseInt(prefs.getString(context.getString(R.string
+                            .pref_distance_range_key),
                     context.getString(R.string.pref_distance_range_default)));
         }
 
@@ -401,17 +404,17 @@ public class TaskModel {
             return this;
         }
 
-        public Builder setStartDate(@NonNull Date startDate) {
+        public Builder setStartDate(@NonNull LocalDate startDate) {
             this.startDate = startDate;
             return this;
         }
 
-        public Builder setEndDate(Date endDate) {
+        public Builder setEndDate(LocalDate endDate) {
             this.endDate = endDate;
             return this;
         }
 
-        public Builder setNextStartDate(@NonNull Date nextStartDate) {
+        public Builder setNextStartDate(@NonNull LocalDate nextStartDate) {
             this.nextStartDate = nextStartDate;
             return this;
         }
@@ -436,7 +439,7 @@ public class TaskModel {
             return this;
         }
 
-        public Builder setLastTriggered(@Nullable Date lastTriggered) {
+        public Builder setLastTriggered(@Nullable LocalDate lastTriggered) {
             this.lastTriggered = lastTriggered;
             return this;
         }
@@ -446,7 +449,7 @@ public class TaskModel {
             return this;
         }
 
-        public Builder setDateAdded(Date dateAdded) {
+        public Builder setDateAdded(LocalDate dateAdded) {
             this.dateAdded = dateAdded;
             return this;
         }
@@ -457,7 +460,8 @@ public class TaskModel {
         public TaskModel build() {
             nextStartDate = (nextStartDate == null) ? startDate : nextStartDate;
             // call the private constructor.
-            return new TaskModel(taskName, locationId, imageUri, isDone, isAlarmSet, reminderRange, note,
+            return new TaskModel(taskName, locationId, imageUri, isDone, isAlarmSet,
+                    reminderRange, note,
                     startTime, endTime, startDate, endDate, nextStartDate, repeatType, movementType,
                     activityType, lastDistance, lastTriggered, snoozedAt, dateAdded);
         }

@@ -40,7 +40,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private Button doneButton;
     private TextView taskNameTv, taskStateTv;
 
-
     private TaskModel mTask;
     private TaskRepository mTaskRepository;
 
@@ -62,7 +61,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public static Intent getStartingIntent(Context context, long taskId,
-            @TaskStateUtil.TaskState int state) {
+                                           @TaskStateUtil.TaskState int state) {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TASK_ID, taskId);
         intent.putExtra(EXTRA_TASK_STATE, state);
@@ -169,8 +168,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private void showDateInterval(TaskModel task) {
         // Date range set.
         String dateIntervalString = String.format(getString(R.string.detail_date_format),
-                AppUtils.getReadableDate(this, task.getStartDate()),
-                AppUtils.getReadableDate(this, task.getEndDate()));
+                AppUtils.getReadableLocalDate(this, task.getStartDate()),
+                AppUtils.getReadableLocalDate(this, task.getEndDate()));
         TextView dateIntervalTv = findViewById(R.id.text_date_interval);
         dateIntervalTv.setText(dateIntervalString);
     }
@@ -321,6 +320,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         // Update the task state.
         setTaskState(TaskStateUtil.STATE_DONE);
     }
+
 
     private void setTaskState(int state) {
         taskStateTv.setText(TaskStateUtil.stateToString(this, state));

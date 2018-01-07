@@ -37,10 +37,11 @@ public interface TaskDao {
 
     /**
      * Query to fetch the tasks not marked as done and active for today.
+     * TODO: check if it works.
      */
-    @Query("SELECT * FROM tasks WHERE is_done = 0 AND (end_date IS NULL || end_date >= :today) " +
-            "AND start_date <= :today")
-    List<TaskModel> getNotDoneTasksForToday(long today);
+    @Query("SELECT * FROM tasks WHERE is_done = 0 AND (end_date IS NULL || end_date >= date(:today)) " +
+            "AND start_date <= date(:today)")
+    List<TaskModel> getNotDoneTasksForToday(String today);
 
     @Query("SELECT * FROM tasks")
     LiveData<List<TaskModel>> getAllTasksWithUpdates();

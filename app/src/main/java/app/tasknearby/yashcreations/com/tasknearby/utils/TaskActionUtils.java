@@ -3,6 +3,8 @@ package app.tasknearby.yashcreations.com.tasknearby.utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import org.joda.time.LocalDate;
+
 import java.util.Date;
 
 import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
@@ -17,7 +19,7 @@ import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 public final class TaskActionUtils {
 
     public static void onTaskMarkedDone(@NonNull Context appContext, TaskModel task) {
-        task.setLastTriggered(new Date());
+        task.setLastTriggered(new LocalDate());
         task.setIsDone(1);
         TaskRepository repository = new TaskRepository(appContext);
         repository.updateTask(task);
@@ -25,7 +27,7 @@ public final class TaskActionUtils {
 
     public static void onTaskSnoozed(@NonNull Context appContext, TaskModel task) {
         task.setSnoozedAt(System.currentTimeMillis());
-        task.setLastTriggered(new Date());
+        task.setLastTriggered(new LocalDate());
         TaskRepository repository = new TaskRepository(appContext);
         repository.updateTask(task);
     }

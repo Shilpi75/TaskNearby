@@ -47,7 +47,7 @@
             android:name=".DetailActivity"
             android:label="Task Detail"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+              android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".AlarmActivity"
@@ -85,6 +85,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />
-    </application>
+        <activity
+            android:name=".AboutActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme"></activity>    </application>
 
 </manifest>

@@ -197,6 +197,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/button_show_map"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/button_show_map"
-        app:srcCompat="@drawable/ic_map_grey_700_24dp" />
+        app:srcCompat="@drawable/ic_check_grey_24dp" />  <!-- TODO: change it -->
 
 </android.support.constraint.ConstraintLayout>

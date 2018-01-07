@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.util.Log;
 
+import org.joda.time.LocalDate;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,18 +39,13 @@ public class TaskRepository {
         mDatabase = AppDatabase.getAppDatabase(context);
         // TODO: Remove mock data call.
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
-        Date endDate = null;
-        try {
-            endDate = sdf.parse("05/01/2018");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        LocalDate endDate = null;
+        endDate = LocalDate.parse("2018-03-02");
 
         dummyTask = new TaskModel.Builder(context, "Check reception plannings", 0)
                 .setIsAlarmSet(0)
                 .setIsDone(0)
-                .setStartDate(new Date())
+                .setStartDate(new LocalDate())
                 .setEndDate(endDate)
 //                .setNote("This is a note")
                 .setLastDistance(23.0f)
@@ -133,14 +130,14 @@ public class TaskRepository {
     private TaskModel dummyTask;
     private LocationModel mockLocationModel = new LocationModel("Hyatt Residency, New Delhi, " +
             "110042", 23.0,
-            77.0, 1, 0, new Date());
+            77.0, 1, 0, new LocalDate());
 
     /**
      * Query to fetch the tasks not marked as done and active for today.
      */
     public List<TaskModel> getNotDoneTasksForToday(){
-        Date today = new Date();
-        return mDatabase.taskDao().getNotDoneTasksForToday(today.getTime());
+        LocalDate today = new LocalDate();
+        return mDatabase.taskDao().getNotDoneTasksForToday(today.toString());
     }
 
     public LiveData<List<TaskModel>> getAllTasksWithUpdates() {

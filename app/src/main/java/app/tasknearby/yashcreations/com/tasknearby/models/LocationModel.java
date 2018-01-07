@@ -6,6 +6,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
+import org.joda.time.LocalDate;
+
 import java.util.Date;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.converters.DateConverter;
@@ -36,14 +38,14 @@ public class LocationModel {
     private int isHidden;
 
     @ColumnInfo(name = "date_added")
-    private Date dateAdded;
+    private LocalDate dateAdded;
 
     @Ignore
     public LocationModel() {
 
     }
 
-    public LocationModel(String placeName, double latitude, double longitude, int useCount, int isHidden, Date dateAdded) {
+    public LocationModel(String placeName, double latitude, double longitude, int useCount, int isHidden, LocalDate dateAdded) {
         this.placeName = placeName;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -100,11 +102,11 @@ public class LocationModel {
         this.isHidden = isHidden;
     }
 
-    public Date getDateAdded() {
+    public LocalDate getDateAdded() {
         return dateAdded;
     }
 
-    public void setDateAdded(Date dateAdded) {
+    public void setDateAdded(LocalDate dateAdded) {
         this.dateAdded = dateAdded;
     }
 }
