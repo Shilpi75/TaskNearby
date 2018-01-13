@@ -62,6 +62,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     public static Intent getStartingIntent(Context context, long taskId,
                                            @TaskStateUtil.TaskState int state) {
+
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TASK_ID, taskId);
         intent.putExtra(EXTRA_TASK_STATE, state);

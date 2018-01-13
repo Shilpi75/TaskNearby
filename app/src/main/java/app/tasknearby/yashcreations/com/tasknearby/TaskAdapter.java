@@ -83,6 +83,7 @@ public final class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomVi
             locationNameTv.setText(listItem.getLocationName());
             lastDistanceTv.setText(String.format(activity.getString(R.string.distance_format_m),
                     task.getLastDistance() + ""));
+
             stateTv.setText(TaskStateUtil.stateToString(activity, listItem.getState()));
         }
     }

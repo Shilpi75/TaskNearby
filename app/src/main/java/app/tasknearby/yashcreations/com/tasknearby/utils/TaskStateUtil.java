@@ -55,6 +55,7 @@ public class TaskStateUtil {
         // Check task's start date.
         LocalDate startDate = task.getStartDate();
 
+
         // NOTE: We need to compare dates by getting the DateOnlyInstance because Date also contains
         // information about the time and comparing them with .compare() also compares time.
         // This causes a reminder expiring today to be told as expired.
@@ -126,8 +127,8 @@ public class TaskStateUtil {
                     doneTasks.add(task);
             }
         }
-        resultList.add(activeNotSnoozedTasks);
         resultList.add(activeSnoozedTasks);
+        resultList.add(activeNotSnoozedTasks);
         resultList.add(upcomingTasks);
         resultList.add(expiredTasks);
         resultList.add(doneTasks);

@@ -72,6 +72,7 @@
     <string name="distance_format_m">%s m</string>
     <string name="distance_format_yd">%s yd</string>
 
+    <!-- TODO: Use this suffix string when we implement isMetric utilities. -->
     <string name="suffix_m">m</string>
     <string name="suffix_yd">yd</string>
     <string name="dialog_action_delete">Delete</string>

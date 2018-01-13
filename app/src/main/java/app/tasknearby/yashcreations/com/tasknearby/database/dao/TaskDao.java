@@ -43,6 +43,7 @@ public interface TaskDao {
             "AND start_date <= date(:today)")
     List<TaskModel> getNotDoneTasksForToday(String today);
 
+
     @Query("SELECT * FROM tasks")
     LiveData<List<TaskModel>> getAllTasksWithUpdates();
 }

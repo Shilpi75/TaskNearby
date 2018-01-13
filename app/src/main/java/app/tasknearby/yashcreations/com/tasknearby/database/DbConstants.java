@@ -15,7 +15,7 @@ public class DbConstants {
     /**
      * Name of app database created.
      */
-    public static final String APP_DATABASE_NAME = "task-database";
+    public static final String APP_DATABASE_NAME = "task_database.db";
 
     /**
      * Activity based alarm constants.

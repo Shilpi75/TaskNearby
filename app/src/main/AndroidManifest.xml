@@ -34,8 +34,9 @@
             android:label="@string/title_add_new_task"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
-        <!-- adjustResize will pan the view up when keyboard opens up -->
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <!-- adjustResize will pan the view up when keyboard opens up
+        but it is causing constraint layout to elongate. Dunno why! Hence, using this.-->
 
         <activity
             android:name=".SettingsActivity"
@@ -47,7 +48,8 @@
             android:name=".DetailActivity"
             android:label="Task Detail"
             android:parentActivityName=".MainActivity"
-              android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" />
+
 
         <activity
             android:name=".AlarmActivity"
@@ -85,9 +87,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />
-        <activity
-            android:name=".AboutActivity"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme"></activity>    </application>
 
+    </application>
 </manifest>

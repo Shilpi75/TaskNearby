@@ -47,7 +47,7 @@ public class TaskRepository {
                 .setIsDone(0)
                 .setStartDate(new LocalDate())
                 .setEndDate(endDate)
-//                .setNote("This is a note")
+//               .setNote("This is a note")
                 .setLastDistance(23.0f)
                 .build();
     }
@@ -143,4 +143,5 @@ public class TaskRepository {
     public LiveData<List<TaskModel>> getAllTasksWithUpdates() {
         return mDatabase.taskDao().getAllTasksWithUpdates();
     }
+
 }

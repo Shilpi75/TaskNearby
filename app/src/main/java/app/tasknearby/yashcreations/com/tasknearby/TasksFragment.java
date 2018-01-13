@@ -50,6 +50,11 @@ public class TasksFragment extends Fragment {
             if (taskModels == null) {
                 return;
             }
+
+
+//            TODO:
+//            When we get the liveData object, we can process it on MainTHread as well as by using
+//            an AsyncTask. Choose either one on the basis of performance.
             // Use Async Task
             new TaskListProcessor(getActivity().getApplicationContext(), taskAdapter,
                     mTaskRepository).execute(taskModels);
@@ -72,6 +77,7 @@ public class TasksFragment extends Fragment {
         new DbUpdatesSimulator(getActivity().getApplicationContext(), mTaskRepository).start();
 
         return rootView;
+
     }
 
     /**
