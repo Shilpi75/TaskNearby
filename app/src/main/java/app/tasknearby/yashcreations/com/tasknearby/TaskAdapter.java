@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
+import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
 
 /**
@@ -81,8 +82,7 @@ public final class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomVi
             TaskModel task = listItem.getTask();
             taskNameTv.setText(task.getTaskName());
             locationNameTv.setText(listItem.getLocationName());
-            lastDistanceTv.setText(String.format(activity.getString(R.string.distance_format_m),
-                    task.getLastDistance() + ""));
+            lastDistanceTv.setText(DistanceUtils.getFormattedDistanceString(activity, task.getLastDistance()));
 
             stateTv.setText(TaskStateUtil.stateToString(activity, listItem.getState()));
         }

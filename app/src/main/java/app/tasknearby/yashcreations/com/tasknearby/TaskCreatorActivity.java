@@ -40,6 +40,7 @@ import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 
 /**
  * Creates a new task and also responsible for editing an old one. For editing, we need to use
@@ -111,7 +112,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * This will be used to get the intent to start this activity when we need to edit the task.
      *
      * @param context context of the calling activity.
-     * @param taskId taskId of the task to be edited.
+     * @param taskId  taskId of the task to be edited.
      * @return intent that can be used in startActivity.
      */
     public static Intent getEditModeIntent(Context context, long taskId) {
@@ -294,7 +295,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         Calendar calendar = Calendar.getInstance();
         // what to do when date is set.
         DatePickerDialog.OnDateSetListener onDateSetListener = (view, year, month,
-                dayOfMonth) -> {
+                                                                dayOfMonth) -> {
             calendar.set(year, month, dayOfMonth);
             v.setTag(calendar.getTime());
             v.setText(AppUtils.getReadableDate(this, calendar.getTime()));
@@ -309,7 +310,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_STORAGE_PERMISSION:
                 if (grantResults.length > 0
@@ -438,7 +439,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         }
         String taskName = taskNameInput.getText().toString();
         String locationName = locationNameInput.getText().toString();
-        int reminderRange = Integer.parseInt(reminderRangeInput.getText().toString());
+        int enteredReminderRange = Integer.parseInt(reminderRangeInput.getText().toString());
+        int reminderRange = (int) DistanceUtils.getDistanceToSave(this, enteredReminderRange);
         boolean isAlarmEnabled = alarmSwitch.isChecked();
         String imageUri = null;
         Uri selectedImageUri = (Uri) coverImageView.getTag();

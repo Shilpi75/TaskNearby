@@ -23,6 +23,7 @@ import org.joda.time.LocalTime;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
@@ -62,7 +63,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     public static Intent getStartingIntent(Context context, long taskId,
                                            @TaskStateUtil.TaskState int state) {
-
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TASK_ID, taskId);
         intent.putExtra(EXTRA_TASK_STATE, state);
@@ -124,7 +124,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         // Reminder range.
         TextView reminderRangeTv = findViewById(R.id.text_reminder_range);
         reminderRangeTv.setText(String.format(getString(R.string.detail_format_reminder_range),
-                task.getReminderRange()));
+                DistanceUtils.getFormattedDistanceString(this, task.getReminderRange())));
         // Set locationName.
         LocationModel locationModel = mTaskRepository.getLocationById(task.getLocationId());
         TextView locationNameTv = findViewById(R.id.text_location_name);

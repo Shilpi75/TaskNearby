@@ -48,7 +48,7 @@
             android:name=".DetailActivity"
             android:label="Task Detail"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+              android:theme="@style/AppTheme.NoActionBar" />
 
 
         <activity

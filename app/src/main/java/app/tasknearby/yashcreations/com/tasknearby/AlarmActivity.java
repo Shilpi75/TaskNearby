@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
+import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskActionUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.AlarmRinger;
 import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.AlarmVibrator;
@@ -87,7 +88,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
      * This will be used to generate the intent containing taskId when starting AlarmActivity.
      *
      * @param context context of the calling activity.
-     * @param taskId taskId for which alarm will ring.
+     * @param taskId  taskId for which alarm will ring.
      * @return the intent that can be passed to startActivity() method.
      */
     public static Intent getStartingIntent(@NonNull Context context, long taskId) {
@@ -124,7 +125,8 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
         // Set taskDetails.
         taskNameView.setText(mTask.getTaskName());
         locationNameView.setText(mTaskLocation.getPlaceName());
-        lastDistanceView.setText(String.valueOf(mTask.getLastDistance() + getString(R.string.suffix_m)));
+        lastDistanceView.setText(DistanceUtils.getFormattedDistanceString(this, mTask
+                .getLastDistance()));
         noteView.setText(mTask.getNote());
         if (mTask.getNote() == null || TextUtils.isEmpty(mTask.getNote())) {
             // Hide note when no note.
@@ -151,7 +153,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
             finish();
         });
         findViewById(R.id.button_show_map).setOnClickListener(v -> userRequestedMap((Button) v));
-        findViewById(R.id.text_notification_only).setOnClickListener(v->{
+        findViewById(R.id.text_notification_only).setOnClickListener(v -> {
             TaskActionUtils.setAsNotificationOnly(getApplicationContext(), mTask);
             finish();
         });

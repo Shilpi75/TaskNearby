@@ -1,7 +1,9 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,7 +33,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main2);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        // To set up the power saver preference if user has updated the app.
+        setPowerSaverPreference();
         setupNavDrawer();
 
         findViewById(R.id.fab).setOnClickListener(view ->
@@ -87,6 +90,27 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    /**
+     * Sets up the power saver preference if user has updated the app.
+     */
+    public void setPowerSaverPreference() {
+        // Set up power/accuracy preferences.
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!defaultPref.contains(getString(R.string.pref_power_saver_key))) {
+            // It means user has updated the app and opening this version for the first time.
+            String accuracy = defaultPref.getString(getString(R.string.pref_accuracy_key),
+                    getString(R.string.pref_accuracy_default));
+            SharedPreferences.Editor editor = defaultPref.edit();
+            if (accuracy.equals(getString(R.string.pref_accuracy_balanced))) {
+                // Set power saver mode.
+                editor.putBoolean(getString(R.string.pref_power_saver_key), true);
+            } else {
+                editor.putBoolean(getString(R.string.pref_power_saver_key), false);
+            }
+            editor.apply();
         }
     }
 }

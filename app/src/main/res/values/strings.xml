@@ -55,7 +55,7 @@
     <string name="detail_date_format">%s  to  %s</string>
     <string name="detail_date_forever">Forever</string>
     <string name="detail_date_today">Today</string>
-    <string name="detail_format_reminder_range">Within %d metres</string>
+    <string name="detail_format_reminder_range">Within %s</string>
     <string name="detail_button_mark_done">Mark Done</string>
     <string name="detail_button_reset">Reset</string>
     <string name="menu_item_delete">Delete</string>
@@ -69,8 +69,10 @@
     <string name="alarm_show_map">Show Map</string>
     <string name="alarm_show_image">Show Image</string>
 
-    <string name="distance_format_m">%s m</string>
-    <string name="distance_format_yd">%s yd</string>
+    <string name="distance_format_m">%d m</string>
+    <string name="distance_format_km">%.2f km</string>
+    <string name="distance_format_yd">%d yd</string>
+    <string name="distance_format_mi">%.2f mi</string>
 
     <!-- TODO: Use this suffix string when we implement isMetric utilities. -->
     <string name="suffix_m">m</string>
@@ -80,7 +82,7 @@
 
     <!-- Preferences -->
     <!-- Unit-->
-    <string name="pref_unit_key">unit</string>
+    <string name="pref_unit_key">units</string>
     <string name="pref_unit_title">Units</string>
     <string-array name="pref_unit_values">
         <item>Metric(m)</item>
@@ -189,5 +191,11 @@
     <string name="feedback_text"><u>Help us improve?</u></string>
     <string name="name_developer_yash">Yash Verma</string>
     <string name="name_developer_shilpi">Shilpi Gupta</string>
+
+    <!-- Accuracy settings used in previous verion -->
+    <string name="pref_accuracy_key">accuracy_pref</string>
+    <string name="pref_accuracy_default">high</string>
+    <string name="pref_accuracy_balanced">balanced</string>
+    <string name="pref_accuracy_high">high</string>
 
 </resources>
