@@ -22,6 +22,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
@@ -68,8 +69,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
         long taskId = getIntent().getLongExtra(EXTRA_TASK_ID, -1);
         if (taskId == -1) {
             Log.w(TAG, "No task id has been passed.");
-//            TODO: Remove in production.
-//            return;
+            return;
         }
         // Initialize the ringer and vibrator.
         mAlarmVibrator = new AlarmVibrator(this);
@@ -102,7 +102,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
      */
     private void setWindowFlags() {
         Window window = this.getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        if (Build.VERSION.SDK_INT >= 27) {
             // In API level 27 setting these via window flags is deprecated.
             setShowWhenLocked(true);
             setTurnScreenOn(true);
@@ -121,6 +121,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
         TextView repeatView = findViewById(R.id.text_repeat);
         TextView noteView = findViewById(R.id.text_note);
         ImageView noteIcon = findViewById(R.id.icon_note);
+        ImageView coverImageView = findViewById(R.id.imageViewCover);
 
         // Set taskDetails.
         taskNameView.setText(mTask.getTaskName());
@@ -133,6 +134,22 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
             noteIcon.setVisibility(View.GONE);
             noteView.setVisibility(View.GONE);
         }
+        // Set image.
+        if (mTask.getImageUri() != null) {
+            Picasso.with(this)
+                    .load("file://" + mTask.getImageUri())
+                    .error(R.drawable.calendar_bkg_12_dec)
+                    .fit()
+                    .centerCrop()
+                    .into(coverImageView);
+            // Set onClick listener.
+            coverImageView.setOnClickListener(v -> {
+                Intent intent = ShowImageActivity.getStartingIntent(AlarmActivity.this,
+                        mTask.getTaskName(), mTask.getImageUri());
+                startActivity(intent);
+            });
+        }
+        // Set repeat options, not using for now.
         String[] repeatOptions = getResources().getStringArray(R.array.creator_repeat_options);
         repeatView.setText(repeatOptions[mTask.getRepeatType()]);
     }

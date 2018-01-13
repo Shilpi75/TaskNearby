@@ -65,7 +65,6 @@ public final class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomVi
             taskNameTv = v.findViewById(R.id.text_task_name);
             locationNameTv = v.findViewById(R.id.text_location_name);
             lastDistanceTv = v.findViewById(R.id.text_last_distance);
-            // TODO: Decide.
             stateTv = v.findViewById(R.id.text_state);
             v.setOnClickListener(v1 -> {
                 // Get the view position.
@@ -82,8 +81,27 @@ public final class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomVi
             TaskModel task = listItem.getTask();
             taskNameTv.setText(task.getTaskName());
             locationNameTv.setText(listItem.getLocationName());
-            lastDistanceTv.setText(DistanceUtils.getFormattedDistanceString(activity, task.getLastDistance()));
+            if (listItem.getState() == TaskStateUtil.STATE_ACTIVE_NOT_SNOOZED
+                    && task.getLastDistance() != Integer.MAX_VALUE) {
+                // Show last distance only when task is active and last distance has been
+                // calculated. If it's active but last distance isn't present, badge is shown.
+                bindLastDistance(task.getLastDistance());
+            } else {
+                bindTaskState(listItem);
+            }
+        }
 
+        private void bindLastDistance(float lastDistance) {
+            stateTv.setVisibility(View.GONE);
+            lastDistanceTv.setVisibility(View.VISIBLE);
+            // Set the last Distance.
+            lastDistanceTv.setText(
+                    DistanceUtils.getFormattedDistanceString(activity, lastDistance));
+        }
+
+        private void bindTaskState(TaskStateWrapper listItem) {
+            stateTv.setVisibility(View.VISIBLE);
+            lastDistanceTv.setVisibility(View.GONE);
             stateTv.setText(TaskStateUtil.stateToString(activity, listItem.getState()));
         }
     }

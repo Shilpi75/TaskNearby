@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
-import app.tasknearby.yashcreations.com.tasknearby.utils.DbUpdatesSimulator;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
 
 /**
@@ -50,11 +49,10 @@ public class TasksFragment extends Fragment {
             if (taskModels == null) {
                 return;
             }
-
-
 //            TODO:
 //            When we get the liveData object, we can process it on MainTHread as well as by using
 //            an AsyncTask. Choose either one on the basis of performance.
+
             // Use Async Task
             new TaskListProcessor(getActivity().getApplicationContext(), taskAdapter,
                     mTaskRepository).execute(taskModels);
@@ -74,7 +72,7 @@ public class TasksFragment extends Fragment {
         });
 
         // For demo.
-        new DbUpdatesSimulator(getActivity().getApplicationContext(), mTaskRepository).start();
+//        new DbUpdatesSimulator(getActivity().getApplicationContext(), mTaskRepository).start();
 
         return rootView;
 
@@ -103,7 +101,6 @@ public class TasksFragment extends Fragment {
             getActivity().findViewById(R.id.no_task_view).setVisibility(View.GONE);
         }
     }
-
 
     private static class TaskListProcessor extends AsyncTask<List<TaskModel>, Void,
             List<TaskStateWrapper>> {

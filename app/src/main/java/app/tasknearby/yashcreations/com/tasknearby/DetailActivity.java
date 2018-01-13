@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.joda.time.LocalTime;
 
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
@@ -62,7 +64,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public static Intent getStartingIntent(Context context, long taskId,
-                                           @TaskStateUtil.TaskState int state) {
+            @TaskStateUtil.TaskState int state) {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TASK_ID, taskId);
         intent.putExtra(EXTRA_TASK_STATE, state);
@@ -136,8 +138,19 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      */
     private void showCoverImage(TaskModel task) {
         if (task.getImageUri() != null) {
-            ((ImageView) findViewById(R.id.image_task_cover))
-                    .setImageURI(Uri.parse(task.getImageUri()));
+            ImageView imageView = findViewById(R.id.image_task_cover);
+            // TODO: Check if loading placeholder is needed.
+            Picasso.with(this)
+                    .load("file://" + task.getImageUri())
+                    .error(R.drawable.calendar_bkg_12_dec)
+                    .fit()
+                    .centerCrop()
+                    .into(imageView);
+            imageView.setOnClickListener(v -> {
+                Intent intent = ShowImageActivity.getStartingIntent(DetailActivity.this,
+                        task.getTaskName(), task.getImageUri());
+                startActivity(intent);
+            });
         }
     }
 
@@ -310,8 +323,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     /**
      * Sets the task as done and sets the Done button.
-     *
-     * @param task
      */
     private void markTaskAsDone(TaskModel task) {
         task.setIsDone(1);

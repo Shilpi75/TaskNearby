@@ -2,13 +2,9 @@ package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
-import android.util.Log;
 
 import org.joda.time.LocalDate;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.AppDatabase;
@@ -37,19 +33,14 @@ public class TaskRepository {
      */
     public TaskRepository(Context context) {
         mDatabase = AppDatabase.getAppDatabase(context);
-        // TODO: Remove mock data call.
-
-        LocalDate endDate = null;
-        endDate = LocalDate.parse("2018-03-02");
-
-        dummyTask = new TaskModel.Builder(context, "Check reception plannings", 0)
-                .setIsAlarmSet(0)
-                .setIsDone(0)
-                .setStartDate(new LocalDate())
-                .setEndDate(endDate)
-//               .setNote("This is a note")
-                .setLastDistance(23.0f)
-                .build();
+//        dummyTask = new TaskModel.Builder(context, "Check reception plannings", 0)
+//                .setIsAlarmSet(0)
+//                .setIsDone(0)
+//                .setStartDate(new LocalDate())
+//                .setEndDate(new LocalDate())
+////                .setNote("This is a note")
+//                .setLastDistance(23.0f)
+//                .build();
     }
 
     /**
@@ -57,17 +48,13 @@ public class TaskRepository {
      */
     public List<TaskModel> getAllTasks() {
         return mDatabase.taskDao().getAllTasks();
-//         TODO: Remove mock data.
-//        return Arrays.asList(dummyTask, dummyTask);
     }
 
     /**
      * Fetches the task with the given id.
      */
     public TaskModel getTaskWithId(long taskId) {
-         return mDatabase.taskDao().getTaskWithId(taskId);
-        // TODO: After database starts working, remove this mock data call.
-//        return dummyTask;
+        return mDatabase.taskDao().getTaskWithId(taskId);
     }
 
     /**
@@ -83,7 +70,6 @@ public class TaskRepository {
      * Updates the task with taskId of the task passed as param.
      */
     public void updateTask(TaskModel task) {
-        Log.i(TAG, "Update called for task: " + task.getTaskName());
         mDatabase.taskDao().updateTask(task);
     }
 
@@ -91,7 +77,6 @@ public class TaskRepository {
      * Deletes the task from the database.
      */
     public void removeTask(TaskModel task) {
-        Log.i(TAG, "Requested deletion of task: " + task.getTaskName());
         mDatabase.taskDao().deleteTask(task);
     }
 
@@ -99,8 +84,7 @@ public class TaskRepository {
      * Returns a location object with the given id from the database.
      */
     public LocationModel getLocationById(long locationId) {
-//         return mDatabase.locationDao().getLocationWithId(locationId);
-        return mockLocationModel;
+        return mDatabase.locationDao().getLocationWithId(locationId);
     }
 
     /**
@@ -135,7 +119,7 @@ public class TaskRepository {
     /**
      * Query to fetch the tasks not marked as done and active for today.
      */
-    public List<TaskModel> getNotDoneTasksForToday(){
+    public List<TaskModel> getNotDoneTasksForToday() {
         LocalDate today = new LocalDate();
         return mDatabase.taskDao().getNotDoneTasksForToday(today.toString());
     }

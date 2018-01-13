@@ -13,6 +13,11 @@ import android.widget.Toast;
 
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 
+/**
+ * Displays the about screen for the app.
+ *
+ * @author shilpi
+ */
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView feedbackTv;
@@ -68,7 +73,9 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         switch (item.getItemId()) {
             case R.id.action_share:
                 String packageName = getPackageName();
-                String appUrl = getString(R.string.play_store_base_url) + packageName;
+                // Generated using GooglePlayUrlBuilder on Google analytics website.
+                String referrer = "&referrer=utm_source%3Dshareapp";
+                String appUrl = getString(R.string.play_store_base_url) + packageName + referrer;
 
                 // Share message.
                 String shareMessage = String.format(getString(R.string.share_message), appUrl);

@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_all_tasks) {
             Log.i(TAG, "All Tasks");
-        } else if (id == R.id.nav_show_map) {
-            Log.i(TAG, "Show map");
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_feedback) {
@@ -103,6 +101,7 @@ public class MainActivity extends AppCompatActivity
             // It means user has updated the app and opening this version for the first time.
             String accuracy = defaultPref.getString(getString(R.string.pref_accuracy_key),
                     getString(R.string.pref_accuracy_default));
+                    
             SharedPreferences.Editor editor = defaultPref.edit();
             if (accuracy.equals(getString(R.string.pref_accuracy_balanced))) {
                 // Set power saver mode.

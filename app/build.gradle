@@ -37,7 +37,8 @@ def supportLibVersion = "27.0.2"
 def playServicesVersion = "11.8.0"
 def archRoomVersion = "1.0.0"
 def jodaTimeVersion = "2.9.9.1"
-def constraintLayoutVersion = "1.0.2"
+def constraintLayoutVersion = "1.1.0-beta3"
+def picassoVersion = "2.5.2"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -71,6 +72,7 @@ dependencies {
     // Annotations
     implementation "com.android.support:support-annotations:$supportLibVersion"
 
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
 }
 
 // this has to be kept after the dependency block to avoid dependency collisions.

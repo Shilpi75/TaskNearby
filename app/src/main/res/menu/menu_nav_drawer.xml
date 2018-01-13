@@ -11,11 +11,6 @@
             android:checked="true"
             android:title="All Tasks" />
         <item
-            android:id="@+id/nav_show_map"
-            android:icon="@drawable/ic_map_grey_700_24dp"
-            android:title="Show Map"
-            android:checkable="false"/>
-        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_settings_grey_700_24dp"
             android:title="Settings"

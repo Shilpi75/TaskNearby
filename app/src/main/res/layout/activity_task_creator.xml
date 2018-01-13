@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context="app.tasknearby.yashcreations.com.tasknearby.TaskCreatorActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -34,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal|bottom"
-                android:background="@drawable/backdrop_gradient" />
+                android:background="@drawable/backdrop_creator_gradient" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -47,7 +46,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_task_creator" />
+    <include layout="@layout/content_task_creator"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_image"

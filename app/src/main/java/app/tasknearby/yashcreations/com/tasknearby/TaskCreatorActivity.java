@@ -6,8 +6,10 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
@@ -29,12 +31,12 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.squareup.picasso.Picasso;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
@@ -202,7 +204,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         startDateTv.setOnClickListener(this);
         endDateTv.setOnClickListener(this);
         // Set initial dates as text on date textViews.
-        startDateTv.setTag(new Date());
+        startDateTv.setTag(new LocalDate());
         endDateTv.setTag(null);
 
         // textView to repeat reminders.
@@ -220,7 +222,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         taskNameInput.setText(task.getTaskName());
         // Set location
         mSelectedLocation = mTaskRepository.getLocationById(task.getLocationId());
-        locationNameInput.setText(mSelectedLocation.getPlaceName());
+        // Shows the location name and makes it visible.
+        onLocationSelected();
         hasSelectedLocation = true;
         // Set reminder range
         reminderRangeInput.setText(String.valueOf(task.getReminderRange()));
@@ -262,10 +265,9 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                    .WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
+                    .READ_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
         } else {
             // Permission is available.
-            // TODO: Show a dialog here to allow the user to use camera or gallery.
             Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(pickPhoto, REQUEST_CODE_GALLERY_IMAGE_PICKER);
@@ -297,7 +299,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         DatePickerDialog.OnDateSetListener onDateSetListener = (view, year, month,
                                                                 dayOfMonth) -> {
             calendar.set(year, month, dayOfMonth);
-            v.setTag(calendar.getTime());
+            v.setTag(LocalDate.fromCalendarFields(calendar));
             v.setText(AppUtils.getReadableDate(this, calendar.getTime()));
             Log.d(TAG, "Date selected: " + calendar.getTime().toString());
         };
@@ -362,11 +364,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             case REQUEST_CODE_CAMERA_IMAGE:
             case REQUEST_CODE_GALLERY_IMAGE_PICKER:
                 if (resultCode == RESULT_OK) {
-                    Uri selectedImageUri = data.getData();
-                    coverImageView.setImageURI(selectedImageUri);
-                    // for retrieval later on.
-                    coverImageView.setTag(selectedImageUri);
-                    Log.d(TAG, "Image selected, Uri: " + selectedImageUri);
+                    onImageSelected(data);
                 }
                 break;
             default:
@@ -380,11 +378,11 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      */
     private void onPlacePickerSuccess(Intent data) {
         Place place = PlacePicker.getPlace(this, data);
-        // Create a new location object.
+        // Create a new location object with use count = 1
         mSelectedLocation = new LocationModel(place.getName().toString(),
                 place.getLatLng().latitude,
                 place.getLatLng().longitude,
-                0, 0, new LocalDate());
+                1, 0, new LocalDate());
         hasSelectedLocation = true;
         onLocationSelected();
     }
@@ -409,6 +407,33 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private void onLocationSelected() {
         locationNameInput.setText(mSelectedLocation.getPlaceName());
         findViewById(R.id.text_input_location_name).setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Sets the task image, Triggered when gallery returns a selected task image.
+     */
+    private void onImageSelected(Intent data) {
+        if (data.getData() == null) {
+            Toast.makeText(this, "Image selection failed", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Uri selectedImageUri = data.getData();
+        // Use Picasso to load image instead of coverImageView.setImageURI(selectedImageUri);
+        Picasso.with(this)
+                .load(selectedImageUri)
+                .fit()
+                .centerCrop()
+                .into(coverImageView);
+        // We need to generate the image file path from the uri.
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn,
+                null, null, null);
+        cursor.moveToFirst();
+        String imageFilePath = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
+        cursor.close();
+        // Set the path as a tag to the imageView for storing in the database
+        // for retrieval later on.
+        coverImageView.setTag(imageFilePath);
     }
 
     /**
@@ -442,10 +467,10 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         int enteredReminderRange = Integer.parseInt(reminderRangeInput.getText().toString());
         int reminderRange = (int) DistanceUtils.getDistanceToSave(this, enteredReminderRange);
         boolean isAlarmEnabled = alarmSwitch.isChecked();
-        String imageUri = null;
-        Uri selectedImageUri = (Uri) coverImageView.getTag();
-        if (selectedImageUri != null) {
-            imageUri = selectedImageUri.toString();
+        String imagePath = null;
+        String selectedImagePath = (String) coverImageView.getTag();
+        if (selectedImagePath != null) {
+            imagePath = selectedImagePath;
         }
         // There can be a case when user selects a time and then turns on the anytime switch.
         // So, we need to check the anytime switch first.
@@ -461,9 +486,9 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             endTime = (LocalTime) endTimeTv.getTag();
         }
 
-        Date startDate = (Date) startDateTv.getTag();
+        LocalDate startDate = (LocalDate) startDateTv.getTag();
         // end date will be stored as null only.
-        Date endDate = (Date) endDateTv.getTag();
+        LocalDate endDate = (LocalDate) endDateTv.getTag();
 
         // repeat mode.
         int repeatType = (int) repeatTv.getTag();
@@ -474,22 +499,31 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         }
 
         mSelectedLocation.setPlaceName(locationName);
-        // TODO:
-        // After location picker has been implemented, check if this works in both cases?
-        // When picking a location from the saved places, we won't create a new location
-        // but instead update the old one. So, if we insert a new location with the same
-        // id, will it cause a conflict or update the old one.
-        long locationId = mTaskRepository.saveLocation(mSelectedLocation);
+        long locationId;
+        if (mSelectedLocation.getId() != 0) {
+            // Location was selected from saved places.
+            // auto-increment numbering starts from 1.
+            // We can also set place picker to return location with id = -1.
+            locationId = mSelectedLocation.getId();
+            // Since this location is already picked up from the database, we just need
+            // to update the location use count.
+            mSelectedLocation.setUseCount(mSelectedLocation.getUseCount() + 1);
+            mTaskRepository.updateLocation(mSelectedLocation);
+        } else {
+            // TODO: Check if place with same name already exists to improve UX.
+            // Doing this when place picker gave the location. i.e. new location with use_count = 1.
+            locationId = mTaskRepository.saveLocation(mSelectedLocation);
+        }
 
         TaskModel task = new TaskModel.Builder(this, taskName, locationId)
                 .setReminderRange(reminderRange)
                 .setIsAlarmSet(isAlarmEnabled ? 1 : 0)
-                .setImageUri(imageUri)
+                .setImageUri(imagePath)
                 .setNote(note)
                 .setStartTime(startTime)
                 .setEndTime(endTime)
-                .setStartDate(LocalDate.fromDateFields(startDate))
-                .setEndDate(LocalDate.fromDateFields(endDate))
+                .setStartDate(startDate)
+                .setEndDate(endDate)
                 .setRepeatType(repeatType)
                 .build();
 
@@ -501,6 +535,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             task.setId(taskBeingEdited.getId());
             mTaskRepository.updateTask(task);
         }
+        finish();
     }
 
     /**
@@ -541,7 +576,6 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_save) {
             saveTask();
-            finish();
         }
         return super.onOptionsItemSelected(item);
     }

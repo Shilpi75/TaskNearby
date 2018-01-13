@@ -166,16 +166,16 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="?selectableItemBackground"
         android:clickable="true"
-        android:focusableInTouchMode="false"
         android:focusable="false"
-        android:layout_marginTop="8dp"
+        android:focusableInTouchMode="false"
         android:text="@string/alarm_action_set_as_notification"
         app:layout_constraintBottom_toTopOf="@+id/button_snooze"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/text_repeat"
+        app:layout_constraintTop_toBottomOf="@+id/button_show_map"
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
@@ -197,6 +197,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/button_show_map"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/button_show_map"
-        app:srcCompat="@drawable/ic_check_grey_24dp" />  <!-- TODO: change it -->
+        app:srcCompat="@drawable/ic_map_grey_700_24dp" />  <!-- TODO: change it -->
 
 </android.support.constraint.ConstraintLayout>

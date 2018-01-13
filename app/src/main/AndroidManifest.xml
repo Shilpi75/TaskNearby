@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <!-- Required for getting image -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -34,9 +34,8 @@
             android:label="@string/title_add_new_task"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <!-- adjustResize will pan the view up when keyboard opens up
-        but it is causing constraint layout to elongate. Dunno why! Hence, using this.-->
+            android:windowSoftInputMode="adjustResize" />
+        <!-- adjustResize will pan the view up when keyboard opens up. -->
 
         <activity
             android:name=".SettingsActivity"
@@ -49,7 +48,6 @@
             android:label="Task Detail"
             android:parentActivityName=".MainActivity"
               android:theme="@style/AppTheme.NoActionBar" />
-
 
         <activity
             android:name=".AlarmActivity"
@@ -71,9 +69,13 @@
             android:theme="@style/AppTheme" />
 
         <activity
+            android:name=".ShowImageActivity"
+            android:label="Task Image" />
+
+        <activity
             android:name=".AboutActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
 
         <service
             android:name=".services.ActivityDetectionService"
@@ -89,4 +91,5 @@
             android:value="@string/places_api_key" />
 
     </application>
+
 </manifest>

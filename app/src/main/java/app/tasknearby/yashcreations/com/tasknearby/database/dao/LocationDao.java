@@ -28,7 +28,11 @@ public interface LocationDao {
     @Delete
     void deleteLocation(LocationModel locationModel);
 
-    @Query("SELECT * FROM locations WHERE is_hidden = 0")
+    /**
+     * Returns all active(not hidden) locations sorted by use_count in decreasing order, the rows
+     * having equal use counts are arranged alphabetically.
+     */
+    @Query("SELECT * FROM locations WHERE is_hidden = 0 ORDER BY use_count DESC, place_name ASC")
     List<LocationModel> getAllLocations();
 
     @Query("SELECT * FROM locations WHERE id = :locationId")
