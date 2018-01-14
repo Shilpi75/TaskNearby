@@ -17,10 +17,10 @@ public class DbUpdatesSimulator extends Thread {
 
     private static final String TAG = DbUpdatesSimulator.class.getSimpleName();
 
-    private static final int TIME_BEFORE_STARTING_FIRST_PROCESSING = 5 * 1000;
+    private static final int TIME_BEFORE_STARTING_FIRST_PROCESSING = 3 * 1000;
     private static final int PROCESSING_TIME_PER_TASK_MILLIS = 1;
     private static final int LOCATION_UPDATE_INTERVAL = 2000;
-    private static final int NUMBER_OF_TASKS = 100;
+    private static final int NUMBER_OF_TASKS = 500;
     private static final int NUMBER_OF_LOCATION_UPDATES = 500;
 
     private Context mAppContext;

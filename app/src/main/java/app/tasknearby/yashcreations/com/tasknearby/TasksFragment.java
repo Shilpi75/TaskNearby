@@ -1,8 +1,6 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.arch.lifecycle.LiveData;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +26,7 @@ public class TasksFragment extends Fragment {
     private static final String TAG = TasksFragment.class.getSimpleName();
 
     private TaskRepository mTaskRepository;
+    private TaskAdapter mTaskAdapter;
 
     @Nullable
     @Override
@@ -38,8 +37,8 @@ public class TasksFragment extends Fragment {
         RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_tasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         // Set adapter to recycler view.
-        TaskAdapter taskAdapter = new TaskAdapter(getActivity());
-        recyclerView.setAdapter(taskAdapter);
+        mTaskAdapter = new TaskAdapter(getActivity());
+        recyclerView.setAdapter(mTaskAdapter);
 
         mTaskRepository = new TaskRepository(getActivity().getApplicationContext());
         // Fetch the live data object.
@@ -49,33 +48,30 @@ public class TasksFragment extends Fragment {
             if (taskModels == null) {
                 return;
             }
-//            TODO:
-//            When we get the liveData object, we can process it on MainTHread as well as by using
-//            an AsyncTask. Choose either one on the basis of performance.
-
-            // Use Async Task
-            new TaskListProcessor(getActivity().getApplicationContext(), taskAdapter,
-                    mTaskRepository).execute(taskModels);
-
-            // Use MainThread.
-/*
-            List<TaskStateWrapper> stateWrappedTasks = TaskStateUtil.getTasksStateListWrapper(
-                    getActivity(), taskModels);
-            // Add location to the tasks.
-            addLocation(stateWrappedTasks);
-            // Add to adapter and notify.
-            taskAdapter.setData(stateWrappedTasks);
-            taskAdapter.notifyDataSetChanged();
-            // Set the no task view.
-            setNoTasksView(taskAdapter.getItemCount());
-*/
+            processTaskModels(taskModels);
         });
 
-        // For demo.
-//        new DbUpdatesSimulator(getActivity().getApplicationContext(), mTaskRepository).start();
-
+        // For demo. TODO: Remove.
+        // new DbUpdatesSimulator(getActivity().getApplicationContext(), mTaskRepository).start();
         return rootView;
+    }
 
+    /**
+     * Does the following things:
+     * 1. Assigns state to all the tasks.
+     * 2. Gets the locations for all the tasks. (Ideally this should be done on WorkerThread)
+     * 3. Notifies the UI that data has changed.
+     */
+    private void processTaskModels(@NonNull List<TaskModel> taskModels) {
+        List<TaskStateWrapper> stateWrappedTasks = TaskStateUtil.getTasksStateListWrapper(
+                getActivity(), taskModels);
+        // Add location to the tasks.
+        addLocation(stateWrappedTasks);
+        // Add to adapter and notify.
+        mTaskAdapter.setData(stateWrappedTasks);
+        mTaskAdapter.notifyDataSetChanged();
+        // Set the no task view.
+        setNoTasksView(mTaskAdapter.getItemCount());
     }
 
     /**
@@ -95,57 +91,12 @@ public class TasksFragment extends Fragment {
      * @param itemCount the number of tasks present in the database.
      */
     private void setNoTasksView(int itemCount) {
-        if (itemCount == 0) {
-            getActivity().findViewById(R.id.no_task_view).setVisibility(View.VISIBLE);
-        } else {
-            getActivity().findViewById(R.id.no_task_view).setVisibility(View.GONE);
-        }
-    }
-
-    private static class TaskListProcessor extends AsyncTask<List<TaskModel>, Void,
-            List<TaskStateWrapper>> {
-        // TODO: After testing change this to WeakReference to not leak memory.
-        private Context mContext;
-
-        private TaskAdapter taskAdapter;
-        private TaskRepository taskRepository;
-
-        public TaskListProcessor(Context appContext, TaskAdapter taskAdapter, TaskRepository
-                taskRepository) {
-            mContext = appContext.getApplicationContext();
-            this.taskAdapter = taskAdapter;
-            this.taskRepository = taskRepository;
-        }
-
-        @Override
-        protected List<TaskStateWrapper> doInBackground(List<TaskModel>[] lists) {
-            List<TaskModel> taskModels = lists[0];
-            List<TaskStateWrapper> stateWrappedTasks = TaskStateUtil.getTasksStateListWrapper(
-                    mContext.getApplicationContext(), taskModels);
-            // Add location to the tasks.
-            addLocation(stateWrappedTasks);
-            return stateWrappedTasks;
-        }
-
-        /**
-         * Assigns the locations to the list of TaskStateWrapper objects.
-         */
-        private void addLocation(List<TaskStateWrapper> stateWrappedTasks) {
-            long locationId;
-            for (TaskStateWrapper wrapper : stateWrappedTasks) {
-                locationId = wrapper.getTask().getLocationId();
-                wrapper.setLocationName(taskRepository.getLocationById(locationId).getPlaceName());
+        if (getActivity() != null) {
+            if (itemCount == 0) {
+                getActivity().findViewById(R.id.no_task_view).setVisibility(View.VISIBLE);
+            } else {
+                getActivity().findViewById(R.id.no_task_view).setVisibility(View.GONE);
             }
-        }
-
-        @Override
-        protected void onPostExecute(List<TaskStateWrapper> taskStateWrappers) {
-            super.onPostExecute(taskStateWrappers);
-            // Add to adapter and notify.
-            taskAdapter.setData(taskStateWrappers);
-            taskAdapter.notifyDataSetChanged();
-            // Set the no task view.
-//            setNoTasksView(taskAdapter.getItemCount());
         }
     }
 }
