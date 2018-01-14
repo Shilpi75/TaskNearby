@@ -241,7 +241,7 @@ public class FusedLocationService extends Service {
                 new Notification.Builder(this)
                         .setContentTitle("task nearby")
                         .setContentText("task nearby")
-                        .setSmallIcon(R.drawable.ic_launcher_background)
+                        .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentIntent(pendingIntent)
                         .build();
 
