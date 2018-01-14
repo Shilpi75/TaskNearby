@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -23,6 +24,15 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
 
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
@@ -39,12 +49,27 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_CODE_PERMISSIONS = 123;
 
+    /**
+     * Constant used in the location settings dialog.
+     */
+    private static final int REQUEST_CHECK_SETTINGS = 1000;
+
+    private SettingsClient mSettingsClient;
+
+    /**
+     * Stores the types of location services the client is interested in using. Used for checking
+     * settings to determine if the device has optimal location settings.
+     */
+    private LocationSettingsRequest mLocationSettingsRequest;
+
     private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        // Device's location settings.
+        mSettingsClient = LocationServices.getSettingsClient(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Initialize SharedPreferences.
@@ -79,6 +104,10 @@ public class MainActivity extends AppCompatActivity
         appSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
                 onAppStatusChanged(isChecked));
         appSwitch.setChecked(isAppEnabled); // This will also trigger the onClickListener.
+        // If app is enabled, check for device's location settings.
+        if (isAppEnabled) {
+            checkSystemSettings();
+        }
     }
 
     private void onAppStatusChanged(boolean status) {
@@ -118,7 +147,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted, continue app.
@@ -257,4 +286,43 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
+    /**
+     * Checks for required location settings according to setting's power saver preference.
+     */
+    public void checkSystemSettings() {
+        buildLocationsSettingsRequest();
+        mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
+                .addOnFailureListener(e -> {
+                    int statusCode = ((ApiException) e).getStatusCode();
+                    switch (statusCode) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            Log.i(TAG, "Location settings are not satisfied. Attempting to " +
+                                    "upgrade location settings ");
+                            try {
+                                ResolvableApiException rae = (ResolvableApiException) e;
+                                rae.startResolutionForResult(MainActivity.this,
+                                        REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException sie) {
+                                Log.i(TAG, "PendingIntent unable to execute request.");
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            String errorMessage = "Location settings are inadequate, and " +
+                                    "cannot be fixed here. Fix in Settings.";
+                            Log.e(TAG, errorMessage);
+                            Toast.makeText(MainActivity.this, errorMessage, Toast
+                                    .LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    public void buildLocationsSettingsRequest() {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        LocationRequest locationRequest = FusedLocationService.createLocationRequest(this,
+                FusedLocationService.DEFAULT_LOCATION_UPDATE_INTERVAL);
+        builder.addLocationRequest(locationRequest);
+        mLocationSettingsRequest = builder.build();
+    }
+
 }

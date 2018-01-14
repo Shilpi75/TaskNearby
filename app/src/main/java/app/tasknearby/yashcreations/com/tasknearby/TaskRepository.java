@@ -128,4 +128,11 @@ public class TaskRepository {
         return mDatabase.taskDao().getAllTasksWithUpdates();
     }
 
+    /**
+     * Batch update.
+     */
+    public void updateTasks(List<TaskModel> tasks) {
+        mDatabase.taskDao().updateTasks(tasks);
+    }
+
 }

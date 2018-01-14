@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 
 import org.joda.time.LocalTime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
@@ -30,7 +32,7 @@ public class LocationResultCallback extends LocationCallback {
     private Context mContext;
     private TaskRepository mTaskRepository;
 
-    public LocationResultCallback(Context context) {
+    LocationResultCallback(Context context) {
         mContext = context;
         mTaskRepository = new TaskRepository(context);
     }
@@ -38,78 +40,97 @@ public class LocationResultCallback extends LocationCallback {
     @Override
     public void onLocationResult(LocationResult locationResult) {
         super.onLocationResult(locationResult);
+        // Performing all operations on a different thread.
+        LocationCallbackThread callbackThread = new LocationCallbackThread(locationResult);
+        new Thread(callbackThread).start();
+    }
 
-        // Get current time.
-        LocalTime currentTime = new LocalTime();
 
-        // Get the current location.
-        Location currentLocation = locationResult.getLastLocation();
+    private class LocationCallbackThread implements Runnable {
 
-        // Get the snooze time from settings.
-        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences
-                (mContext);
-        long snoozeTime = Long.parseLong(defaultPref.getString(mContext.getString((R.string
-                .pref_snooze_time_key)), mContext.getString(R.string.pref_snooze_time_default)));
+        private LocationResult mLocationResult;
 
-        // Get all the tasks not marked done and active for today.
-        List<TaskModel> tasks = mTaskRepository.getNotDoneTasksForToday();
+        LocationCallbackThread(LocationResult locationResult) {
+            mLocationResult = locationResult;
+        }
 
-        // Check for each Task:
-        // 1. If it is active in the current time
-        // 2. Calculate distance form task's location.
-        // 3. Check if last distance is less than the reminder range.
-        // 4. Check for snoozed or not. Proceed accordingly.
-        // 5. Update the task.
-        for (TaskModel task : tasks) {
+        @Override
+        public void run() {
+            // Get current time.
+            LocalTime currentTime = new LocalTime();
 
-            // Check if active in current time. If not, continue.
-            if (!AppUtils.isTaskActiveAtTime(task, currentTime))
-                continue;
+            // Get the current location.
+            Location currentLocation = mLocationResult.getLastLocation();
 
-            // Get the distance from task's location.
-            float lastDistance = getDistance(currentLocation, task);
-            // Set the last distance.
-            task.setLastDistance(lastDistance);
+            // A list of tasks to be updated.
+            List<TaskModel> tasksToUpdate = new ArrayList<>();
 
-            if (lastDistance <= task.getReminderRange()) {
+            // Get the snooze time from settings.
+            SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences
+                    (mContext);
+            long snoozeTime = Long.parseLong(defaultPref.getString(mContext.getString((R.string
+                    .pref_snooze_time_key)), mContext.getString(R.string
+                    .pref_snooze_time_default)));
 
-                long lastSnoozedTime = task.getSnoozedAt();
+            // Get all the tasks not marked done and active for today.
+            List<TaskModel> tasks = mTaskRepository.getNotDoneTasksForToday();
 
-                // When to notify/alarm the user: If task is not snoozed yet OR when snoozed task
-                // is eligible to ring again.
-                // Check is it a snoozed task.
-                boolean isSnoozedTask = AppUtils.isSnoozed(lastSnoozedTime);
+            // Check for each Task:
+            // 1. If it is active in the current time
+            // 2. Calculate distance form task's location.
+            // 3. Check if last distance is less than the reminder range.
+            // 4. Check for snoozed or not. Proceed accordingly.
+            // 5. Update the task.
+            for (TaskModel task : tasks) {
 
-                if (!isSnoozedTask || AppUtils.isSnoozedTaskEligible(lastSnoozedTime, snoozeTime)) {
-                    // Check if alarm is allowed to ring.
-                    if (task.getIsAlarmSet() == 1) {
-                        // TODO: Ring Alarm.
+                // Check if active in current time. If not, continue.
+                if (!AppUtils.isTaskActiveAtTime(task, currentTime))
+                    continue;
 
-                    } else {
-                        // TODO: No alarm, only notification.
+                // Get the distance from task's location.
+                float lastDistance = getDistance(currentLocation, task);
+                // Set the last distance.
+                task.setLastDistance(lastDistance);
 
+                if (lastDistance <= task.getReminderRange()) {
+
+                    long lastSnoozedTime = task.getSnoozedAt();
+
+                    // When to notify/alarm the user: If task is not snoozed yet OR when snoozed
+                    // task
+                    // is eligible to ring again.
+                    // Check is it a snoozed task.
+                    boolean isSnoozedTask = AppUtils.isSnoozed(lastSnoozedTime);
+
+                    if (!isSnoozedTask || AppUtils.isSnoozedTaskEligible(lastSnoozedTime,
+                            snoozeTime)) {
+                        // Check if alarm is allowed to ring.
+                        if (task.getIsAlarmSet() == 1) {
+                            // TODO: Ring Alarm.
+                        } else {
+                            // TODO: No alarm, only notification.
+                        }
                     }
                 }
+                // Add this task to the list of tasks to be updated.
+                tasksToUpdate.add(task);
             }
 
-            // Update task to update last distance.
-            mTaskRepository.updateTask(task);
+            // Batch update tasks.
+            mTaskRepository.updateTasks(tasksToUpdate);
         }
-    }
 
-    /**
-     * Returns the distance of given Location from the task location.
-     *
-     * @param currentLocation
-     * @param task
-     * @return
-     */
-    float getDistance(Location currentLocation, TaskModel task) {
-        LocationModel location = mTaskRepository.getLocationById(task.getLocationId());
-        Location taskLocation = new Location(location.getPlaceName());
-        taskLocation.setLatitude(location.getLatitude());
-        taskLocation.setLongitude(location.getLongitude());
-        return currentLocation.distanceTo(taskLocation);
+        /**
+         * Returns the distance of given Location from the task location.
+         */
+        private float getDistance(Location currentLocation, TaskModel task) {
+            LocationModel location = mTaskRepository.getLocationById(task.getLocationId());
+            Location taskLocation = new Location(location.getPlaceName());
+            taskLocation.setLatitude(location.getLatitude());
+            taskLocation.setLongitude(location.getLongitude());
+            return currentLocation.distanceTo(taskLocation);
+        }
+
     }
-};
+}
 

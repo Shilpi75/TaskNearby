@@ -81,7 +81,7 @@ public class FusedLocationService extends Service {
 
         // Creating LocationCallback, LocationRequest and LocationSettingsRequest objects.
         createLocationCallback();
-        createLocationRequest(DEFAULT_LOCATION_UPDATE_INTERVAL);
+        mLocationRequest = createLocationRequest(this, DEFAULT_LOCATION_UPDATE_INTERVAL);
 
         // Set up activity detection receiver.
         mActivityDetectionReceiver = new ActivityDetectionReceiver();
@@ -131,11 +131,12 @@ public class FusedLocationService extends Service {
     /**
      * Creates location request to be used by fused location client.
      */
-    public void createLocationRequest(long updateInterval) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(updateInterval);
-        mLocationRequest.setFastestInterval(FASTEST_LOCATION_UPDATE_INTERVAL);
-        setLocationRequestPriority(mLocationRequest);
+    public static LocationRequest createLocationRequest(Context context, long updateInterval) {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(updateInterval);
+        locationRequest.setFastestInterval(FASTEST_LOCATION_UPDATE_INTERVAL);
+        locationRequest = setLocationRequestPriority(context, locationRequest);
+        return locationRequest;
     }
 
     /**
@@ -156,6 +157,7 @@ public class FusedLocationService extends Service {
             Log.e(TAG, "Missing permissions");
             return;
         }
+
         Task<Void> task = mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                 mLocationCallback, Looper.myLooper());
 
@@ -220,7 +222,7 @@ public class FusedLocationService extends Service {
     public void restartLocationUpdates(long updateInterval) {
         if (mLocationRequest != null && mLocationRequest.getInterval() != updateInterval) {
             stopLocationUpdates();
-            createLocationRequest(updateInterval);
+            createLocationRequest(this, updateInterval);
             startLocationUpdates();
         }
     }
@@ -256,16 +258,24 @@ public class FusedLocationService extends Service {
     /**
      * Sets the priority for location updates based on power saving mode setting.
      */
-    public void setLocationRequestPriority(LocationRequest locationRequest) {
-        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean powerSaverMode = defaultPref.getBoolean(getString(R.string.pref_power_saver_key),
+    public static LocationRequest setLocationRequestPriority(Context context, LocationRequest
+            locationRequest) {
+        if (locationRequest == null) {
+            Log.e(TAG, "Location Request null while setting priority");
+            return null;
+        }
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean powerSaverMode = defaultPref.getBoolean(context.getString(R.string
+                        .pref_power_saver_key),
                 false);
         if (powerSaverMode) {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         } else {
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         }
+        return locationRequest;
     }
+
 
     /**
      * Receives the broadcasted intent by {@link ActivityDetectionService}.

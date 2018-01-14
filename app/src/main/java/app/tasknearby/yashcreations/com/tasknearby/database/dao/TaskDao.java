@@ -45,4 +45,7 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks")
     LiveData<List<TaskModel>> getAllTasksWithUpdates();
+
+    @Update
+    void updateTasks(List<TaskModel> tasks);
 }
