@@ -5,10 +5,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -76,6 +78,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private TextView startTimeTv, endTimeTv;
     private TextView startDateTv, endDateTv;
     private TextView repeatTv;
+    private TextView unitsTv;
     private ImageView coverImageView;
     private Switch alarmSwitch;
     private Switch anytimeSwitch;
@@ -211,6 +214,10 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         repeatTv = findViewById(R.id.text_repeat_selection);
         repeatTv.setTag(DbConstants.NO_REPEAT);
         repeatTv.setOnClickListener(this);
+
+        // Units text view.
+        unitsTv = findViewById(R.id.text_units);
+        setUnitsText();
     }
 
     /**
@@ -578,5 +585,19 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             saveTask();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Sets proper units according to user's settings.
+     */
+    private void setUnitsText() {
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String unitsPref = defaultPref.getString(getString(R.string.pref_unit_key), getString(R
+                .string.pref_unit_default));
+        if (unitsPref.equals(getString(R.string.pref_unit_metric))) {
+            unitsTv.setText(getString(R.string.unit_metres));
+        } else {
+            unitsTv.setText(getString(R.string.unit_yards));
+        }
     }
 }

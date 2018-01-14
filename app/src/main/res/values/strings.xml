@@ -8,7 +8,9 @@
     <string name="title_about">About</string>
     <string name="title_task_detail">Task Details</string>
 
+    <string name = "units">units</string>
     <string name="unit_metres">metres</string>
+    <string name="unit_yards">yards</string>
 
     <!--These are displayed in TaskCreatorActivity. -->
     <string name="creator_task_name_hint">Remind me about</string>
@@ -53,7 +55,7 @@
     <string name="detail_time_format">%s to %s</string>
     <string name="detail_time_anytime">Anytime during the day</string>
     <string name="detail_date_format">%s  to  %s</string>
-    <string name="detail_date_forever">Forever</string>
+    <string name="detail_date_no_deadline">No deadline</string>
     <string name="detail_date_today">Today</string>
     <string name="detail_format_reminder_range">Within %s</string>
     <string name="detail_button_mark_done">Mark Done</string>

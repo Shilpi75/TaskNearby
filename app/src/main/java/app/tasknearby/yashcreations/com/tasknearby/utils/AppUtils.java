@@ -47,7 +47,7 @@ public final class AppUtils {
      */
     public static String getReadableDate(@NonNull Context context, @Nullable Date date) {
         if (date == null) {
-            return context.getString(R.string.detail_date_forever);
+            return context.getString(R.string.detail_date_no_deadline);
         } else if (DateTimeComparator.getDateOnlyInstance().compare(date, new Date()) == 0) {
             return context.getString(R.string.detail_date_today);
         } else {
@@ -58,7 +58,7 @@ public final class AppUtils {
 
     public static String getReadableLocalDate(Context context, LocalDate date) {
         if (date == null) {
-            return context.getString(R.string.detail_date_forever);
+            return context.getString(R.string.detail_date_no_deadline);
         } else if(date.compareTo(new LocalDate()) == 0){
             return context.getString(R.string.detail_date_today);
         }else{

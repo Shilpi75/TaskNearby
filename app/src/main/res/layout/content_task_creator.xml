@@ -119,12 +119,12 @@
 
         <ImageView
             android:id="@+id/icon_range"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             app:layout_constraintBottom_toBottomOf="@+id/text_reminder_range"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_16dp"
             app:layout_constraintTop_toTopOf="@+id/text_reminder_range"
-            app:srcCompat="@drawable/ic_range_grey_700_24dp" />
+            app:srcCompat="@drawable/ic_grey_ruler" />
 
         <TextView
             android:id="@+id/text_reminder_range"
@@ -147,18 +147,18 @@
             android:ems="10"
             android:gravity="end"
             android:hint="@string/creator_reminder_range_default"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:text="@string/creator_reminder_range_default"
             app:layout_constraintBaseline_toBaselineOf="@+id/text_reminder_range"
             app:layout_constraintStart_toEndOf="@+id/text_reminder_range" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/text_units"
             style="@style/taskCreatorItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/unit_metres"
+            android:text="@string/units"
             app:layout_constraintBaseline_toBaselineOf="@+id/edit_text_reminder_range"
             app:layout_constraintStart_toEndOf="@+id/edit_text_reminder_range" />
 
