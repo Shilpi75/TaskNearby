@@ -269,7 +269,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * checks and requests if required permissions are not available.
      */
     private void addTaskImage() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
                     .READ_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);

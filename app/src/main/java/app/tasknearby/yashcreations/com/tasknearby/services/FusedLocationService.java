@@ -88,6 +88,13 @@ public class FusedLocationService extends Service {
         LocalBroadcastManager.getInstance(this).
                 registerReceiver(mActivityDetectionReceiver,
                         new IntentFilter(ServiceConstants.ACTION_DETECTED_ACTIVITIES));
+
+        // Moved here from onStartCommand so that if the startService function is called on an
+        // already started service, it'll just call onStartCommandMethod and not trigger any
+        // listeners.
+        startLocationUpdates();
+        startActivityDetection();
+        startServiceInForeground();
     }
 
     /**
@@ -96,9 +103,6 @@ public class FusedLocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        startLocationUpdates();
-        startActivityDetection();
-        startServiceInForeground();
         return START_NOT_STICKY;
     }
 
