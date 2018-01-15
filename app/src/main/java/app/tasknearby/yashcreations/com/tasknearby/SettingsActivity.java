@@ -18,8 +18,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
+import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_alarm_tone_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_distance_range_key;
@@ -35,7 +39,7 @@ import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_voice_al
  * @author shilpi
  */
 public class SettingsActivity extends AppCompatActivity {
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +70,10 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragment implements Preference
             .OnPreferenceChangeListener {
 
-        ListPreference mUnitPreference, mSnoozePreference, mVibratePreference;
-        RingtonePreference mAlarmTonePreference;
-        EditTextPreference mDistancePreference;
-        SwitchPreference mVoiceAlarmPreference, mPowerSaverPreference;
+        private ListPreference mUnitPreference, mSnoozePreference, mVibratePreference;
+        private RingtonePreference mAlarmTonePreference;
+        private EditTextPreference mDistancePreference;
+        private SwitchPreference mVoiceAlarmPreference, mPowerSaverPreference;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,9 +149,11 @@ public class SettingsActivity extends AppCompatActivity {
                     getActivity().stopService(serviceIntent);
 
                     // Check if app is enabled.
-                    SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    String appStatus = defaultPref.getString(getString(R.string.pref_status_key), getString(R.string.pref_status_default));
-                    if(appStatus.equals(getString(R.string.pref_status_enabled))){
+                    SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences
+                            (getActivity());
+                    String appStatus = defaultPref.getString(getString(R.string.pref_status_key),
+                            getString(R.string.pref_status_default));
+                    if (appStatus.equals(getString(R.string.pref_status_enabled))) {
                         // Start the service again.
                         getActivity().startService(serviceIntent);
                     }

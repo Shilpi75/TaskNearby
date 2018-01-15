@@ -54,7 +54,7 @@
     <string name="detail_alarm_off">off</string>
     <string name="detail_time_format">%s to %s</string>
     <string name="detail_time_anytime">Anytime during the day</string>
-    <string name="detail_date_format">%s  to  %s</string>
+    <string name="detail_date_format">%s  -  %s</string>
     <string name="detail_date_no_deadline">No deadline</string>
     <string name="detail_date_today">Today</string>
     <string name="detail_format_reminder_range">Within %s</string>

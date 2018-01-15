@@ -33,9 +33,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
  * Shows the list of tasks segregated into categories when the app loads. This activity also
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity
 
     private SettingsClient mSettingsClient;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     /**
      * Stores the types of location services the client is interested in using. Used for checking
      * settings to determine if the device has optimal location settings.
@@ -70,6 +74,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main2);
         // Device's location settings.
         mSettingsClient = LocationServices.getSettingsClient(this);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        logAnalytics();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Initialize SharedPreferences.
@@ -106,7 +114,7 @@ public class MainActivity extends AppCompatActivity
         appSwitch.setChecked(isAppEnabled); // This will also trigger the onClickListener.
         // If app is enabled, check for device's location settings.
         if (isAppEnabled) {
-            checkSystemSettings();
+            checkLocationSettings();
         }
     }
 
@@ -116,6 +124,7 @@ public class MainActivity extends AppCompatActivity
             // Put enabled string in SharedPreferences.
             editor.putString(getString(R.string.pref_status_key),
                     getString(R.string.pref_status_enabled));
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_ENABLED, new Bundle());
             // TODO: The startService method calls the onStartCommand method and doesn't start a
             // new instance of the service. So, is there any check needed before doing this?
             // Or should we keep an Application class which takes care of isServiceRunning etc.
@@ -124,6 +133,7 @@ public class MainActivity extends AppCompatActivity
             // Put disabled string in shared preferences.
             editor.putString(getString(R.string.pref_status_key),
                     getString(R.string.pref_status_disabled));
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_DISABLED, new Bundle());
             stopService(new Intent(this, FusedLocationService.class));
         }
         editor.apply();
@@ -290,7 +300,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Checks for required location settings according to setting's power saver preference.
      */
-    public void checkSystemSettings() {
+    public void checkLocationSettings() {
         buildLocationsSettingsRequest();
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnFailureListener(e -> {
@@ -323,6 +333,14 @@ public class MainActivity extends AppCompatActivity
                 FusedLocationService.DEFAULT_LOCATION_UPDATE_INTERVAL);
         builder.addLocationRequest(locationRequest);
         mLocationSettingsRequest = builder.build();
+    }
+
+    private void logAnalytics(){
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isPowerSaver = defaultPref.getBoolean(getString(R.string.pref_power_saver_key), false);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_POWER_SAVER_ON, isPowerSaver);
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_START, bundle);
     }
 
 }

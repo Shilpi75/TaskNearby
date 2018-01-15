@@ -33,6 +33,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.LocalDate;
@@ -45,6 +46,7 @@ import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
  * Creates a new task and also responsible for editing an old one. For editing, we need to use
@@ -83,6 +85,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private Switch alarmSwitch;
     private Switch anytimeSwitch;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     /**
      * Tells if the task present is being edited or a new one is being created.
      */
@@ -103,6 +107,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         setActionBar();
         // Find views and set click listeners.
         initializeViews();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mTaskRepository = new TaskRepository(getApplicationContext());
         // check if activity has been started for editing a task.
         if (getIntent().hasExtra(EXTRA_EDIT_MODE_TASK_ID)) {
@@ -537,6 +542,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         if (taskBeingEdited == null) {
             // add new task.
             mTaskRepository.saveTask(task);
+            logAnalytics(task);
         } else {
             // update task.
             task.setId(taskBeingEdited.getId());
@@ -599,5 +605,20 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         } else {
             unitsTv.setText(getString(R.string.unit_yards));
         }
+    }
+
+    /**
+     * Log task creation events.
+     */
+    private void logAnalytics(TaskModel task) {
+        Bundle bundle = new Bundle();
+        bundle.putString(AnalyticsConstants.ANALYTICS_PARAM_START_TIME, task.getStartTime()
+                .toString());
+        bundle.putString(AnalyticsConstants.ANALYTICS_PARAM_END_TIME, task.getEndTime().toString());
+        boolean isDeadlineSet = task.getEndDate() != null;
+        bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_DEADLINE_SET, isDeadlineSet);
+        boolean isNoteAdded = task.getNote() != null;
+        bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_NOTE_ADDED, isNoteAdded);
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_SAVE_NEW_TASK, bundle);
     }
 }

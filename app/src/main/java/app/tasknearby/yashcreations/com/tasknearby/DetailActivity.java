@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.LocalTime;
@@ -27,6 +28,7 @@ import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
+import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -46,6 +48,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private TaskModel mTask;
     private TaskRepository mTaskRepository;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +65,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
         mTask = mTaskRepository.getTaskWithId(taskId);
         setData(mTask);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     public static Intent getStartingIntent(Context context, long taskId,
@@ -115,6 +121,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.fab_directions:
                 showDirections();
+                mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_SHOW_MAP_FROM_DETAIL, new Bundle());
                 break;
         }
     }
