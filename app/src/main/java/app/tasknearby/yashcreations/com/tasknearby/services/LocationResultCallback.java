@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
@@ -19,6 +18,7 @@ import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 
 /**
  * Receives location result callbacks and check for tasks for which an action has to be taken.
@@ -27,30 +27,39 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
  */
 public class LocationResultCallback extends LocationCallback {
 
-    /* TODO: Check for date compare issue. */
-
     private Context mContext;
     private TaskRepository mTaskRepository;
+    private Location mLastLocation;
 
     LocationResultCallback(Context context) {
         mContext = context;
         mTaskRepository = new TaskRepository(context);
+        mLastLocation = null;
     }
 
     @Override
     public void onLocationResult(LocationResult locationResult) {
         super.onLocationResult(locationResult);
-        // Performing all operations on a different thread.
-        LocationCallbackThread callbackThread = new LocationCallbackThread(locationResult);
-        new Thread(callbackThread).start();
+        Location currentLocation = locationResult.getLastLocation();
+        if (mLastLocation == null || !isLocationSame(currentLocation, mLastLocation)) {
+            // Performing all operations on a different thread.
+            LocationCallbackRunnable callbackThread = new LocationCallbackRunnable(locationResult);
+            new Thread(callbackThread).start();
+            mLastLocation = locationResult.getLastLocation();
+        }
+    }
+
+    private boolean isLocationSame(Location locationA, Location locationB) {
+        return (locationA.getLongitude() == locationB.getLongitude() && locationA.getLatitude() ==
+                locationB.getLatitude());
     }
 
 
-    private class LocationCallbackThread implements Runnable {
+    private class LocationCallbackRunnable implements Runnable {
 
         private LocationResult mLocationResult;
 
-        LocationCallbackThread(LocationResult locationResult) {
+        LocationCallbackRunnable(LocationResult locationResult) {
             mLocationResult = locationResult;
         }
 
@@ -88,7 +97,8 @@ public class LocationResultCallback extends LocationCallback {
                     continue;
 
                 // Get the distance from task's location.
-                float lastDistance = getDistance(currentLocation, task);
+                LocationModel taskLocation = mTaskRepository.getLocationById(task.getLocationId());
+                float lastDistance = DistanceUtils.getDistance(currentLocation, taskLocation);
                 // Set the last distance.
                 task.setLastDistance(lastDistance);
 
@@ -120,16 +130,6 @@ public class LocationResultCallback extends LocationCallback {
             mTaskRepository.updateTasks(tasksToUpdate);
         }
 
-        /**
-         * Returns the distance of given Location from the task location.
-         */
-        private float getDistance(Location currentLocation, TaskModel task) {
-            LocationModel location = mTaskRepository.getLocationById(task.getLocationId());
-            Location taskLocation = new Location(location.getPlaceName());
-            taskLocation.setLatitude(location.getLatitude());
-            taskLocation.setLongitude(location.getLongitude());
-            return currentLocation.distanceTo(taskLocation);
-        }
 
     }
 }

@@ -59,9 +59,9 @@ public final class AppUtils {
     public static String getReadableLocalDate(Context context, LocalDate date) {
         if (date == null) {
             return context.getString(R.string.detail_date_no_deadline);
-        } else if(date.compareTo(new LocalDate()) == 0){
+        } else if (date.compareTo(new LocalDate()) == 0) {
             return context.getString(R.string.detail_date_today);
-        }else{
+        } else {
             return date.toString("EEE, d MMM YY");
         }
 
@@ -126,4 +126,5 @@ public final class AppUtils {
             context.startActivity(playStoreIntent);
         }
     }
+
 }

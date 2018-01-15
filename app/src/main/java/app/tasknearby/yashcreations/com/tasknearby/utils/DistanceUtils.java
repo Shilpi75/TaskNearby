@@ -2,9 +2,12 @@ package app.tasknearby.yashcreations.com.tasknearby.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.preference.PreferenceManager;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
+import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 
 /**
  * Lists all distance utility functions.
@@ -81,4 +84,15 @@ public class DistanceUtils {
     public static double yardsToMeters(double yards) {
         return yards * 0.9144;
     }
+
+    /**
+     * Returns the distance of given Location from the task location.
+     */
+    public static float getDistance(Location currentLocation, LocationModel locationModel) {
+        Location taskLocation = new Location(locationModel.getPlaceName());
+        taskLocation.setLatitude(locationModel.getLatitude());
+        taskLocation.setLongitude(locationModel.getLongitude());
+        return currentLocation.distanceTo(taskLocation);
+    }
+
 }

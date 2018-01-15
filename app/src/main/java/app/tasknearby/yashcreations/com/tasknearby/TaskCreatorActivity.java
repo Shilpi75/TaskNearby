@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -44,6 +46,7 @@ import java.util.Calendar;
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
+import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
@@ -548,6 +551,10 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             task.setId(taskBeingEdited.getId());
             mTaskRepository.updateTask(task);
         }
+        // Service is restarted to update tasks distance and accordingly trigger
+        // alarm/notification at that instant.
+        // TODO: This is the optimized way. Change this later.
+        restartService();
         finish();
     }
 
@@ -621,4 +628,15 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_NOTE_ADDED, isNoteAdded);
         mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_SAVE_NEW_TASK, bundle);
     }
+
+    /**
+     * Restarts service.
+     */
+    private void restartService() {
+        Intent serviceIntent = new Intent(this, FusedLocationService.class);
+        stopService(serviceIntent);
+        startService(serviceIntent);
+    }
+
+
 }

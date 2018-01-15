@@ -47,6 +47,7 @@
     <string name="creator_error_empty_location">Please pickup a location where you need to be reminded.</string>
     <string name="creator_error_image_permission">Permission is required for adding image.</string>
     <string name="creator_error_empty_range">Please enter a reminder range around your chosen location.</string>
+    <string name="creator_already_in_range">You are already within the selected range.</string>
 
     <!-- Used in Detail activity -->
     <string name="detail_alarm_format">Alarm is %s</string>
@@ -144,11 +145,11 @@
         <item>Snooze for 20 minutes.</item>
     </string-array>
     <string-array name="pref_snooze_time_values">
-        <item>60</item>
-        <item>180</item>
-        <item>300</item>
-        <item>600</item>
-        <item>1200</item>
+        <item>60000</item>
+        <item>180000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>1200000</item>
     </string-array>
     <string name="pref_snooze_time_default">600</string>
 
