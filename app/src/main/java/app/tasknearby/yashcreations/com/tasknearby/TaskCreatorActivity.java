@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -345,6 +347,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * Triggered when the user clicks on the Pick Place button.
      */
     private void onPlacePickerRequested() {
+        if (!isInternetConnected())
+            return;
         PlacePicker.IntentBuilder placePickerIntent = new PlacePicker.IntentBuilder();
         try {
             startActivityForResult(placePickerIntent.build(this),
@@ -638,5 +642,21 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         startService(serviceIntent);
     }
 
+    /**
+     * Checks for internet permission. If internet is not connected, it shows a snackbar and
+     * return false.
+     */
+    private boolean isInternetConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context
+                .CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() == null) {
+            // No internet connection present. Show snackbar.
+            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),getString(R.string.creator_no_internet_error),
+                    Snackbar.LENGTH_SHORT);
+            snackbar.show();
+            return false;
+        }
+        return true;
+    }
 
 }

@@ -48,6 +48,7 @@
     <string name="creator_error_image_permission">Permission is required for adding image.</string>
     <string name="creator_error_empty_range">Please enter a reminder range around your chosen location.</string>
     <string name="creator_already_in_range">You are already within the selected range.</string>
+    <string name="creator_no_internet_error">Place picker requires active internet connection.</string>
 
     <!-- Used in Detail activity -->
     <string name="detail_alarm_format">Alarm is %s</string>
