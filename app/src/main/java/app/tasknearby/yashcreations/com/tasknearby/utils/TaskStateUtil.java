@@ -86,7 +86,7 @@ public class TaskStateUtil {
         SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(context);
         long snoozeTime = Long.parseLong(defaultPref.getString(context.getString(R.string
                 .pref_snooze_time_key), context.getString(R.string.pref_snooze_time_default)));
-        if (task.getSnoozedAt() != -1 && task.getSnoozedAt() + snoozeTime < System
+        if (task.getSnoozedAt() != -1 && task.getSnoozedAt() + snoozeTime > System
                 .currentTimeMillis())
             return STATE_ACTIVE_SNOOZED;
 

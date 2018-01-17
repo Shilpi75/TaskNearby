@@ -46,4 +46,9 @@ public class AnalyticsConstants {
     public static final String ANALYTICS_APP_ENABLED = "app_enabled";
     public static final String ANALYTICS_APP_DISABLED = "app_disabled";
     public static final String ANALYTICS_PARAM_IS_POWER_SAVER_ON = "is_power_saver_on";
+
+    /**
+     * Show Image Activity
+     */
+    public static final String ANALYTICS_SHOW_TASK_IMAGE = "show_task_image";
 }

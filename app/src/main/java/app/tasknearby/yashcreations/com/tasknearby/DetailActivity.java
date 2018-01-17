@@ -70,7 +70,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public static Intent getStartingIntent(Context context, long taskId,
-            @TaskStateUtil.TaskState int state) {
+                                           @TaskStateUtil.TaskState int state) {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TASK_ID, taskId);
         intent.putExtra(EXTRA_TASK_STATE, state);
@@ -121,7 +121,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.fab_directions:
                 showDirections();
-                mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_SHOW_MAP_FROM_DETAIL, new Bundle());
+                mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_SHOW_MAP_FROM_DETAIL,
+                        new Bundle());
                 break;
         }
     }
@@ -312,14 +313,19 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      * @param task
      */
     private void resetTask(TaskModel task) {
+        // These are done so that correct state can be calculated.
         task.setIsDone(0);
+        long taskSoozedAt = task.getSnoozedAt();
+        task.setSnoozedAt(-1L);
+
         int state = TaskStateUtil.getTaskState(this, task);
+
         if (state == TaskStateUtil.STATE_EXPIRED) {
             task.setIsDone(1);
+            task.setSnoozedAt(taskSoozedAt);
             Toast.makeText(this, "This task has expired. You can edit the dates.", Toast
                     .LENGTH_SHORT).show();
         } else {
-            task.setSnoozedAt(-1L);
             task.setLastTriggered(null);
             Toast.makeText(this, "Task has been reset.", Toast.LENGTH_SHORT).show();
             setTaskState(state);

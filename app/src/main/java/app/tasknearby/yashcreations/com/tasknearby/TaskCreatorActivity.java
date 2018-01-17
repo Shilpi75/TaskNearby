@@ -33,8 +33,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -127,7 +125,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * This will be used to get the intent to start this activity when we need to edit the task.
      *
      * @param context context of the calling activity.
-     * @param taskId taskId of the task to be edited.
+     * @param taskId  taskId of the task to be edited.
      * @return intent that can be used in startActivity.
      */
     public static Intent getEditModeIntent(Context context, long taskId) {
@@ -316,7 +314,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         Calendar calendar = Calendar.getInstance();
         // what to do when date is set.
         DatePickerDialog.OnDateSetListener onDateSetListener = (view, year, month,
-                dayOfMonth) -> {
+                                                                dayOfMonth) -> {
             calendar.set(year, month, dayOfMonth);
             v.setTag(LocalDate.fromCalendarFields(calendar));
             v.setText(AppUtils.getReadableDate(this, calendar.getTime()));
@@ -331,7 +329,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_STORAGE_PERMISSION:
                 if (grantResults.length > 0
@@ -639,9 +637,15 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * Restarts service.
      */
     private void restartService() {
-        Intent serviceIntent = new Intent(this, FusedLocationService.class);
-        stopService(serviceIntent);
-        startService(serviceIntent);
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isAppEnabled = defaultPref.getString(getString(R.string.pref_status_key),
+                getString(R.string.pref_status_default)).equals(getString(R.string
+                .pref_status_enabled));
+        if (isAppEnabled) {
+            Intent serviceIntent = new Intent(this, FusedLocationService.class);
+            stopService(serviceIntent);
+            startService(serviceIntent);
+        }
     }
 
     /**
@@ -651,9 +655,10 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private boolean isInternetConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context
                 .CONNECTIVITY_SERVICE);
-        if (cm.getActiveNetworkInfo() == null) {
+        if (cm != null && cm.getActiveNetworkInfo() == null) {
             // No internet connection present. Show snackbar.
-            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),getString(R.string.creator_no_internet_error),
+            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), getString(R
+                            .string.creator_no_internet_error),
                     Snackbar.LENGTH_SHORT);
             snackbar.show();
             return false;

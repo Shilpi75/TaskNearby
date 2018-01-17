@@ -5,9 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
+
+import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
  * Displays an image on the screen.
@@ -22,10 +26,15 @@ public class ShowImageActivity extends AppCompatActivity {
     private static final String EXTRA_PATH_TO_IMAGE = "imageFilePath";
     private static final String EXTRA_TASK_NAME = "taskName";
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_image);
+        // Analytics
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_SHOW_TASK_IMAGE, new Bundle());
         // Get the extras.
         setActionBar();
         String imagePath = getIntent().getStringExtra(EXTRA_PATH_TO_IMAGE);
@@ -61,5 +70,14 @@ public class ShowImageActivity extends AppCompatActivity {
         Picasso.with(this)
                 .load("file://" + imagePath)
                 .into(imageView);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return true;
     }
 }
