@@ -9,6 +9,7 @@ import java.util.Date;
 
 import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
+import app.tasknearby.yashcreations.com.tasknearby.notification.NotificationHelper;
 
 /**
  * Contains actions performed commonly on tasks. Both AlarmActivity and Notifications will be
@@ -34,6 +35,7 @@ public final class TaskActionUtils {
 
     public static void setAsNotificationOnly(Context appContext, TaskModel task) {
         task.setIsAlarmSet(0);
+        new NotificationHelper(appContext).showReminderNotification(task);
         TaskRepository repository = new TaskRepository(appContext);
         repository.updateTask(task);
     }

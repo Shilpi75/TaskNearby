@@ -7,7 +7,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -76,10 +75,8 @@ public class NotificationHelper {
         int notificationId = (int) task.getId();
         // This will cause the notification to be shown only if it is not present. However, if we
         // want to beep constantly, remove this.
-        if (!isNotificationAlreadyShown(notificationId)) {
-            // Show the notification with an id = (int) taskId.
-            mNotificationManager.notify(notificationId, notification);
-        }
+        mNotificationManager.notify(notificationId, notification);
+
     }
 
     private Notification createReminderNotification(TaskModel task) {
@@ -92,11 +89,11 @@ public class NotificationHelper {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(true)
                 .setShowWhen(true)
+                .setOnlyAlertOnce(true)
                 .addAction(getMarkDoneAction(task))
                 .addAction(getSnoozeAction(task))
-                // The below 3 are deprecated in O. (Using notification channels for them.)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setVibrate(new long[]{100, 500, 200, 500})
+                // These are deprecated in O. (Using notification channels for them.)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(Notification.PRIORITY_HIGH);
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -160,15 +157,6 @@ public class NotificationHelper {
                 .build();
     }
 
-    // FIXME: Not working, always returning false.
-    private boolean isNotificationAlreadyShown(int notificationId) {
-        Intent intent = new Intent(mAppContext, DetailActivity.class);
-        // This won't create a new Pending Intent because of the flag. And if another such
-        // pending intent is not active, it means the notification has been removed.
-        PendingIntent pi = PendingIntent.getActivity(mAppContext, notificationId, intent,
-                PendingIntent.FLAG_NO_CREATE);
-        return pi != null;
-    }
 
     @TargetApi(Build.VERSION_CODES.O)
     private void createNotificationChannels() {

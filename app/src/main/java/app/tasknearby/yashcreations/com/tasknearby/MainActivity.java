@@ -304,9 +304,10 @@ public class MainActivity extends AppCompatActivity
         mLocationSettingsRequest = builder.build();
     }
 
-    private void logAnalytics(){
+    private void logAnalytics() {
         SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isPowerSaver = defaultPref.getBoolean(getString(R.string.pref_power_saver_key), false);
+        boolean isPowerSaver = defaultPref.getBoolean(getString(R.string.pref_power_saver_key),
+                false);
         Bundle bundle = new Bundle();
         bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_POWER_SAVER_ON, isPowerSaver);
         mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_START, bundle);
@@ -325,6 +326,7 @@ public class MainActivity extends AppCompatActivity
 
         public BootCompletedReceiver() {
         }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "onReceive: Received BOOT_COMPLETED.");
