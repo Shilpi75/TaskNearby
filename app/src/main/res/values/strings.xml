@@ -88,6 +88,8 @@
     <string name="dialog_permission_message">Location permission is necessary for this app to work, please grant this permission.</string>
     <string name="dialog_grant_permission_button">Grant Permissions</string>
 
+    <string name="msg_notif_foreground_service">Location reminders are on.</string>
+
     <!-- Preferences -->
     <!-- Unit-->
     <string name="pref_unit_key">units</string>

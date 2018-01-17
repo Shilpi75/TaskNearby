@@ -1,6 +1,7 @@
 package app.tasknearby.yashcreations.com.tasknearby.services;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
@@ -13,10 +14,12 @@ import org.joda.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.tasknearby.yashcreations.com.tasknearby.AlarmActivity;
 import app.tasknearby.yashcreations.com.tasknearby.R;
 import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
+import app.tasknearby.yashcreations.com.tasknearby.notification.NotificationHelper;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 
@@ -31,9 +34,12 @@ public class LocationResultCallback extends LocationCallback {
     private TaskRepository mTaskRepository;
     private Location mLastLocation;
 
+    private NotificationHelper mNotificationHelper;
+
     LocationResultCallback(Context context) {
         mContext = context;
         mTaskRepository = new TaskRepository(context);
+        mNotificationHelper = new NotificationHelper(mContext.getApplicationContext());
         mLastLocation = null;
     }
 
@@ -116,9 +122,11 @@ public class LocationResultCallback extends LocationCallback {
                             snoozeTime)) {
                         // Check if alarm is allowed to ring.
                         if (task.getIsAlarmSet() == 1) {
-                            // TODO: Ring Alarm.
+                            Intent alarmIntent = AlarmActivity.getStartingIntent(mContext,
+                                    task.getId());
+                            mContext.startActivity(alarmIntent);
                         } else {
-                            // TODO: No alarm, only notification.
+                            mNotificationHelper.showReminderNotification(task);
                         }
                     }
                 }

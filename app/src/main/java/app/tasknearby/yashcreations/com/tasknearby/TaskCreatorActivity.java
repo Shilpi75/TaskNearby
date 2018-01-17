@@ -127,7 +127,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * This will be used to get the intent to start this activity when we need to edit the task.
      *
      * @param context context of the calling activity.
-     * @param taskId  taskId of the task to be edited.
+     * @param taskId taskId of the task to be edited.
      * @return intent that can be used in startActivity.
      */
     public static Intent getEditModeIntent(Context context, long taskId) {
@@ -153,6 +153,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab_image:
+                mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_ADD_IMAGE, new Bundle());
                 addTaskImage();
                 break;
             case R.id.button_saved_places:
@@ -272,6 +273,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         if (task.getImageUri() != null) {
             coverImageView.setImageURI(Uri.parse(task.getImageUri()));
         }
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_EDIT_TASK, new Bundle());
     }
 
     /**
@@ -314,7 +316,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         Calendar calendar = Calendar.getInstance();
         // what to do when date is set.
         DatePickerDialog.OnDateSetListener onDateSetListener = (view, year, month,
-                                                                dayOfMonth) -> {
+                dayOfMonth) -> {
             calendar.set(year, month, dayOfMonth);
             v.setTag(LocalDate.fromCalendarFields(calendar));
             v.setText(AppUtils.getReadableDate(this, calendar.getTime()));
@@ -329,7 +331,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_STORAGE_PERMISSION:
                 if (grantResults.length > 0

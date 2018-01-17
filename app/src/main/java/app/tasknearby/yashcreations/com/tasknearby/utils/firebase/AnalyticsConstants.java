@@ -18,8 +18,9 @@ public class AnalyticsConstants {
     /**
      * Constants for notification alarm.
      */
+    public static final String ANALYTICS_NOTIFICATION_SHOWN = "notification_shown";
     public static final String ANALYTICS_NOTIFICATION_MARK_DONE = "notification_mark_done";
-    public static final String ANALYTICS_NOTIFICATION_SNOOZE = "notificaiton_snooze";
+    public static final String ANALYTICS_NOTIFICATION_SNOOZE = "notification_snooze";
 
     /**
      * Constants for navigation button from detail activity.
@@ -34,6 +35,9 @@ public class AnalyticsConstants {
     public static final String ANALYTICS_PARAM_END_TIME = "task_end_time";
     public static final String ANALYTICS_PARAM_IS_DEADLINE_SET = "is_deadline_set";
     public static final String ANALYTICS_PARAM_IS_NOTE_ADDED = "is_note_added";
+
+    public static final String ANALYTICS_EDIT_TASK = "task_edit";
+    public static final String ANALYTICS_ADD_IMAGE = "add_image_button";
 
     /**
      * Constants for app start.

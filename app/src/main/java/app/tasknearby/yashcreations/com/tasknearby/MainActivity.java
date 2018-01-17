@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         if (checkPermissions()) {
-            // TODO: Check accuracy and GPS status.
             // Check permissions will automatically request permissions if they're not present.
             startServiceIfAppEnabled();
         }
@@ -157,7 +156,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted, continue app.
@@ -268,36 +267,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Starts the service when device is rebooted.
-     * The applications are placed in a 'Stopped' state after install and AFTER Force stop TOO.
-     * When an application is in the stopped state, it won't receive any broadcasts, no matter what!
-     * Hence, when this app is killed by the user, it won't receive any boot completed broadcast.
-     * TODO(1): Check that swiping the application from recents force stops it only in Xiaomi
-     * devices or all devices?
-     * TODO (2) : Find a way to keep it running even after this kind of swiping from the recents.
-     */
-    public static class BootCompletedReceiver extends BroadcastReceiver {
-
-        public BootCompletedReceiver() {
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i(TAG, "onReceive: Received BOOT_COMPLETED.");
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            // Check if app is enabled or not.
-            boolean isAppEnabled = prefs.getString(context.getString(R.string.pref_status_key),
-                    context.getString(R.string.pref_status_default))
-                    .equals(context.getString(R.string.pref_status_enabled));
-            // Also check if location permissions are available or not.
-            if (isAppEnabled && ActivityCompat.checkSelfPermission(context, Manifest.permission
-                    .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                context.startService(new Intent(context, FusedLocationService.class));
-            }
-        }
-    }
-
-    /**
      * Checks for required location settings according to setting's power saver preference.
      */
     public void checkLocationSettings() {
@@ -343,4 +312,37 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_START, bundle);
     }
 
+    /**
+     * Starts the service when device is rebooted.
+     * The applications are placed in a 'Stopped' state after install and AFTER Force stop TOO.
+     * When an application is in the stopped state, it won't receive any broadcasts, no matter what!
+     * Hence, when this app is killed by the user, it won't receive any boot completed broadcast.
+     * TODO(1): Check that swiping the application from recents force stops it only in Xiaomi
+     * devices or all devices?
+     * TODO (2) : Find a way to keep it running even after this kind of swiping from the recents.
+     */
+    public static class BootCompletedReceiver extends BroadcastReceiver {
+
+        public BootCompletedReceiver() {
+        }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "onReceive: Received BOOT_COMPLETED.");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            // Check if app is enabled or not.
+            boolean isAppEnabled = prefs.getString(context.getString(R.string.pref_status_key),
+                    context.getString(R.string.pref_status_default))
+                    .equals(context.getString(R.string.pref_status_enabled));
+            // Also check if location permissions are available or not.
+            if (isAppEnabled && ActivityCompat.checkSelfPermission(context, Manifest.permission
+                    .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= 26) {
+                    context.startForegroundService(new Intent(context, FusedLocationService.class));
+                } else {
+                    context.startService(new Intent(context, FusedLocationService.class));
+                }
+            }
+        }
+
+    }
 }

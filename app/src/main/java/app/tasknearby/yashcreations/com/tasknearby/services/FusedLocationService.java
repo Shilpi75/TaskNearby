@@ -31,8 +31,8 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
-import app.tasknearby.yashcreations.com.tasknearby.MainActivity;
 import app.tasknearby.yashcreations.com.tasknearby.R;
+import app.tasknearby.yashcreations.com.tasknearby.notification.NotificationHelper;
 
 /**
  * Set location updates on based on detected activities.
@@ -231,20 +231,8 @@ public class FusedLocationService extends Service {
      * Starts service in foreground.
      */
     public void startServiceInForeground() {
-
-        // TODO: Change accordingly later.
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-        Notification notification =
-                new Notification.Builder(this)
-                        .setContentTitle("task nearby")
-                        .setContentText("task nearby")
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentIntent(pendingIntent)
-                        .build();
-
+        Notification notification = new NotificationHelper(this.getApplicationContext())
+                .getForegroundServiceNotification();
         startForeground(101, notification);
     }
 
