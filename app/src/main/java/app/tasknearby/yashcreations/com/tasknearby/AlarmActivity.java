@@ -2,8 +2,10 @@ package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -31,6 +33,7 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskActionUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.AlarmRinger;
 import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.AlarmVibrator;
+import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.voice.VoiceAlarmRinger;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
@@ -50,6 +53,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
     private AlarmVibrator mAlarmVibrator;
 
     private AlarmRinger mAlarmRinger;
+    private VoiceAlarmRinger mVoiceAlarmRinger;
 
     /**
      * For interacting with the database.
@@ -62,6 +66,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
     private TaskModel mTask;
     private LocationModel mTaskLocation;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private boolean isVoiceReminderEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +81,24 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
             Log.w(TAG, "No task id has been passed.");
             return;
         }
-        // Initialize the ringer and vibrator.
-        mAlarmVibrator = new AlarmVibrator(this);
-        mAlarmRinger = new AlarmRinger(this);
 
         // Fetch data.
         mTaskRepository = new TaskRepository(getApplicationContext());
         mTask = mTaskRepository.getTaskWithId(taskId);
         mTaskLocation = mTaskRepository.getLocationById(mTask.getLocationId());
+
+        // Check if voice reminders are enabled.
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        isVoiceReminderEnabled= defaultPref.getBoolean(getString(R.string
+                .pref_voice_alarm_key), false);
+        if (isVoiceReminderEnabled) {
+            mVoiceAlarmRinger = new VoiceAlarmRinger(this, mTask, mTaskLocation);
+        } else {
+            // Initialize the ringer and vibrator.
+            mAlarmVibrator = new AlarmVibrator(this);
+            mAlarmRinger = new AlarmRinger(this);
+        }
+
         setDataToUi();
         setMap();
         setClickListeners();
@@ -227,14 +242,22 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
     @Override
     protected void onStart() {
         super.onStart();
-        mAlarmVibrator.startVibrating();
-        mAlarmRinger.startRinging();
+        if (isVoiceReminderEnabled) {
+            mVoiceAlarmRinger.startSpeaking();
+        } else {
+            mAlarmVibrator.startVibrating();
+            mAlarmRinger.startRinging();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mAlarmVibrator.stopVibrationg();
-        mAlarmRinger.stopRinging();
+        if (isVoiceReminderEnabled) {
+            mVoiceAlarmRinger.stopSpeaking();
+        } else {
+            mAlarmVibrator.stopVibrationg();
+            mAlarmRinger.stopRinging();
+        }
     }
 }
