@@ -209,4 +209,6 @@
     <string name="pref_accuracy_balanced">balanced</string>
     <string name="pref_accuracy_high">high</string>
 
+    <string name="error_tts">Please check text to speech settings of your device.</string>
+
 </resources>

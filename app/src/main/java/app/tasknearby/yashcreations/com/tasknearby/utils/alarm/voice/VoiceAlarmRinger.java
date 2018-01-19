@@ -1,11 +1,14 @@
 package app.tasknearby.yashcreations.com.tasknearby.utils.alarm.voice;
 
+import android.app.Activity;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import java.util.Locale;
 
+import app.tasknearby.yashcreations.com.tasknearby.R;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 
@@ -52,13 +55,14 @@ public class VoiceAlarmRinger implements TextToSpeech.OnInitListener {
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech
                     .LANG_NOT_SUPPORTED) {
                 Log.e(TAG, Locale.getDefault().getLanguage() + " Language is not supported");
+                showSnackbar();
+
             }
             speakOut();
         } else {
             Log.e(TAG, "Initialization Failed!");
+            showSnackbar();
         }
-
-
     }
 
     private void speakOut() {
@@ -72,4 +76,15 @@ public class VoiceAlarmRinger implements TextToSpeech.OnInitListener {
         }
         mTts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
+
+    /**
+     * Shows snackbar to set google text to speech settings.
+     */
+    private void showSnackbar() {
+        Snackbar snackbar = Snackbar.make(((Activity) mContext).findViewById(android.R.id
+                .content), mContext.getString(R.string
+                .error_tts), Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
+
 }
