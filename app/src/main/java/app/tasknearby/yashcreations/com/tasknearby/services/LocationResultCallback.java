@@ -124,6 +124,7 @@ public class LocationResultCallback extends LocationCallback {
                         if (task.getIsAlarmSet() == 1) {
                             Intent alarmIntent = AlarmActivity.getStartingIntent(mContext,
                                     task.getId());
+                            alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             mContext.startActivity(alarmIntent);
                         } else {
                             mNotificationHelper.showReminderNotification(task);
@@ -141,4 +142,3 @@ public class LocationResultCallback extends LocationCallback {
 
     }
 }
-

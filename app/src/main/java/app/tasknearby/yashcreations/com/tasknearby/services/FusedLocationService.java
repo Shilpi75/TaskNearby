@@ -1,6 +1,7 @@
 package app.tasknearby.yashcreations.com.tasknearby.services;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -12,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -264,6 +266,29 @@ public class FusedLocationService extends Service {
         return locationRequest;
     }
 
+    /**
+     * This is called when user removes app's task from the list of recent apps. In that case,
+     * We restart the service if app is enabled.
+     */
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        // Check if app is enabled or not.
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isAppEnabled = defaultPref.getString(getString(R.string.pref_status_key), getString
+                (R.string.pref_status_default)).equals(getString(R.string.pref_status_enabled));
+        if (isAppEnabled) {
+            Intent restartServiceTask = new Intent(getApplicationContext(), this.getClass());
+            restartServiceTask.setPackage(getPackageName());
+            PendingIntent restartPendingIntent = PendingIntent.getService(getApplicationContext(),
+                    1, restartServiceTask, PendingIntent.FLAG_ONE_SHOT);
+            AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService
+                    (Context.ALARM_SERVICE);
+            alarmManager.set(
+                    AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 500,
+                    restartPendingIntent);
+        }
+    }
 
     /**
      * Receives the broadcasted intent by {@link ActivityDetectionService}.
