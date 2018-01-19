@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -35,13 +36,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import org.joda.time.LocalDate;
-
-import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
-import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
-import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.voice.VoiceAlarmRinger;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
@@ -99,6 +95,9 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.container, new TasksFragment())
                 .commit();
 
+        // TODO: Remove this, it's here just for testing. This activity opens up every time app
+        // is opened, allowing us to set premium or non-premium version for testing.
+        UpgradeActivity.show(this);
     }
 
     @Override
@@ -233,6 +232,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        // Hide upgrade to premium if already upgraded.
+        if (AppUtils.isPremiumUser(this)) {
+            Menu nav_Menu = navigationView.getMenu();
+            nav_Menu.findItem(R.id.nav_group_premium).setVisible(false);
+        }
     }
 
     @Override
@@ -252,9 +256,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this, AboutActivity.class));
                 break;
             case R.id.premium:
-                // TODO: When billing has been integrated, call the buy function here.
-                // TODO: Do not show this when version is premium.
-                Log.i(TAG, "Premium");
+                UpgradeActivity.show(this);
                 break;
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -351,6 +353,5 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-
     }
 }

@@ -8,7 +8,7 @@
     <string name="title_about">About</string>
     <string name="title_task_detail">Task Details</string>
 
-    <string name = "units">units</string>
+    <string name="units">units</string>
     <string name="unit_metres">metres</string>
     <string name="unit_yards">yards</string>
 
@@ -73,14 +73,25 @@
     <string name="alarm_show_map">Show Map</string>
     <string name="alarm_show_image">Show Image</string>
 
+    <!-- Upgrade activity. -->
+    <string-array name="upgrade_premium_items">
+        <item>Add Images</item>
+        <item>Add Notes</item>
+        <item>Set Time intervals</item>
+        <item>Set Date intervals</item>
+        <item>Custom snooze times</item>
+        <item>Voice alerts</item>
+        <item>Generate Route (Coming soon)</item>
+    </string-array>
+
+    <string name="upgrade_purchase">Purchase</string>
+    <string name="upgrade_restore">Restore</string>
+
     <string name="distance_format_m">%d m</string>
     <string name="distance_format_km">%.2f km</string>
     <string name="distance_format_yd">%d yd</string>
     <string name="distance_format_mi">%.2f mi</string>
 
-    <!-- TODO: Use this suffix string when we implement isMetric utilities. -->
-    <string name="suffix_m">m</string>
-    <string name="suffix_yd">yd</string>
     <string name="dialog_action_delete">Delete</string>
     <string name="dialog_cancel">Cancel</string>
 
@@ -89,7 +100,9 @@
     <string name="dialog_grant_permission_button">Grant Permissions</string>
 
     <string name="msg_notif_foreground_service">Location reminders are on.</string>
-
+    
+    <string name="error_tts">Please check text to speech settings of your device.</string>  
+  
     <!-- Preferences -->
     <!-- Unit-->
     <string name="pref_unit_key">units</string>
@@ -134,8 +147,8 @@
 
     <!-- Voice Alarm -->
     <string name="pref_voice_alarm_key">voice_alarm</string>
-    <string name="pref_voice_alarm_title">Voice based alarm</string>
-    <string name="pref_voice_alarm_summary">Alarm announcing the task details.</string>
+    <string name="pref_voice_alarm_title">Voice alerts</string>
+    <string name="pref_voice_alarm_summary">App announcing the task details.</string>
 
     <!-- Snooze Time -->
     <string name="pref_snooze_time_key">snooze_time</string>
@@ -154,7 +167,7 @@
         <item>600000</item>
         <item>1200000</item>
     </string-array>
-    <string name="pref_snooze_time_default">600</string>
+    <string name="pref_snooze_time_default">180000</string>
 
     <!-- Power Saver Mode -->
     <string name="pref_power_saver_key">power_saver</string>
@@ -209,6 +222,7 @@
     <string name="pref_accuracy_balanced">balanced</string>
     <string name="pref_accuracy_high">high</string>
 
-    <string name="error_tts">Please check text to speech settings of your device.</string>
+    <!-- Preference for user upgraded to premium or not. -->
+    <string name="pref_is_premium_user_key">isPremiumUser</string>
 
 </resources>

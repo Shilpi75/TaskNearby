@@ -25,8 +25,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -125,7 +127,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * This will be used to get the intent to start this activity when we need to edit the task.
      *
      * @param context context of the calling activity.
-     * @param taskId  taskId of the task to be edited.
+     * @param taskId taskId of the task to be edited.
      * @return intent that can be used in startActivity.
      */
     public static Intent getEditModeIntent(Context context, long taskId) {
@@ -151,8 +153,11 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab_image:
-                mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_ADD_IMAGE, new Bundle());
-                addTaskImage();
+                if (AppUtils.isPremiumUser(this)) {
+                    addTaskImage();
+                } else {
+                    UpgradeActivity.show(this);
+                }
                 break;
             case R.id.button_saved_places:
                 Intent savedPlacesIntent = new Intent(this, SavedPlacesActivity.class);
@@ -279,6 +284,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * checks and requests if required permissions are not available.
      */
     private void addTaskImage() {
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_ADD_IMAGE, new Bundle());
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
@@ -314,7 +320,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         Calendar calendar = Calendar.getInstance();
         // what to do when date is set.
         DatePickerDialog.OnDateSetListener onDateSetListener = (view, year, month,
-                                                                dayOfMonth) -> {
+                dayOfMonth) -> {
             calendar.set(year, month, dayOfMonth);
             v.setTag(LocalDate.fromCalendarFields(calendar));
             v.setText(AppUtils.getReadableDate(this, calendar.getTime()));
@@ -329,7 +335,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_STORAGE_PERMISSION:
                 if (grantResults.length > 0
@@ -666,4 +672,35 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         return true;
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Setting in onStart so that when the upgrade activity closes, the lock layout refreshes
+        // taking into account the purchase(if any).
+        setPremiumLock();
+    }
+
+    private void setPremiumLock() {
+        // Find views.
+        LinearLayout premiumLockLayout = findViewById(R.id.ll_premium_overlay_lock);
+        Button upgradeButton = findViewById(R.id.button_upgrade);
+        // Set an onClickListener on them to show the dialog.
+        View.OnClickListener premiumLockListener = v -> {
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.PREMIUM_DIALOG_REQUESTED_BY_BUTTON,
+                    new Bundle());
+            UpgradeActivity.show(TaskCreatorActivity.this);
+        };
+        upgradeButton.setOnClickListener(premiumLockListener);
+        premiumLockLayout.setOnClickListener(premiumLockListener);
+        // Adjust the views in the app.
+        if (AppUtils.isPremiumUser(this)) {
+            premiumLockLayout.setVisibility(View.GONE);
+            noteInput.setFocusable(true);
+        } else {
+            premiumLockLayout.setVisibility(View.VISIBLE);
+            // The note input can still gain focus by clicking enter button on keyboard,
+            // to avoid this, set it as not focusable.
+            noteInput.setFocusable(false);
+        }
+    }
 }

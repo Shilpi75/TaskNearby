@@ -38,7 +38,8 @@
         </menu>
     </item>
 
-    <item android:title="Premium">
+    <item android:title="Premium"
+        android:id="@+id/nav_group_premium">
         <menu>
             <item
                 android:id="@+id/premium"

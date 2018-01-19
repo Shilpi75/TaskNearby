@@ -48,6 +48,14 @@ public class AnalyticsConstants {
     public static final String ANALYTICS_PARAM_IS_POWER_SAVER_ON = "is_power_saver_on";
 
     /**
+     * Premium upgrade dialog/activity constants.
+     */
+    public static final String PREMIUM_DIALOG_REQUESTED_BY_BUTTON = "premium_lock_layout_clicked";
+    public static final String PREMIUM_DIALOG_SHOWN = "premium_dialog_shown";
+    public static final String PREMIUM_DIALOG_BUTTON_CLICK = "premium_dialog_purchase_clicked";
+    public static final String PREMIUM_DIALOG_USER_CLICKED_BUY = "premium_dialog_user_clicked_buy";
+
+    /**
      * Show Image Activity
      */
     public static final String ANALYTICS_SHOW_TASK_IMAGE = "show_task_image";

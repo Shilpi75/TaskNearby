@@ -78,6 +78,10 @@
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
 
+        <activity android:name=".UpgradeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"/>
+
         <service
             android:name=".services.ActivityDetectionService"
             android:enabled="true"

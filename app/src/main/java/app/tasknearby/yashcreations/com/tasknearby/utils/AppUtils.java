@@ -3,7 +3,9 @@ package app.tasknearby.yashcreations.com.tasknearby.utils;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -127,4 +129,8 @@ public final class AppUtils {
         }
     }
 
+    public static boolean isPremiumUser(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(context.getString(R.string.pref_is_premium_user_key), false);
+    }
 }

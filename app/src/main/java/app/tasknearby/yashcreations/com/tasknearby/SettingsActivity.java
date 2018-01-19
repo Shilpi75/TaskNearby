@@ -18,12 +18,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
-import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
+import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_alarm_tone_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_distance_range_key;
@@ -31,7 +28,6 @@ import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_power_sa
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_snooze_time_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_unit_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_vibrate_key;
-import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_voice_alarm_key;
 
 /**
  * Manages the settings/preferences.
@@ -39,6 +35,7 @@ import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_voice_al
  * @author shilpi
  */
 public class SettingsActivity extends AppCompatActivity {
+
     private Toolbar toolbar;
 
     @Override
@@ -87,8 +84,6 @@ public class SettingsActivity extends AppCompatActivity {
          * Attaches a listener so the summary is always updated with the preference value.
          * Also fires the listener once, to initialize the summary (so it shows up before the value
          * is changed.)
-         *
-         * @param preference
          */
         public void bindPreferenceSummaryToValue(Preference preference) {
 
@@ -113,10 +108,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         /**
          * Listens to the changes in preference value.
-         *
-         * @param preference
-         * @param o
-         * @return
          */
         @Override
         public boolean onPreferenceChange(Preference preference, Object o) {
@@ -128,7 +119,10 @@ public class SettingsActivity extends AppCompatActivity {
                 } else {
                     preference.setSummary(null);
                 }
-
+                // If snooze has been set to anything other than default, Check premium exists.
+                if (preference.equals(mSnoozePreference)) {
+                    premiumCheckForSnooze(o.toString());
+                }
             } else if (preference instanceof EditTextPreference) {
                 if (preference.getKey().equals(getString(pref_distance_range_key))) {
                     preference.setSummary(o.toString() + " units");
@@ -183,7 +177,7 @@ public class SettingsActivity extends AppCompatActivity {
             mPowerSaverPreference = (SwitchPreference) getPreferenceManager().findPreference
                     (getString(pref_power_saver_key));
             mVoiceAlarmPreference = (SwitchPreference) getPreferenceManager().findPreference
-                    (getString(pref_voice_alarm_key));
+                    (getString(R.string.pref_voice_alarm_key));
 
 
             bindPreferenceSummaryToValue(mUnitPreference);
@@ -193,6 +187,33 @@ public class SettingsActivity extends AppCompatActivity {
             bindPreferenceSummaryToValue(mVibratePreference);
             bindPreferenceSummaryToValue(mVoiceAlarmPreference);
             bindPreferenceSummaryToValue(mPowerSaverPreference);
+
+            // Makes sure that voice alarms can be adjusted only in premium version.
+            mVoiceAlarmPreference.setOnPreferenceClickListener(preference -> {
+                if (!AppUtils.isPremiumUser(getActivity())) {
+                    UpgradeActivity.show(getActivity());
+                    mVoiceAlarmPreference.setChecked(false);
+                }
+                return true;
+            });
+        }
+
+        /**
+         * Makes sure that the snooze preference is adjustable only in the premium version.
+         */
+        private void premiumCheckForSnooze(String newValue) {
+            String defaultValue = getString(R.string.pref_snooze_time_default);
+            // Check if the default(allowed) value has been set.
+            if (!newValue.equals(defaultValue)) {
+                // Check if the user is premium or not.
+                if (!AppUtils.isPremiumUser(getActivity())) {
+                    // The user is not a premium user.
+                    // FIXME: This is not changing the value but only the summary to default one.
+                    onPreferenceChange(mSnoozePreference, defaultValue);
+                    // Show the upgrade to premium activity.
+                    UpgradeActivity.show(getActivity());
+                }
+            }
         }
     }
 }
