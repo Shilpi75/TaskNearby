@@ -696,6 +696,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         if (AppUtils.isPremiumUser(this)) {
             premiumLockLayout.setVisibility(View.GONE);
             noteInput.setFocusable(true);
+            noteInput.setFocusableInTouchMode(true);
         } else {
             premiumLockLayout.setVisibility(View.VISIBLE);
             // The note input can still gain focus by clicking enter button on keyboard,

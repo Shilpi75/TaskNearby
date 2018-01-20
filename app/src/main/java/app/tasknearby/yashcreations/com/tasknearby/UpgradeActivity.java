@@ -78,19 +78,12 @@ public class UpgradeActivity extends AppCompatActivity {
 
     // TODO: Remove after the billing APIs have been integrated.
     private void dummyPurchase() {
-        // Toggles premium status on button click.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences
                 (UpgradeActivity.this);
-        boolean currentPremiumStatus = prefs.getBoolean(getString(R.string
-                .pref_is_premium_user_key), false);
         SharedPreferences.Editor ed = prefs.edit();
-        ed.putBoolean(getString(R.string.pref_is_premium_user_key), !currentPremiumStatus);
+        ed.putBoolean(getString(R.string.pref_is_premium_user_key), true);
         ed.apply();
-        if (currentPremiumStatus) {
-            Toast.makeText(this, "Converted to NON-premium", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Converted to premium", Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(this, "Thanks for buying!", Toast.LENGTH_SHORT).show();
     }
 
     /**

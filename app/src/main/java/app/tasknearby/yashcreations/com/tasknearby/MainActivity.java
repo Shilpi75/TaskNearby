@@ -95,9 +95,6 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.container, new TasksFragment())
                 .commit();
 
-        // TODO: Remove this, it's here just for testing. This activity opens up every time app
-        // is opened, allowing us to set premium or non-premium version for testing.
-        UpgradeActivity.show(this);
     }
 
     @Override

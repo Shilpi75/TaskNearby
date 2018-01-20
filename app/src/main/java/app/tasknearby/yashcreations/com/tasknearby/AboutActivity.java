@@ -1,7 +1,9 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -45,6 +47,12 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         // Set on click listeners.
         feedbackTv.setOnClickListener(this);
         rateFab.setOnClickListener(this);
+
+        if (BuildConfig.DEBUG) {
+            findViewById(R.id.image_launcher).setOnClickListener(v -> {
+                togglePremium();
+            });
+        }
     }
 
     @Override
@@ -93,6 +101,24 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
 
+    /**
+     * Allows us to toggle the app's premium status for testing. Works only in debug version.
+     */
+    private void togglePremium() {
+        // Toggles premium status on button click.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences
+                (this);
+        boolean currentPremiumStatus = prefs.getBoolean(getString(R.string
+                .pref_is_premium_user_key), false);
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putBoolean(getString(R.string.pref_is_premium_user_key), !currentPremiumStatus);
+        ed.apply();
+        if (currentPremiumStatus) {
+            Toast.makeText(this, "Converted to NON-premium", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Converted to premium", Toast.LENGTH_SHORT).show();
+        }
     }
 }
