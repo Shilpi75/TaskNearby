@@ -1,5 +1,6 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
@@ -18,6 +19,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
 
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
@@ -76,7 +80,6 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
-
             initializeViews();
         }
 
@@ -118,10 +121,6 @@ public class SettingsActivity extends AppCompatActivity {
                     preference.setSummary(listPreference.getEntries()[index]);
                 } else {
                     preference.setSummary(null);
-                }
-                // If snooze has been set to anything other than default, Check premium exists.
-                if (preference.equals(mSnoozePreference)) {
-                    premiumCheckForSnooze(o.toString());
                 }
             } else if (preference instanceof EditTextPreference) {
                 if (preference.getKey().equals(getString(pref_distance_range_key))) {
@@ -197,23 +196,27 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
         }
-
-        /**
-         * Makes sure that the snooze preference is adjustable only in the premium version.
-         */
-        private void premiumCheckForSnooze(String newValue) {
-            String defaultValue = getString(R.string.pref_snooze_time_default);
-            // Check if the default(allowed) value has been set.
-            if (!newValue.equals(defaultValue)) {
-                // Check if the user is premium or not.
-                if (!AppUtils.isPremiumUser(getActivity())) {
-                    // The user is not a premium user.
-                    // FIXME: This is not changing the value but only the summary to default one.
-                    onPreferenceChange(mSnoozePreference, defaultValue);
-                    // Show the upgrade to premium activity.
-                    UpgradeActivity.show(getActivity());
-                }
-            }
-        }
     }
 }
+class CustomListPreference extends ListPreference {
+
+    public CustomListPreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    @Override
+    protected View onCreateView(final ViewGroup parent) {
+        final View view = super.onCreateView(parent);
+        view.setOnClickListener(v -> {
+            if (!AppUtils.isPremiumUser(getContext())) {
+                UpgradeActivity.show(getContext());
+            } else {
+                CustomListPreference.super.onClick();
+            }
+        });
+        return view;
+    }
+}
+
+
+

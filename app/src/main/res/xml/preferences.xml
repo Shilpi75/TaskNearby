@@ -41,12 +41,13 @@
             android:title="@string/pref_voice_alarm_title" />
 
         <!-- Snooze time. -->
-        <ListPreference
+        <app.tasknearby.yashcreations.com.tasknearby.CustomListPreference
             android:defaultValue="@string/pref_snooze_time_default"
             android:entries="@array/pref_snooze_time_entries"
             android:entryValues="@array/pref_snooze_time_values"
             android:key="@string/pref_snooze_time_key"
-            android:title="@string/pref_snooze_title" />
+            android:title="@string/pref_snooze_title"
+            />
 
     </PreferenceCategory>
 
