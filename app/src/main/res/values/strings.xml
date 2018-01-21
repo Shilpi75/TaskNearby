@@ -112,6 +112,7 @@
 
     <string name="msg_notif_foreground_service">Location reminders are on.</string>
 
+
     <string name="error_tts">Please check text to speech settings of your device.</string>
     <string name="error_no_app">No supporting application found.</string>
 
@@ -236,5 +237,8 @@
 
     <!-- Preference for user upgraded to premium or not. -->
     <string name="pref_is_premium_user_key">isPremiumUser</string>
+
+    <!-- Preference for version -->
+    <string name="pref_version_key">app_version</string>
 
 </resources>

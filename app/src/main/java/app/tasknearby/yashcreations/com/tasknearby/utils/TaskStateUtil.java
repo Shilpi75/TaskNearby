@@ -61,12 +61,14 @@ public class TaskStateUtil {
         // Check task's start date.
         LocalDate startDate = task.getStartDate();
         // If start date > today, return upcoming.Else, proceed.
+
         if (startDate.compareTo(today) > 0)
             return STATE_UPCOMING;
 
         // Check end date.
         LocalDate endDate = task.getEndDate();
         // If end date < today, retun expired. Else, proceed.
+
         if (endDate != null && endDate.compareTo(today) < 0) {
             return STATE_EXPIRED;
         }
@@ -75,12 +77,14 @@ public class TaskStateUtil {
         // Check start time.
         LocalTime startTime = task.getStartTime();
         // If start time > current time, it is upcoming. Else proceed.
+
         if (startTime.compareTo(currentTime) > 0)
             return STATE_UPCOMING;
 
         // Check end Time.
         LocalTime endTime = task.getEndTime();
         // If end time is less than current time, it is expired. Else, proceed.
+
         if (endTime != null && endTime.compareTo(currentTime) < 0) {
             if (endDate != null && endDate.compareTo(today) == 0) {
                 return STATE_EXPIRED;
@@ -145,7 +149,7 @@ public class TaskStateUtil {
      * It returns a sorted list of tasks wrapped with their state.
      */
     public static ArrayList<TaskStateWrapper> getTasksStateListWrapper(Context context,
-            List<TaskModel> tasks) {
+                                                                       List<TaskModel> tasks) {
 
         // Get the state lists.
         ArrayList<List<TaskModel>> statesList = getTaskListState(context, tasks);

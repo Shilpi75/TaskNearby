@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         // To set up the power saver preference if user has updated the app.
         setPowerSaverPreference();
+        setVersionPreference();
         setupNavDrawer();
 
         findViewById(R.id.fab).setOnClickListener(view ->
@@ -234,6 +235,15 @@ public class MainActivity extends AppCompatActivity
             Menu nav_Menu = navigationView.getMenu();
             nav_Menu.findItem(R.id.nav_group_premium).setVisible(false);
         }
+    }
+
+    /**
+     * Sets the version preference.
+     */
+    public void setVersionPreference(){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(getString(R.string.pref_version_key), getString(R.string.app_version));
+        editor.apply();
     }
 
     @Override
