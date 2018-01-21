@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import java.util.Locale;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
+import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 
 /**
  * Contains utility functions used throughout the app.
@@ -126,5 +128,23 @@ public final class AppUtils {
     public static boolean isPremiumUser(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(context.getString(R.string.pref_is_premium_user_key), false);
+    }
+
+    /**
+     * Starts {@link FusedLocationService} service.
+     */
+    public static void startService(Context context) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            context.startForegroundService(new Intent(context, FusedLocationService.class));
+        } else {
+            context.startService(new Intent(context, FusedLocationService.class));
+        }
+    }
+
+    /**
+     * Stops {@link FusedLocationService} service.
+     */
+    public static void stopService(Context context){
+        context.stopService(new Intent(context, FusedLocationService.class));
     }
 }

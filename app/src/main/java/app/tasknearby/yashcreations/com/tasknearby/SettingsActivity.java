@@ -1,7 +1,6 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -20,13 +19,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
@@ -144,9 +141,7 @@ public class SettingsActivity extends AppCompatActivity {
             } else if (preference instanceof SwitchPreference) {
                 if (preference.getKey().equals(getString(pref_power_saver_key))) {
                     // Stop the service.
-                    Intent serviceIntent = new Intent(getActivity(), FusedLocationService.class);
-                    getActivity().stopService(serviceIntent);
-
+                    AppUtils.stopService(getActivity());
                     // Check if app is enabled.
                     SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences
                             (getActivity());
@@ -154,7 +149,7 @@ public class SettingsActivity extends AppCompatActivity {
                             getString(R.string.pref_status_default));
                     if (appStatus.equals(getString(R.string.pref_status_enabled))) {
                         // Start the service again.
-                        getActivity().startService(serviceIntent);
+                        AppUtils.startService(getActivity());
                     }
                 }
 
@@ -204,17 +199,21 @@ public class SettingsActivity extends AppCompatActivity {
 
             mPowerSaverPreference.setOnPreferenceClickListener(preference -> {
                 SharedPreferences pref = preference.getSharedPreferences();
-                boolean isPowerSaver = pref.getBoolean(getString(R.string.pref_power_saver_key),false);
-                if(isPowerSaver){
-                    mFirebaseAnalytics.logEvent(AnalyticsConstants.POWER_SAVER_TURN_ON, new Bundle());
-                } else{
-                    mFirebaseAnalytics.logEvent(AnalyticsConstants.POWER_SAVER_TURN_OFF, new Bundle());
+                boolean isPowerSaver = pref.getBoolean(getString(R.string.pref_power_saver_key),
+                        false);
+                if (isPowerSaver) {
+                    mFirebaseAnalytics.logEvent(AnalyticsConstants.POWER_SAVER_TURN_ON, new
+                            Bundle());
+                } else {
+                    mFirebaseAnalytics.logEvent(AnalyticsConstants.POWER_SAVER_TURN_OFF, new
+                            Bundle());
                 }
                 return true;
             });
         }
     }
 }
+
 class CustomListPreference extends ListPreference {
 
     public CustomListPreference(Context context, AttributeSet attrs) {

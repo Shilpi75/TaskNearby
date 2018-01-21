@@ -650,9 +650,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 getString(R.string.pref_status_default)).equals(getString(R.string
                 .pref_status_enabled));
         if (isAppEnabled) {
-            Intent serviceIntent = new Intent(this, FusedLocationService.class);
-            stopService(serviceIntent);
-            startService(serviceIntent);
+            AppUtils.stopService(this);
+            AppUtils.startService(this);
         }
     }
 

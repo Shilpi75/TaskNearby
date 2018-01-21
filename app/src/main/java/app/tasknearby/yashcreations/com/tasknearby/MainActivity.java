@@ -130,13 +130,13 @@ public class MainActivity extends AppCompatActivity
             // TODO: The startService method calls the onStartCommand method and doesn't start a
             // new instance of the service. So, is there any check needed before doing this?
             // Or should we keep an Application class which takes care of isServiceRunning etc.
-            startService(new Intent(this, FusedLocationService.class));
+            AppUtils.startService(this);
         } else {
             // Put disabled string in shared preferences.
             editor.putString(getString(R.string.pref_status_key),
                     getString(R.string.pref_status_disabled));
             mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_DISABLED, new Bundle());
-            stopService(new Intent(this, FusedLocationService.class));
+            AppUtils.stopService(this);
         }
         editor.apply();
     }
@@ -328,6 +328,8 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_START, bundle);
     }
 
+
+
     /**
      * Starts the service when device is rebooted.
      * The applications are placed in a 'Stopped' state after install and AFTER Force stop TOO.
@@ -353,11 +355,7 @@ public class MainActivity extends AppCompatActivity
             // Also check if location permissions are available or not.
             if (isAppEnabled && ActivityCompat.checkSelfPermission(context, Manifest.permission
                     .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                if (Build.VERSION.SDK_INT >= 26) {
-                    context.startForegroundService(new Intent(context, FusedLocationService.class));
-                } else {
-                    context.startService(new Intent(context, FusedLocationService.class));
-                }
+                AppUtils.startService(context);
             }
         }
     }
