@@ -20,11 +20,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_alarm_tone_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_distance_range_key;
@@ -75,10 +79,12 @@ public class SettingsActivity extends AppCompatActivity {
         private RingtonePreference mAlarmTonePreference;
         private EditTextPreference mDistancePreference;
         private SwitchPreference mVoiceAlarmPreference, mPowerSaverPreference;
+        private FirebaseAnalytics mFirebaseAnalytics;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
             addPreferencesFromResource(R.xml.preferences);
             initializeViews();
         }
@@ -192,6 +198,17 @@ public class SettingsActivity extends AppCompatActivity {
                 if (!AppUtils.isPremiumUser(getActivity())) {
                     UpgradeActivity.show(getActivity());
                     mVoiceAlarmPreference.setChecked(false);
+                }
+                return true;
+            });
+
+            mPowerSaverPreference.setOnPreferenceClickListener(preference -> {
+                SharedPreferences pref = preference.getSharedPreferences();
+                boolean isPowerSaver = pref.getBoolean(getString(R.string.pref_power_saver_key),false);
+                if(isPowerSaver){
+                    mFirebaseAnalytics.logEvent(AnalyticsConstants.POWER_SAVER_TURN_ON, new Bundle());
+                } else{
+                    mFirebaseAnalytics.logEvent(AnalyticsConstants.POWER_SAVER_TURN_OFF, new Bundle());
                 }
                 return true;
             });

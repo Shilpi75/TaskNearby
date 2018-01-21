@@ -13,6 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
@@ -23,7 +24,7 @@ import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
  * A utility class for task's state as {STATE_ACTIVE_SNOOZED, STATE_ACTIVE_NOT_SNOOZED,
  * STATE_UPCOMING, STATE_EXPIRED, STATE_DONE}.
  *
- * @author
+ * @author shilpi
  */
 
 public class TaskStateUtil {
@@ -51,35 +52,42 @@ public class TaskStateUtil {
         if (task.getIsDone() == 1)
             return STATE_DONE;
 
-        // Check task's start date.
-        LocalDate startDate = task.getStartDate();
+        LocalDate today = LocalDate.fromDateFields(new Date());
 
         // NOTE: We need to compare dates by getting the DateOnlyInstance because Date also contains
         // information about the time and comparing them with .compare() also compares time.
         // This causes a reminder expiring today to be told as expired.
 
+        // Check task's start date.
+        LocalDate startDate = task.getStartDate();
         // If start date > today, return upcoming.Else, proceed.
-        if (startDate.compareTo(new LocalDate()) > 0)
+        if (startDate.compareTo(today) > 0)
             return STATE_UPCOMING;
 
         // Check end date.
         LocalDate endDate = task.getEndDate();
         // If end date < today, retun expired. Else, proceed.
-        if (endDate != null && endDate.compareTo(new LocalDate()) < 0) {
+        if (endDate != null && endDate.compareTo(today) < 0) {
             return STATE_EXPIRED;
         }
 
+        LocalTime currentTime = LocalTime.fromDateFields(new Date());
         // Check start time.
         LocalTime startTime = task.getStartTime();
         // If start time > current time, it is upcoming. Else proceed.
-        if (startTime.compareTo(new LocalTime()) > 0)
+        if (startTime.compareTo(currentTime) > 0)
             return STATE_UPCOMING;
 
         // Check end Time.
         LocalTime endTime = task.getEndTime();
         // If end time is less than current time, it is expired. Else, proceed.
-        if (endTime != null && endTime.compareTo(new LocalTime()) < 0)
-            return STATE_EXPIRED;
+        if (endTime != null && endTime.compareTo(currentTime) < 0) {
+            if (endDate != null && endDate.compareTo(today) == 0) {
+                return STATE_EXPIRED;
+            } else {
+                return STATE_UPCOMING;
+            }
+        }
 
         // Check if snoozed.
         // Get snooze time from settings.
@@ -196,20 +204,15 @@ public class TaskStateUtil {
         }
     }
 
-
+    /**
+     * Returns the name for a taskState constant passed to this function.
+     */
     public static String stateToString(Context context, @TaskState int taskState) {
-        switch (taskState) {
-            case STATE_ACTIVE_SNOOZED:
-                return "Snoozed";
-            case STATE_ACTIVE_NOT_SNOOZED:
-                return "Active";
-            case STATE_EXPIRED:
-                return "Expired";
-            case STATE_UPCOMING:
-                return "Upcoming";
-            case STATE_DONE:
-                return "Done";
+        String[] taskStateNames = context.getResources().getStringArray(R.array.task_states);
+        // Handle invalid case.
+        if (taskState > taskStateNames.length) {
+            taskState = taskStateNames.length - 1;
         }
-        return "Invalid";
+        return taskStateNames[taskState];
     }
 }

@@ -254,7 +254,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 + locationModel.getLongitude());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setPackage("com.google.android.apps.maps");
-        startActivity(intent);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, getString(R.string.error_no_app), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

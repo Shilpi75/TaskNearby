@@ -636,6 +636,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_DEADLINE_SET, isDeadlineSet);
         boolean isNoteAdded = task.getNote() != null;
         bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_NOTE_ADDED, isNoteAdded);
+        boolean isAnytimeOn = anytimeSwitch.isChecked();
+        bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_ANYTIME_SET, isAnytimeOn);
         mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_SAVE_NEW_TASK, bundle);
     }
 

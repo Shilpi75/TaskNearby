@@ -87,6 +87,17 @@
     <string name="upgrade_purchase">Purchase</string>
     <string name="upgrade_restore">Restore</string>
 
+    <!-- NOTE: Make sure that these are in the same order as the value of the constants
+    that are defined for these. i.e. Snoozed, Active, Upcoming, Expired, Done -->
+    <string-array name="task_states">
+        <item>Snoozed</item>
+        <item>Active</item>
+        <item>Upcoming</item>
+        <item>Expired</item>
+        <item>Done</item>
+        <item>Invalid</item>
+    </string-array>
+
     <string name="distance_format_m">%d m</string>
     <string name="distance_format_km">%.2f km</string>
     <string name="distance_format_yd">%d yd</string>
@@ -100,9 +111,10 @@
     <string name="dialog_grant_permission_button">Grant Permissions</string>
 
     <string name="msg_notif_foreground_service">Location reminders are on.</string>
-    
-    <string name="error_tts">Please check text to speech settings of your device.</string>  
-  
+
+    <string name="error_tts">Please check text to speech settings of your device.</string>
+    <string name="error_no_app">No supporting application found.</string>
+
     <!-- Preferences -->
     <!-- Unit-->
     <string name="pref_unit_key">units</string>

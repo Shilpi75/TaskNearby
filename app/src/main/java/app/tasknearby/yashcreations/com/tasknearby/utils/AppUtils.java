@@ -95,12 +95,6 @@ public final class AppUtils {
         return (lastSnoozedTime != -1);
     }
 
-    public static boolean isTaskActiveAtTime(TaskModel task, LocalTime time) {
-        LocalTime startTime = task.getStartTime();
-        LocalTime endTime = task.getEndTime();
-        return ((startTime.compareTo(time) <= 0) && (endTime.compareTo(time) >= 0));
-    }
-
     public static boolean isSnoozedTaskEligible(long lastSnoozedTime, long snoozeTime) {
         return (lastSnoozedTime + snoozeTime <= System.currentTimeMillis());
     }

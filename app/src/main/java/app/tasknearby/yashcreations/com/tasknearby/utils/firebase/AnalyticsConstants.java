@@ -35,6 +35,7 @@ public class AnalyticsConstants {
     public static final String ANALYTICS_PARAM_END_TIME = "task_end_time";
     public static final String ANALYTICS_PARAM_IS_DEADLINE_SET = "is_deadline_set";
     public static final String ANALYTICS_PARAM_IS_NOTE_ADDED = "is_note_added";
+    public static final String ANALYTICS_PARAM_IS_ANYTIME_SET = "is_anytime_set";
 
     public static final String ANALYTICS_EDIT_TASK = "task_edit";
     public static final String ANALYTICS_ADD_IMAGE = "add_image_button";
@@ -59,4 +60,10 @@ public class AnalyticsConstants {
      * Show Image Activity
      */
     public static final String ANALYTICS_SHOW_TASK_IMAGE = "show_task_image";
+
+    /**
+     * Power saver settings click.
+     */
+    public static final String POWER_SAVER_TURN_ON = "power_saver_turn_on";
+    public static final String POWER_SAVER_TURN_OFF = "power_saver_turn_off";
 }
