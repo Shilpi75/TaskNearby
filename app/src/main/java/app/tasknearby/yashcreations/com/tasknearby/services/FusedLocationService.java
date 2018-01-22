@@ -58,11 +58,11 @@ public class FusedLocationService extends Service {
     /**
      * Constants for update time intervals for different detected activities.
      */
-    public static final long DRIVING_LOCATION_UPDATE_INTERVAL = 5 * 1000;           // 5 seconds.
-    public static final long RUNNING_LOCATION_UPDATE_INTERVAL = 10 * 1000;          // 10 seconds.
+    public static final long DRIVING_LOCATION_UPDATE_INTERVAL = 3 * 1000;           // 3 seconds.
+    public static final long RUNNING_LOCATION_UPDATE_INTERVAL = 7 * 1000;          // 7 seconds.
     public static final long FAST_RUNNING_LOCATION_UPDATE_INTERVAL = 5 * 1000;      // 5 seconds.
-    public static final long WALKING_LOCATION_UPDATE_INTERVAL = 15 * 1000;          // 15 seconds.
-    public static final long UNKNOWN_LOCATION_UPDATE_INTERVAL = 10 * 1000;          // 10 seconds.
+    public static final long WALKING_LOCATION_UPDATE_INTERVAL = 10 * 1000;          // 10 seconds.
+    public static final long UNKNOWN_LOCATION_UPDATE_INTERVAL = 7 * 1000;          // 7 seconds.
 
     public static final String TAG = FusedLocationService.class.getSimpleName();
 

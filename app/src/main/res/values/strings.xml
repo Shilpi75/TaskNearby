@@ -20,7 +20,7 @@
     <string name="creator_or_string">OR</string>
     <string name="creator_location_name_hint">Location Name</string>
     <string name="creator_reminder_range">Reminder range :</string>
-    <string name="creator_reminder_range_default">50</string>
+    <string name="creator_reminder_range_default">75</string>
     <string name="creator_alarm_title">Alarm</string>
     <string name="creator_note_hint">Add a note</string>
     <string name="creator_time_title">Anytime</string>
