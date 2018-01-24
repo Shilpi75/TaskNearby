@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.billingclient.api.Purchase;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -36,6 +37,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
+import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
@@ -46,8 +49,8 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConst
  *
  * @author vermayash8
  */
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView
+        .OnNavigationItemSelectedListener, BillingManager.BillingUpdatesListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_CODE_PERMISSIONS = 123;
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity
     private LocationSettingsRequest mLocationSettingsRequest;
 
     private SharedPreferences prefs;
+
+    private BillingManager mBillingManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +101,7 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.container, new TasksFragment())
                 .commit();
 
+        mBillingManager = new BillingManager(this, this);
     }
 
     @Override
@@ -159,7 +165,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted, continue app.
@@ -240,7 +246,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Sets the version preference.
      */
-    public void setVersionPreference(){
+    public void setVersionPreference() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.pref_version_key), getString(R.string.app_version));
         editor.apply();
@@ -329,15 +335,44 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    /**
+     * Callbacks for the BillingManager class.
+     */
+    @Override
+    public void onBillingClientSetupFinished() {
+        mBillingManager.queryPurchases();
+    }
+
+    @Override
+    public void onItemPurchased(Purchase purchase) {
+        if (AppUtils.isPremiumUser(this)) {
+            if (purchase == null) {
+                // This user is a premium user but he has not purchased anything.
+                reportPremiumWithoutPurchase();
+            }
+        } else if (purchase != null
+                && purchase.getSku().equals(ProductIdConstants.PREMIUM_PRODUCT_ID)) {
+            // If queried purchases include premium upgrade, then make it premium.
+            AppUtils.setPremium(this, true);
+            AppUtils.savePurchaseDetails(this, purchase);
+        }
+    }
+
+    private void reportPremiumWithoutPurchase() {
+        String orderId = prefs.getString(getString(R.string.pref_upgrade_order_id), null);
+        String purchaseToken = prefs.getString(getString(R.string.pref_upgrade_purchase_token),
+                null);
+        Bundle bundle = new Bundle();
+        bundle.putString(AnalyticsConstants.EXTRA_ORDER_ID, orderId);
+        bundle.putString(AnalyticsConstants.EXTRA_PURCHASE_TOKEN, purchaseToken);
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.NOT_PURCHASED_BUT_PREMIUM, bundle);
+    }
 
     /**
      * Starts the service when device is rebooted.
      * The applications are placed in a 'Stopped' state after install and AFTER Force stop TOO.
      * When an application is in the stopped state, it won't receive any broadcasts, no matter what!
      * Hence, when this app is killed by the user, it won't receive any boot completed broadcast.
-     * TODO(1): Check that swiping the application from recents force stops it only in Xiaomi
-     * devices or all devices?
-     * TODO (2) : Find a way to keep it running even after this kind of swiping from the recents.
      */
     public static class BootCompletedReceiver extends BroadcastReceiver {
 

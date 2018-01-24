@@ -12,5 +12,11 @@
     This is the API key that is used to access the Google Places API.
     <string name="places_api_key">INSERT API KEY HERE</string>
 
+    <string-array name="modified_google_play_public_key_parts">
+        <item>PART 1</item>
+        <item>PART 1</item>
+        <item>PART 1</item>
+        <item>PART 1</item>
+    </string-array>
 -->
 </resources>

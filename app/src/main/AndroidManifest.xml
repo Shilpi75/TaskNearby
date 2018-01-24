@@ -11,6 +11,11 @@
     <!-- Required for getting image -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Billing permission -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <!-- To stop from being distributed on non-GPS enabled devices. -->
+    <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:allowBackup="true"
@@ -78,9 +83,10 @@
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
 
-        <activity android:name=".UpgradeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:exported="true"/>
+        <activity
+            android:name=".UpgradeActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".services.ActivityDetectionService"
@@ -101,6 +107,7 @@
         </receiver>
 
         <receiver android:name=".notification.NotificationClickHandler" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />

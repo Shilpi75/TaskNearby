@@ -25,7 +25,6 @@
 
     <ImageButton
         android:id="@+id/button_delete"
-        style="@android:style/Widget.Material.ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

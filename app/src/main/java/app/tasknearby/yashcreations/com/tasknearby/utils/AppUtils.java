@@ -10,6 +10,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.android.billingclient.api.Purchase;
+
 import org.joda.time.DateTimeComparator;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -19,7 +21,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
-import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 
 /**
@@ -130,6 +131,13 @@ public final class AppUtils {
         return prefs.getBoolean(context.getString(R.string.pref_is_premium_user_key), false);
     }
 
+    public static void setPremium(Context context, boolean value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putBoolean(context.getString(R.string.pref_is_premium_user_key), value);
+        ed.apply();
+    }
+
     /**
      * Starts {@link FusedLocationService} service.
      */
@@ -144,7 +152,19 @@ public final class AppUtils {
     /**
      * Stops {@link FusedLocationService} service.
      */
-    public static void stopService(Context context){
+    public static void stopService(Context context) {
         context.stopService(new Intent(context, FusedLocationService.class));
+    }
+
+    /**
+     * Saves the order Id and purchase token to shared preferences.
+     */
+    public static void savePurchaseDetails(Context context, Purchase purchase) {
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor ed = defaultPref.edit();
+        ed.putString(context.getString(R.string.pref_upgrade_order_id), purchase.getOrderId());
+        ed.putString(context.getString(R.string.pref_upgrade_purchase_token), purchase
+                .getPurchaseToken());
+        ed.apply();
     }
 }

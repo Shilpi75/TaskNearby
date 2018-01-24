@@ -2,20 +2,16 @@ package app.tasknearby.yashcreations.com.tasknearby.services;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
-import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
-
-import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.AlarmActivity;
-import app.tasknearby.yashcreations.com.tasknearby.R;
 import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
@@ -29,6 +25,8 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
  * @author shilpi
  */
 public class LocationResultCallback extends LocationCallback {
+
+    private static final String TAG = LocationResultCallback.class.getSimpleName();
 
     private Context mContext;
     private TaskRepository mTaskRepository;
@@ -46,6 +44,7 @@ public class LocationResultCallback extends LocationCallback {
     @Override
     public void onLocationResult(LocationResult locationResult) {
         super.onLocationResult(locationResult);
+        Log.d(TAG, "LocationResult received.");
         Location currentLocation = locationResult.getLastLocation();
         if (mLastLocation == null || !isLocationSame(currentLocation, mLastLocation)) {
             // Performing all operations on a different thread.
@@ -71,24 +70,14 @@ public class LocationResultCallback extends LocationCallback {
 
         @Override
         public void run() {
-            // Get current time.
-            LocalTime currentTime = new LocalTime();
 
+            // Get all the tasks not marked done and active for today.
+            List<TaskModel> tasks = mTaskRepository.getNotDoneTasksForToday();
             // Get the current location.
             Location currentLocation = mLocationResult.getLastLocation();
 
             // A list of tasks to be updated.
             List<TaskModel> tasksToUpdate = new ArrayList<>();
-
-            // Get the snooze time from settings.
-            SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences
-                    (mContext);
-            long snoozeTime = Long.parseLong(defaultPref.getString(mContext.getString((R.string
-                    .pref_snooze_time_key)), mContext.getString(R.string
-                    .pref_snooze_time_default)));
-
-            // Get all the tasks not marked done and active for today.
-            List<TaskModel> tasks = mTaskRepository.getNotDoneTasksForToday();
 
             // Check for each Task:
             // 1. If it is active in the current time
@@ -100,8 +89,9 @@ public class LocationResultCallback extends LocationCallback {
 
                 int taskState = TaskStateUtil.getTaskState(mContext, task);
 
-                if (taskState == TaskStateUtil.STATE_ACTIVE_SNOOZED || taskState == TaskStateUtil
-                        .STATE_ACTIVE_NOT_SNOOZED) {
+                if (taskState == TaskStateUtil.STATE_ACTIVE_SNOOZED
+                        || taskState == TaskStateUtil.STATE_ACTIVE_NOT_SNOOZED) {
+
                     // Get the distance from task's location.
                     LocationModel taskLocation = mTaskRepository.getLocationById(task
                             .getLocationId());
@@ -129,6 +119,7 @@ public class LocationResultCallback extends LocationCallback {
             }
             // Batch update tasks.
             mTaskRepository.updateTasks(tasksToUpdate);
+            Log.i(TAG, "Tasks updated successfully.");
         }
     }
 }

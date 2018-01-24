@@ -1,6 +1,5 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -18,9 +17,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -213,26 +209,3 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 }
-
-class CustomListPreference extends ListPreference {
-
-    public CustomListPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    @Override
-    protected View onCreateView(final ViewGroup parent) {
-        final View view = super.onCreateView(parent);
-        view.setOnClickListener(v -> {
-            if (!AppUtils.isPremiumUser(getContext())) {
-                UpgradeActivity.show(getContext());
-            } else {
-                CustomListPreference.super.onClick();
-            }
-        });
-        return view;
-    }
-}
-
-
-

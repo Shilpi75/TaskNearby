@@ -5,6 +5,7 @@ import android.content.Context;
 
 import org.joda.time.LocalDate;
 
+import java.util.Date;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.AppDatabase;
@@ -33,14 +34,6 @@ public class TaskRepository {
      */
     public TaskRepository(Context context) {
         mDatabase = AppDatabase.getAppDatabase(context);
-//        dummyTask = new TaskModel.Builder(context, "Check reception plannings", 0)
-//                .setIsAlarmSet(0)
-//                .setIsDone(0)
-//                .setStartDate(new LocalDate())
-//                .setEndDate(new LocalDate())
-////                .setNote("This is a note")
-//                .setLastDistance(23.0f)
-//                .build();
     }
 
     /**
@@ -109,18 +102,10 @@ public class TaskRepository {
     }
 
     /**
-     * Mock task which will be used for debugging.
-     */
-    private TaskModel dummyTask;
-    private LocationModel mockLocationModel = new LocationModel("Hyatt Residency, New Delhi, " +
-            "110042", 23.0,
-            77.0, 1, 0, new LocalDate());
-
-    /**
      * Query to fetch the tasks not marked as done and active for today.
      */
     public List<TaskModel> getNotDoneTasksForToday() {
-        LocalDate today = new LocalDate();
+        LocalDate today = LocalDate.fromDateFields(new Date());
         return mDatabase.taskDao().getNotDoneTasksForToday(today.toString());
     }
 

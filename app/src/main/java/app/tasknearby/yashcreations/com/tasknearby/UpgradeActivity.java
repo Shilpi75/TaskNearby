@@ -2,12 +2,11 @@ package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -16,8 +15,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.billingclient.api.Purchase;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
+import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
+import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
@@ -25,7 +28,8 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConst
  *
  * @author vermayash8
  */
-public class UpgradeActivity extends AppCompatActivity {
+public class UpgradeActivity extends AppCompatActivity implements BillingManager
+        .BillingUpdatesListener {
 
     private static final String TAG = UpgradeActivity.class.getSimpleName();
 
@@ -42,15 +46,18 @@ public class UpgradeActivity extends AppCompatActivity {
             R.drawable.ic_pro_route_generate
     };
 
+    private BillingManager mBillingManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upgrade);
 
-        mItemNames = getResources().getStringArray(R.array.upgrade_premium_items);
-
         FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(this);
 
+        mBillingManager = new BillingManager(this, this);
+
+        mItemNames = getResources().getStringArray(R.array.upgrade_premium_items);
         ListView listView = findViewById(R.id.listView);
         listView.setAdapter(new PremiumAdapter(this));
         listView.setDividerHeight(0);
@@ -59,11 +66,7 @@ public class UpgradeActivity extends AppCompatActivity {
         findViewById(R.id.button_purchase).setOnClickListener(v -> {
             // This analytic will let us know if the users are dropping off on seeing the price.
             analytics.logEvent(AnalyticsConstants.PREMIUM_DIALOG_USER_CLICKED_BUY, new Bundle());
-            // TODO: Call the Billing APIs here. The following code is here just for testing.
-            dummyPurchase();
-
-            // Ideally, we should display a ThankYou message over here.
-            finish();
+            purchasePremium();
         });
 
         analytics.logEvent(AnalyticsConstants.PREMIUM_DIALOG_SHOWN, new Bundle());
@@ -76,14 +79,27 @@ public class UpgradeActivity extends AppCompatActivity {
         context.startActivity(new Intent(context, UpgradeActivity.class));
     }
 
-    // TODO: Remove after the billing APIs have been integrated.
-    private void dummyPurchase() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences
-                (UpgradeActivity.this);
-        SharedPreferences.Editor ed = prefs.edit();
-        ed.putBoolean(getString(R.string.pref_is_premium_user_key), true);
-        ed.apply();
-        Toast.makeText(this, "Thanks for buying!", Toast.LENGTH_SHORT).show();
+    private void purchasePremium() {
+        if (mBillingManager.isConnectedToService()) {
+            mBillingManager.initiatePurchaseFlow(ProductIdConstants.PREMIUM_PRODUCT_ID);
+        } else {
+            Log.w(TAG, "Purchase button clicked, but BillingManager is not connected.");
+        }
+    }
+
+    @Override
+    public void onBillingClientSetupFinished() {
+        // Do nothing.
+    }
+
+    @Override
+    public void onItemPurchased(Purchase purchase) {
+        if (purchase.getSku().equals(ProductIdConstants.PREMIUM_PRODUCT_ID)) {
+            AppUtils.setPremium(this, true);
+            AppUtils.savePurchaseDetails(this, purchase);
+            Toast.makeText(this, R.string.msg_thanks_for_buying, Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     /**

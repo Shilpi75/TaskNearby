@@ -121,7 +121,7 @@ public class FusedLocationService extends Service {
         stopLocationUpdates();
         stopActivityDetection();
         stopServiceInForeground();
-
+        Log.d(TAG, "Service destroyed. Will now terminate.");
     }
 
     @Nullable
@@ -182,7 +182,7 @@ public class FusedLocationService extends Service {
      */
     public void stopLocationUpdates() {
         if (isReceivingLocationUpdates) {
-            Log.d(TAG, "Loction update stop.");
+            Log.d(TAG, "Stopping location updates.");
             mFusedLocationClient.removeLocationUpdates(mLocationCallback).addOnSuccessListener
                     (new OnSuccessListener<Void>() {
                         @Override
@@ -197,6 +197,7 @@ public class FusedLocationService extends Service {
      * Starts activity recognition.
      */
     public void startActivityDetection() {
+        Log.d(TAG, "Starting activity detection.");
         mActivityRecognitionClient = new ActivityRecognitionClient(this);
         mActivityRecognitionClient.requestActivityUpdates(ACTIVITY_DETECTION_INTERVAL,
                 getActivityDetectionPendingIntent());
@@ -214,6 +215,7 @@ public class FusedLocationService extends Service {
      * Stops activity recognition.
      */
     public void stopActivityDetection() {
+        Log.d(TAG, "Stopping activity detection.");
         mActivityRecognitionClient.removeActivityUpdates(getActivityDetectionPendingIntent());
     }
 
@@ -223,6 +225,7 @@ public class FusedLocationService extends Service {
      */
     public void restartLocationUpdates(long updateInterval) {
         if (mLocationRequest != null && mLocationRequest.getInterval() != updateInterval) {
+            Log.i(TAG, "Restarting location updates with updateInterval:" + updateInterval);
             stopLocationUpdates();
             createLocationRequest(this, updateInterval);
             startLocationUpdates();

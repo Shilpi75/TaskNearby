@@ -7,8 +7,8 @@ android {
         applicationId 'app.tasknearby.yashcreations.com.tasknearby'
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 9
-        versionName "4.0"
+        versionCode 10
+        versionName "4.0.alpha.2"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -39,6 +39,7 @@ def archRoomVersion = "1.0.0"
 def jodaTimeVersion = "2.9.9.1"
 def constraintLayoutVersion = "1.1.0-beta3"
 def picassoVersion = "2.5.2"
+def billingLibVersion = "1.0"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -54,6 +55,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-places:$playServicesVersion"
 
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
+    implementation "com.google.firebase:firebase-database:$playServicesVersion"
 
     // Room
     implementation "android.arch.persistence.room:runtime:$archRoomVersion"
@@ -73,6 +75,8 @@ dependencies {
     implementation "com.android.support:support-annotations:$supportLibVersion"
 
     implementation "com.squareup.picasso:picasso:$picassoVersion"
+
+    implementation "com.android.billingclient:billing:$billingLibVersion"
 }
 
 // this has to be kept after the dependency block to avoid dependency collisions.

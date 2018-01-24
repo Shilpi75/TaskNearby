@@ -56,6 +56,10 @@ public class AnalyticsConstants {
     public static final String PREMIUM_DIALOG_BUTTON_CLICK = "premium_dialog_purchase_clicked";
     public static final String PREMIUM_DIALOG_USER_CLICKED_BUY = "premium_dialog_user_clicked_buy";
 
+    public static final String NOT_PURCHASED_BUT_PREMIUM = "not_purchased_but_premium";
+    public static final String EXTRA_ORDER_ID = "order_id";
+    public static final String EXTRA_PURCHASE_TOKEN = "purchase_token";
+
     /**
      * Show Image Activity
      */

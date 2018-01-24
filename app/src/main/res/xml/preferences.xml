@@ -46,8 +46,7 @@
             android:entries="@array/pref_snooze_time_entries"
             android:entryValues="@array/pref_snooze_time_values"
             android:key="@string/pref_snooze_time_key"
-            android:title="@string/pref_snooze_title"
-            />
+            android:title="@string/pref_snooze_title" />
 
     </PreferenceCategory>
 

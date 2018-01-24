@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# As mentioned in play billing library documentation.
+-keep class com.android.vending.billing.**
+
+# Proguard warns about okhttp being used in Picasso. As the github page of picasso suggests, we've
+# added this to proguard rules to suppress the warnings.
+-dontwarn com.squareup.okhttp.**

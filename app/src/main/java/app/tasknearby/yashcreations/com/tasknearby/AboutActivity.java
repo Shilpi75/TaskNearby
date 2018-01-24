@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -13,6 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.billingclient.api.Purchase;
+
+import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 
 /**
@@ -53,6 +57,9 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
                 togglePremium();
             });
         }
+
+        // TODO(Severe): Make sure this is commented in production builds.
+        findViewById(R.id.consume).setOnClickListener(v -> consumePurchase());
     }
 
     @Override
@@ -101,6 +108,30 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // TODO: This is test code and should be removed.
+    // Needed to make global.
+    BillingManager billingManager;
+
+    private void consumePurchase() {
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String purchaseToken = defaultPref.getString(getString(R.string
+                .pref_upgrade_purchase_token), null);
+        BillingManager.BillingUpdatesListener listener = new BillingManager
+                .BillingUpdatesListener() {
+            @Override
+            public void onBillingClientSetupFinished() {
+                Toast.makeText(AboutActivity.this, "Consuming", Toast.LENGTH_SHORT).show();
+                billingManager.consumePurchasedProduct(purchaseToken);
+                AppUtils.setPremium(AboutActivity.this, false);
+            }
+
+            @Override
+            public void onItemPurchased(@Nullable Purchase purchase) {
+            }
+        };
+        billingManager = new BillingManager(this, listener);
     }
 
     /**
