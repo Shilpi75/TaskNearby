@@ -9,8 +9,8 @@
     <string name="title_task_detail">Task Details</string>
 
     <string name="units">units</string>
-    <string name="unit_metres">metres</string>
-    <string name="unit_yards">yards</string>
+    <string name="unit_metres">m</string>
+    <string name="unit_yards">yd</string>
 
     <!--These are displayed in TaskCreatorActivity. -->
     <string name="creator_task_name_hint">Remind me about</string>
@@ -112,7 +112,6 @@
 
     <string name="msg_notif_foreground_service">Location reminders are on.</string>
     <string name="msg_thanks_for_buying">Thanks for buying!</string>
-
 
     <string name="error_tts">Please check text to speech settings of your device.</string>
     <string name="error_no_app">No supporting application found.</string>

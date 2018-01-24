@@ -10,15 +10,9 @@ import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Collections;
 import java.util.List;
 
-import app.tasknearby.yashcreations.com.tasknearby.BuildConfig;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 
 /**
@@ -228,46 +222,6 @@ public class BillingManager implements PurchasesUpdatedListener {
         }
         // Notify that a new item was purchased.
         mBillingUpdatesListener.onItemPurchased(purchase);
-
-        // Note: the newPurchase parameter can tell us if the purchase was made or queried. If
-        // the purchase was made, we can add the orderId details to our Firebase realtime Database.
-        // Also, if required, we can check when queried also.
-        if (newPurchase) {
-            beginFirebaseSaving(purchase);
-        }
-    }
-
-    // Firebase saving functionality. Remove this in future updates if it's not required.
-
-    /**
-     * Starts querying the skuDetails (price) and once they're queried, it calls add it to firebase.
-     */
-    public void beginFirebaseSaving(Purchase purchase) {
-        SkuDetailsParams params = SkuDetailsParams.newBuilder()
-                .setSkusList(Collections.singletonList(purchase.getSku()))
-                .setType(BillingClient.SkuType.INAPP)
-                .build();
-        mBillingClient.querySkuDetailsAsync(params, (responseCode, skuDetailsList) -> {
-            if (responseCode == BillingClient.BillingResponse.OK) {
-                saveToFirebase(purchase, skuDetailsList);
-            }
-        });
-    }
-
-    /**
-     * Saves the {@link PurchaseRecord} to firebase.
-     */
-    private void saveToFirebase(Purchase purchase, List<SkuDetails> skuDetailsList) {
-        if (skuDetailsList.size() == 0) {
-            return;
-        }
-        String price = skuDetailsList.get(0).getPrice();
-        PurchaseRecord purchaseRecord = new PurchaseRecord(purchase, price);
-        DatabaseReference purchasesRef = FirebaseDatabase.getInstance().getReference()
-                .child(BuildConfig.BUILD_TYPE)
-                .child("purchases")
-                .child(String.valueOf(purchase.getPurchaseTime()));
-        purchasesRef.setValue(purchaseRecord);
     }
 
     /**

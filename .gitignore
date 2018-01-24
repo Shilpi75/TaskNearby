@@ -97,6 +97,7 @@ projectFilesBackup/
 
 # File containing API keys.
 app/src/main/res/values/keys.xml
+app/src/main/java/app/tasknearby/yashcreations/com/tasknearby/billing/SecurityUtils.java
 
 # vim partially opened files
 *.swp

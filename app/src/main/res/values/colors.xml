@@ -12,6 +12,8 @@
     <color name="dark_grey">#999999</color>
     <color name="orange500">#FF5722</color>
     <color name="light_blue">#99ccff</color>
+    <color name="default_window_color">#FAFAFA</color>
+
     <!--Not being used currently-->
     <color name="grey">#C7C7C7</color>
     <color name="amber500">#ffc107</color>

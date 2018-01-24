@@ -48,7 +48,6 @@ import java.util.Calendar;
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
-import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
@@ -275,6 +274,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         // Cover image
         if (task.getImageUri() != null) {
             coverImageView.setImageURI(Uri.parse(task.getImageUri()));
+            coverImageView.setTag(task.getImageUri());
         }
         mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_EDIT_TASK, new Bundle());
     }
