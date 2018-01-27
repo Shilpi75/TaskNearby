@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -14,9 +13,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.billingclient.api.Purchase;
-
-import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 
 /**
@@ -55,11 +51,9 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         if (BuildConfig.DEBUG) {
             findViewById(R.id.image_launcher).setOnClickListener(v -> {
                 togglePremium();
+                startActivity(new Intent(AboutActivity.this, OnboardingActivity.class));
             });
         }
-
-        // TODO(Severe): Make sure this is commented in production builds.
-        findViewById(R.id.consume).setOnClickListener(v -> consumePurchase());
     }
 
     @Override
@@ -109,8 +103,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         }
         return super.onOptionsItemSelected(item);
     }
-
-    // TODO: This is test code and should be removed.
+/*
     // Needed to make global.
     BillingManager billingManager;
 
@@ -133,7 +126,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         };
         billingManager = new BillingManager(this, listener);
     }
-
+*/
     /**
      * Allows us to toggle the app's premium status for testing. Works only in debug version.
      */

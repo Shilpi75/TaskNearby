@@ -167,4 +167,9 @@ public final class AppUtils {
                 .getPurchaseToken());
         ed.apply();
     }
+
+    public static boolean hasUserSeenOnboarding(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_has_user_seen_onboarding), false);
+    }
 }

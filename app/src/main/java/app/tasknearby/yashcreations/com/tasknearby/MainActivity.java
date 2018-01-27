@@ -37,8 +37,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
 import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
+import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
@@ -77,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!AppUtils.hasUserSeenOnboarding(this)) {
+            startActivity(new Intent(this, OnboardingActivity.class));
+        }
+
         setContentView(R.layout.activity_main2);
         // Device's location settings.
         mSettingsClient = LocationServices.getSettingsClient(this);

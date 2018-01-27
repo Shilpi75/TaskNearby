@@ -34,7 +34,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".TaskCreatorActivity"
             android:label="@string/title_add_new_task"
@@ -48,13 +47,11 @@
             android:label="@string/title_settings"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".DetailActivity"
             android:label="Task Detail"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".AlarmActivity"
             android:excludeFromRecents="true"
@@ -66,27 +63,27 @@
             android:showWhenLocked="true"
             android:theme="@style/AppTheme.NoActionBar"
             android:turnScreenOn="true" />
-
         <activity
             android:name=".SavedPlacesActivity"
             android:exported="true"
             android:label="@string/title_saved_places"
             android:parentActivityName=".TaskCreatorActivity"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".ShowImageActivity"
             android:label="Task Image" />
-
         <activity
             android:name=".AboutActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".UpgradeActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".OnboardingActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"/>
 
         <service
             android:name=".services.ActivityDetectionService"
@@ -105,13 +102,12 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".notification.NotificationClickHandler" />
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />
-
     </application>
 
 </manifest>
