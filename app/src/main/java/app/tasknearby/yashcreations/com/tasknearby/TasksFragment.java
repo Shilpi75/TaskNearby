@@ -1,103 +1,102 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Typeface;
-import android.net.Uri;
+import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import app.tasknearby.yashcreations.com.tasknearby.database.TasksContract;
+import java.util.List;
+
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
+import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
 
 /**
- * Created by Yash on 22/04/15.
+ * Fragment to display a list of tasks present in the database.
+ *
+ * @author vermayash8
  */
-public class TasksFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TasksFragment extends Fragment {
 
-    final int REQUEST_CODE_ADD_TASK = 5;
-    public static int distance = 0;
-    final int LOADER_ID = 0;
+    private static final String TAG = TasksFragment.class.getSimpleName();
 
-    private TasksAdapter mTaskAdapter;
-    View rootView;
+    private TaskRepository mTaskRepository;
+    private TaskAdapter mTaskAdapter;
+
+    @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
-        rootView = inflater.inflate(R.layout.fragment_main, container,false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        ListView listview = (ListView) rootView.findViewById(R.id.listView_task);
+        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_tasks);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // Set adapter to recycler view.
+        mTaskAdapter = new TaskAdapter(getActivity());
+        recyclerView.setAdapter(mTaskAdapter);
 
-        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fabMain);
-
-        getLoaderManager().initLoader(LOADER_ID, null, this);
-
-        mTaskAdapter = new TasksAdapter(getActivity(),null, 0);
-        listview.setAdapter(mTaskAdapter);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Cursor c = mTaskAdapter.getCursor();
-                if (c != null && c.moveToPosition(pos)) {
-
-                    Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
-                    intent.putExtra(Constants.TaskID, c.getString(Constants.COL_TASK_ID));
-                    startActivity(intent);
-                }
+        mTaskRepository = new TaskRepository(getActivity().getApplicationContext());
+        // Fetch the live data object.
+        LiveData<List<TaskModel>> liveData = mTaskRepository.getAllTasksWithUpdates();
+        // observe the live data for changes.
+        liveData.observe(this, taskModels -> {
+            if (taskModels == null) {
+                return;
             }
+            processTaskModels(taskModels);
         });
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), NewTaskActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_ADD_TASK);
-            }
-        });
-
+        // For demo. TODO: Remove.
+        // new DbUpdatesSimulator(getActivity().getApplicationContext(), mTaskRepository).start();
         return rootView;
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = TasksContract.TaskEntry.COLUMN_DONE_STATUS + " ASC, " + TasksContract.TaskEntry.COLUMN_MIN_DISTANCE + " ASC ";
-        Uri uri = TasksContract.TaskEntry.CONTENT_URI;
-        return new CursorLoader(getActivity(), uri, Constants.PROJECTION_TASKS, null, null, sortOrder);
+    /**
+     * Does the following things:
+     * 1. Assigns state to all the tasks.
+     * 2. Gets the locations for all the tasks. (Ideally this should be done on WorkerThread)
+     * 3. Notifies the UI that data has changed.
+     */
+    private void processTaskModels(@NonNull List<TaskModel> taskModels) {
+        List<TaskStateWrapper> stateWrappedTasks = TaskStateUtil.getTasksStateListWrapper(
+                getActivity(), taskModels);
+        // Add location to the tasks.
+        addLocation(stateWrappedTasks);
+        // Add to adapter and notify.
+        mTaskAdapter.setData(stateWrappedTasks);
+        mTaskAdapter.notifyDataSetChanged();
+        // Set the no task view.
+        setNoTasksView(mTaskAdapter.getItemCount());
     }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mTaskAdapter.swapCursor(data);
-        TextView noTasksTV = (TextView) rootView.findViewById(R.id.textView);
-        if(data.getCount()==0) {
-            noTasksTV.setTypeface(Typeface.createFromAsset(getActivity().getAssets(),"fonts/Raleway-Regular.ttf"));
-            noTasksTV.setVisibility(View.VISIBLE);
+    /**
+     * Assigns the locations to the list of TaskStateWrapper objects.
+     */
+    private void addLocation(List<TaskStateWrapper> stateWrappedTasks) {
+        long locationId;
+        for (TaskStateWrapper wrapper : stateWrappedTasks) {
+            locationId = wrapper.getTask().getLocationId();
+            wrapper.setLocationName(mTaskRepository.getLocationById(locationId).getPlaceName());
         }
-        else
-            noTasksTV.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mTaskAdapter.swapCursor(null);
+    /**
+     * When no task is present, this shows the empty view.
+     *
+     * @param itemCount the number of tasks present in the database.
+     */
+    private void setNoTasksView(int itemCount) {
+        if (getActivity() != null) {
+            if (itemCount == 0) {
+                getActivity().findViewById(R.id.no_task_view).setVisibility(View.VISIBLE);
+            } else {
+                getActivity().findViewById(R.id.no_task_view).setVisibility(View.GONE);
+            }
+        }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getLoaderManager().restartLoader(LOADER_ID, null, this);
-    }
-
 }

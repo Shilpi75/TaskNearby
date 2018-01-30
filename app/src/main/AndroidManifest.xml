@@ -1,106 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="app.tasknearby.yashcreations.com.tasknearby"
-    android:installLocation="auto">
+    package="app.tasknearby.yashcreations.com.tasknearby">
 
     <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <!-- Required for getting image -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Billing permission -->
+    <uses-permission android:name="com.android.vending.BILLING" />
 
+    <!-- To stop from being distributed on non-GPS enabled devices. -->
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/TealTheme">
+            android:theme="@style/TranslucentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".AboutActivity"
-            android:label="@string/title_activity_about"
+            android:name=".TaskCreatorActivity"
+            android:label="@string/title_add_new_task"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/TealTheme"/>
-
-        <activity
-            android:name=".AlarmActivity"
-            android:excludeFromRecents="true"
-            android:label="@string/title_activity_alarm"
-            android:launchMode="singleInstance"
-            android:showOnLockScreen="true"
-            android:theme="@style/TealTheme" />
-
-        <activity
-            android:name=".NewTaskActivity"
-            android:label="@string/title_activity_new_task"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/TealTheme"/>
-
-        <activity
-            android:name=".SavedLocationListActivity"
-            android:label="@string/title_activity_saved_location_list"
-            android:parentActivityName=".NewTaskActivity" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <!-- adjustResize will pan the view up when keyboard opens up. -->
 
         <activity
             android:name=".SettingsActivity"
-            android:label="Settings"
+            android:label="@string/title_settings"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/TealTheme" />
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".TaskDetailActivity"
-            android:label="@string/title_activity_task_detail"
+            android:name=".DetailActivity"
+            android:label="Task Detail"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AlarmActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="Alarm"
+            android:launchMode="singleInstance"
+            android:parentActivityName=".MainActivity"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:turnScreenOn="true" />
+        <activity
+            android:name=".SavedPlacesActivity"
+            android:exported="true"
+            android:label="@string/title_saved_places"
+            android:parentActivityName=".TaskCreatorActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ShowImageActivity"
+            android:label="Task Image" />
+        <activity
+            android:name=".AboutActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UpgradeActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        <!-- API Key required to access Google Places and Google Maps API. -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/common_api_key" />
+        <activity android:name=".OnboardingActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"/>
 
         <service
-            android:name=".service.FusedLocationService"
+            android:name=".services.ActivityDetectionService"
             android:enabled="true"
-            android:exported="false" />
-
+            android:stopWithTask="false" />
         <service
-            android:name=".service.ActivityDetectionService"
-            android:enabled="true" />
-
-        <service
-            android:name=".service.NotificationClickHandler"
-            android:enabled="true" />
-
-        <provider
-            android:name=".database.TasksProvider"
-            android:authorities="@string/content_authority"
-            android:exported="false"/>
+            android:name=".services.FusedLocationService"
+            android:enabled="true"
+            android:stopWithTask="false" />
 
         <receiver
-            android:name=".MainActivity$OnBootStarter"
+            android:name=".MainActivity$BootCompletedReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".notification.NotificationClickHandler" />
 
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/places_api_key" />
     </application>
+
 </manifest>

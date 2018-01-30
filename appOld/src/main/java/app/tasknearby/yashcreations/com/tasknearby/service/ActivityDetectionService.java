@@ -50,4 +50,5 @@ public class ActivityDetectionService extends IntentService {
         local.sendBroadcast(localIntent);
         Log.i(TAG, "Activity Broadcast Sent!");
     }
+
 }

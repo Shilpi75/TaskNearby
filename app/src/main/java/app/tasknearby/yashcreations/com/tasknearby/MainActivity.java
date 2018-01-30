@@ -3,21 +3,21 @@ package app.tasknearby.yashcreations.com.tasknearby;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
-import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -25,291 +25,378 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.billingclient.api.Purchase;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import app.tasknearby.yashcreations.com.tasknearby.service.FusedLocationService;
-import app.tasknearby.yashcreations.com.tasknearby.service.ActivityDetectionService;
+import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
+import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
+import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
+import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
- * App's working: It relies on FusedLocation provided by Google play services to obtain location.
- * In FusedLocation API, We can adjust the interval in which we want the location. We should keep
- * the interval as minimum as possible so, the app intelligently uses Activity Recognition API to
- * recognize what the user is doing. If we find that the mobile is at rest, we set the interval
- * much higher (1 min) and when he's driving (3-5 seconds) and otherwise in between. So,
- * basically the app obtains the data from these 2 APIs. Rest all are the algorithms implemented
- * to use this data.
- * <p>
- * Activities :-
+ * Shows the list of tasks segregated into categories when the app loads. This activity also
+ * contains the switch that will turn the app's service on or off.
  *
- * @see MainActivity - opens first as of now and shows the Add Task FAB and TasksFragment.
- * @see TasksFragment - gets the cursor from database and displays the added tasks on display.
- * @see NewTaskActivity - provides a UI to add a task, also, editing a task also comes here only,
- * data
- * * is already filled in that case.
- * @see SavedLocationListActivity - displays the list of saved places and option to delete them.
- * @see com.google.android.gms.location.places.ui.PlacePicker is provided by Google Play services.
- * @see TaskDetailActivity - displays the details of the task, click to edit, directions etc.
- * @see AlarmActivity - shows when alarm rings.
- * <p>
- * All these were just data display activities, now the services which actually run the app.
- * @see FusedLocationService sets a listener to the FusedLocation API by using the data obtained
- * from ActivittRecognition API to adjust the update interval. After setting the listener, on
- * receiving location updates, it checks the active tasks in database and finds which are
- * eligible for alarms and if anyone is found eligible, it starts the AlarmActivity.
- * @see ActivityDetectionService it is used as an input for results from Google play services.
- * @see Utility contains a collection of methods used in app, which, ideally should not be there.
- * @see app.tasknearby.yashcreations.com.tasknearby.database.TasksProvider - provides an
- * abstraction to the database, just insert, update delete query functions. Not required if you
- * don't have a widget and are not sharing your data with other apps.
- * <p>
- * <p>
- * Go in this order :
- * <p>
- * Note: Just skim over the database. Don't read what components do, learn Room, we'll be using
- * that.
- * a) Database - 1. TasksContract 2. TasksDbHelper 3. TasksProvider
- * b) ActivityDetectionService
- * c) FusedLocationService
- * d) You've got 90% of the app. rest all will be written from scratch completely.
- * remaining are activities.
- * <p>
- * <p>
- * <p>
- * Running
- * </p>
- * I've setup checkstyle and findbugs check. They will run only when you do
- * ./gradlew build  or  ./gradlew check
- * If you want to disable them, which you should not, then set ignoreViolations to true in build
- * .gradle.
- * You might install Findbugs and Checkstyle plugins for android studio, but not necessary as
- * of now. Do that later.
- * <p>
- * Note - when you'll build this app locally, debug version -> the place selector won't work.
- * You'll have to run the following command to generate your SHA1 fingerprint of debug.keystore
- * keytool -list -v -keystore ~/.android/debug.keystore
- * get the fingerprint to me, I'll add it to allowed list in Google Developers Console.
- * </p>
- * Continuous Integration is setup for this project, as soon as you push your changes to any
- * branch, it'll trigger the build on travis ci. I'll configure it to run only when master or
- * develop is pushed.
+ * @author vermayash8
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView
+        .OnNavigationItemSelectedListener, BillingManager.BillingUpdatesListener {
 
-    public static final String TAG = MainActivity.class.getSimpleName();
-    private Utility utility;
-    private static boolean isServiceRunning = false;
-    private SwitchCompat appSwitch;
-    private FirebaseAnalytics mAnalytics;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int REQUEST_CODE_PERMISSIONS = 123;
+
+    /**
+     * Constant used in the location settings dialog.
+     */
+    private static final int REQUEST_CHECK_SETTINGS = 1000;
+
+    private SettingsClient mSettingsClient;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
+
+    /**
+     * Stores the types of location services the client is interested in using. Used for checking
+     * settings to determine if the device has optimal location settings.
+     */
+    private LocationSettingsRequest mLocationSettingsRequest;
+
+    private SharedPreferences prefs;
+
+    private BillingManager mBillingManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new TasksFragment(), TAG)
-                    .commit();
+
+        if (!AppUtils.hasUserSeenOnboarding(this)) {
+            startActivity(new Intent(this, OnboardingActivity.class));
         }
-        mAnalytics = FirebaseAnalytics.getInstance(this);
-        Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
+
+        setContentView(R.layout.activity_main2);
+        // Device's location settings.
+        mSettingsClient = LocationServices.getSettingsClient(this);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        logAnalytics();
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setElevation(0);
-        }
-        TextView mTitleView = (TextView) toolbar.findViewById(R.id.toolbarTV);
-        mTitleView.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Raleway-SemiBold.ttf"));
+        // Initialize SharedPreferences.
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        // To set up the power saver preference if user has updated the app.
+        setPowerSaverPreference();
+        setVersionPreference();
+        setupNavDrawer();
 
-        utility = new Utility();
+        findViewById(R.id.fab).setOnClickListener(view ->
+                startActivity(new Intent(MainActivity.this, TaskCreatorActivity.class)));
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-            startApp();
-        else {
-            checkPermissions();
-        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, new TasksFragment())
+                .commit();
 
-        //TODO: Ad code
-       /* String android_id = Settings.Secure.getString(this.getContentResolver(), Settings
-       .Secure.ANDROID_ID);
-        String deviceId = md5(android_id).toUpperCase();
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice(deviceId).build();
-        mAdView.landroid oadAd(adRequest);
-        boolean isTestDevice = adRequest.isTestDevice(this);
-        Log.e(TAG, "is Admob Test Device ? "+deviceId+" "+isTestDevice);
-*/
-    }
-
-    //    http://www.javacreed.com/why-should-we-use-dependency-injection/
-    private void checkPermissions() {
-        boolean mFinePermission = ContextCompat.checkSelfPermission(this, Manifest.permission
-                .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        boolean mCoarsePermission = ContextCompat.checkSelfPermission(this, Manifest.permission
-                .ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        if (mFinePermission && mCoarsePermission)
-            startApp();
-        else
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                    .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        mBillingManager = new BillingManager(this, this);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+    protected void onStart() {
+        if (checkPermissions()) {
+            // Check permissions will automatically request permissions if they're not present.
+            startServiceIfAppEnabled();
+        }
+        super.onStart();
+    }
+
+    private void startServiceIfAppEnabled() {
+        SwitchCompat appSwitch = findViewById(R.id.switch_app_status);
+        boolean isAppEnabled = prefs.getString(getString(R.string.pref_status_key), getString(
+                R.string.pref_status_default)).equals(getString(R.string.pref_status_enabled));
+        appSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+                onAppStatusChanged(isChecked));
+        appSwitch.setChecked(isAppEnabled); // This will also trigger the onClickListener.
+        // If app is enabled, check for device's location settings.
+        if (isAppEnabled) {
+            checkLocationSettings();
+        }
+    }
+
+    private void onAppStatusChanged(boolean status) {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (status) {
+            // Put enabled string in SharedPreferences.
+            editor.putString(getString(R.string.pref_status_key),
+                    getString(R.string.pref_status_enabled));
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_ENABLED, new Bundle());
+            // TODO: The startService method calls the onStartCommand method and doesn't start a
+            // new instance of the service. So, is there any check needed before doing this?
+            // Or should we keep an Application class which takes care of isServiceRunning etc.
+            AppUtils.startService(this);
+        } else {
+            // Put disabled string in shared preferences.
+            editor.putString(getString(R.string.pref_status_key),
+                    getString(R.string.pref_status_disabled));
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_DISABLED, new Bundle());
+            AppUtils.stopService(this);
+        }
+        editor.apply();
+    }
+
+    private boolean checkPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                        .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                REQUEST_CODE_PERMISSIONS);
+        // Now the onRequestPermissionsResult method will take care of the rest.
+        // If permissions are granted, it'll start the startAppIfEnabled method.
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager
-                        .PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted, continue app.
+                startServiceIfAppEnabled();
+            } else {
+                // Handle permission request denied.
+                // Permission requests can be denied in 2 ways: a) Deny  b) Never ask again.
+                // 1. Deny case:
+                // shouldShowRequestPermissionRationale tells us if the user clicked deny and
+                // hence we should show an explanation for the permission request.
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
+                    // Permissions were denied, so asking again (Ideally we should show an
+                    // explanation).
                     checkPermissions();
                 } else {
-                    Snackbar.make(findViewById(android.R.id.content), getString(R.string
-                            .no_permissions_granted), Snackbar.LENGTH_LONG).show();
+                    // User clicked never ask again.
+                    // Show a persistent dialog to enable the permissions from settings.
+                    showPermissionsFromSettingsDialog();
+                    // When the settings screen will close, onStart will be called and it'll
+                    // start the service after checking permissions.
                 }
-                break;
+            }
         }
     }
 
-    private void startApp() {
-        appSwitch = (SwitchCompat) this.findViewById(R.id.app_switch);
-        LocationManager locationManager = (LocationManager) getSystemService(Context
-                .LOCATION_SERVICE);
+    private void showPermissionsFromSettingsDialog() {
+        AlertDialog permissionsDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_permission_title)
+                .setMessage(R.string.dialog_permission_message)
+                .setPositiveButton(R.string.dialog_grant_permission_button, (dialog, which) -> {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", getPackageName(), null));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                })
+                .setCancelable(false)
+                .create();
+        permissionsDialog.show();
+    }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String accuracyString = prefs.getString(getString(R.string.pref_accuracy_key), getString
-                (R.string.pref_accuracy_default));
-        String appStatus = prefs.getString(getString(R.string.pref_status_key), getString(R
-                .string.pref_status_default));
-
-        Bundle bundle = new Bundle();
-        bundle.putBoolean("app_started", true);
-        bundle.putBoolean("gps_status", locationManager.isProviderEnabled(locationManager
-                .GPS_PROVIDER));
-        bundle.putString("accuracy_settings", accuracyString);
-        bundle.putString("app_status", appStatus);
-        mAnalytics.logEvent(Constants.ANALYTICS_KEY_APP_OPENED, bundle);
-
-        if (/*accuracyString.equals(getString(R.string.pref_accuracy_default)) &&
-        */!locationManager.isProviderEnabled(locationManager.GPS_PROVIDER))
-            showGpsOffDialog(this);
-
-        if (isAppEnabled(this) && utility.checkPlayServices(this)) {
-            startServ();
-            appSwitch.setChecked(true);
-        } else
-            appSwitch.setChecked(false);
-
-        appSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences
-                        (MainActivity.this);
-                SharedPreferences.Editor editor = prefs.edit();
-                if (appSwitch.isChecked()) {
-                    if (!isServiceRunning)              //If service is not running then start it!
-                        startServ();
-                    editor.putString(MainActivity.this.getString(R.string.pref_status_key),
-                            "enabled");
-                } else {
-                    if (isServiceRunning)
-                        stopServ();
-                    editor.putString(MainActivity.this.getString(R.string.pref_status_key),
-                            "disabled");
-                }
-                editor.apply();
+    /**
+     * Sets up the power saver preference if user has updated the app.
+     */
+    private void setPowerSaverPreference() {
+        // Set up power/accuracy preferences.
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!defaultPref.contains(getString(R.string.pref_power_saver_key))) {
+            // It means user has updated the app and opening this version for the first time.
+            String accuracy = defaultPref.getString(getString(R.string.pref_accuracy_key),
+                    getString(R.string.pref_accuracy_default));
+            SharedPreferences.Editor editor = defaultPref.edit();
+            if (accuracy.equals(getString(R.string.pref_accuracy_balanced))) {
+                // Set power saver mode.
+                editor.putBoolean(getString(R.string.pref_power_saver_key), true);
+            } else {
+                editor.putBoolean(getString(R.string.pref_power_saver_key), false);
             }
-        });
-
+            editor.apply();
+        }
     }
 
-    private void showGpsOffDialog(final Context context) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle(getString(R.string.gps_off_dialog_title))
-                .setIcon(R.drawable.ic_location_off_teal_500_24dp)
-                .setMessage(getString(R.string.gps_off))
-                .setPositiveButton(getString(R.string.turn_on_button),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(Settings
-                                        .ACTION_LOCATION_SOURCE_SETTINGS);
-                                context.startActivity(intent);
-                            }
-                        });
-        alertDialog.show();
+    private void setupNavDrawer() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, findViewById(R.id
+                .toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        // Hide upgrade to premium if already upgraded.
+        if (AppUtils.isPremiumUser(this)) {
+            Menu nav_Menu = navigationView.getMenu();
+            nav_Menu.findItem(R.id.nav_group_premium).setVisible(false);
+        }
     }
 
-    public void startServ() {
-        startService(new Intent(this, FusedLocationService.class));
-        isServiceRunning = true;
-    }
-
-    void stopServ() {
-        stopService(new Intent(this, FusedLocationService.class));
-        isServiceRunning = false;
+    /**
+     * Sets the version preference.
+     */
+    public void setVersionPreference() {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(getString(R.string.pref_version_key), getString(R.string.app_version));
+        editor.apply();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        switch (item.getItemId()) {
+            case R.id.nav_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.nav_feedback:
+                AppUtils.sendFeedbackEmail(this);
+                break;
+            case R.id.nav_share:
+                AppUtils.rateApp(this);
+                break;
+            case R.id.nav_about:
+                startActivity(new Intent(this, AboutActivity.class));
+                break;
+            case R.id.premium:
+                UpgradeActivity.show(this);
+                break;
+        }
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            Intent settingIntent = new Intent(this, SettingsActivity.class);
-            startActivity(settingIntent);
-            return true;
-        } else if (id == R.id.action_about) {
-            startActivity(new Intent(this, AboutActivity.class));
-            return true;
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Checks for required location settings according to setting's power saver preference.
+     */
+    public void checkLocationSettings() {
+        buildLocationsSettingsRequest();
+        mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
+                .addOnFailureListener(e -> {
+                    int statusCode = ((ApiException) e).getStatusCode();
+                    switch (statusCode) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            Log.i(TAG, "Location settings are not satisfied. Attempting to " +
+                                    "upgrade location settings ");
+                            try {
+                                ResolvableApiException rae = (ResolvableApiException) e;
+                                rae.startResolutionForResult(MainActivity.this,
+                                        REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException sie) {
+                                Log.i(TAG, "PendingIntent unable to execute request.");
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            String errorMessage = "Location settings are inadequate, and " +
+                                    "cannot be fixed here. Fix in Settings.";
+                            Log.e(TAG, errorMessage);
+                            Toast.makeText(MainActivity.this, errorMessage, Toast
+                                    .LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    public void buildLocationsSettingsRequest() {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        LocationRequest locationRequest = FusedLocationService.createLocationRequest(this,
+                FusedLocationService.DEFAULT_LOCATION_UPDATE_INTERVAL);
+        builder.addLocationRequest(locationRequest);
+        mLocationSettingsRequest = builder.build();
+    }
+
+    private void logAnalytics() {
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isPowerSaver = defaultPref.getBoolean(getString(R.string.pref_power_saver_key),
+                false);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(AnalyticsConstants.ANALYTICS_PARAM_IS_POWER_SAVER_ON, isPowerSaver);
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_START, bundle);
+    }
+
+
+    /**
+     * Callbacks for the BillingManager class.
+     */
+    @Override
+    public void onBillingClientSetupFinished() {
+        mBillingManager.queryPurchases();
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            Snackbar.make(findViewById(android.R.id.content), "Task Added!", Snackbar
-                    .LENGTH_LONG).show();
-            TextView tv = (TextView) this.findViewById(R.id.textView);
-            tv.setVisibility(View.INVISIBLE);
-            mAnalytics.logEvent(Constants.ANALYTICS_KEY_TASK_ADDED, new Bundle());
+    public void onItemPurchased(Purchase purchase) {
+        if (AppUtils.isPremiumUser(this)) {
+            if (purchase == null) {
+                // This user is a premium user but he has not purchased anything.
+                reportPremiumWithoutPurchase();
+            }
+        } else if (purchase != null
+                && purchase.getSku().equals(ProductIdConstants.PREMIUM_PRODUCT_ID)) {
+            // If queried purchases include premium upgrade, then make it premium.
+            AppUtils.setPremium(this, true);
+            AppUtils.savePurchaseDetails(this, purchase);
         }
     }
 
-    public static boolean isAppEnabled(Context mContext) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String m = prefs.getString(mContext.getString(R.string.pref_status_key),
-                mContext.getString(R.string.pref_status_default));
-        return m.equals("enabled");
+    private void reportPremiumWithoutPurchase() {
+        String orderId = prefs.getString(getString(R.string.pref_upgrade_order_id), null);
+        String purchaseToken = prefs.getString(getString(R.string.pref_upgrade_purchase_token),
+                null);
+        Bundle bundle = new Bundle();
+        bundle.putString(AnalyticsConstants.EXTRA_ORDER_ID, orderId);
+        bundle.putString(AnalyticsConstants.EXTRA_PURCHASE_TOKEN, purchaseToken);
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.NOT_PURCHASED_BUT_PREMIUM, bundle);
     }
 
-    public static class OnBootStarter extends BroadcastReceiver {
-        public OnBootStarter() {
-            super();
+    /**
+     * Starts the service when device is rebooted.
+     * The applications are placed in a 'Stopped' state after install and AFTER Force stop TOO.
+     * When an application is in the stopped state, it won't receive any broadcasts, no matter what!
+     * Hence, when this app is killed by the user, it won't receive any boot completed broadcast.
+     */
+    public static class BootCompletedReceiver extends BroadcastReceiver {
+
+        public BootCompletedReceiver() {
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "onReceive: BootCompletedReceived");
-            boolean mFinePermission = ContextCompat.checkSelfPermission(context, Manifest
-                    .permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-            if (mFinePermission && isAppEnabled(context)) {
-                Log.e(TAG, "onReceive: Starting service now.");
-                context.startService(new Intent(context, FusedLocationService.class));
-                isServiceRunning = true;
+            Log.i(TAG, "onReceive: Received BOOT_COMPLETED.");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            // Check if app is enabled or not.
+            boolean isAppEnabled = prefs.getString(context.getString(R.string.pref_status_key),
+                    context.getString(R.string.pref_status_default))
+                    .equals(context.getString(R.string.pref_status_enabled));
+            // Also check if location permissions are available or not.
+            if (isAppEnabled && ActivityCompat.checkSelfPermission(context, Manifest.permission
+                    .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                AppUtils.startService(context);
             }
         }
     }
-
-
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="General">
+        <!-- Units preference -->
+        <ListPreference
+            android:defaultValue="@string/pref_unit_metric"
+            android:entries="@array/pref_units_entries"
+            android:entryValues="@array/pref_unit_values"
+            android:key="@string/pref_unit_key"
+            android:title="@string/pref_unit_title" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_power_saver_key"
+            android:summary="@string/pref_power_saver_summary"
+            android:title="@string/pref_power_saver_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Alarms">
+
+        <!-- Alarm Tone preference. -->
+        <RingtonePreference
+            android:key="@string/pref_alarm_tone_key"
+            android:ringtoneType="all"
+            android:title="@string/creator_alarm_title" />
+
+        <!-- Vibrate preference. -->
+        <ListPreference
+            android:defaultValue="@string/pref_vibrate_default"
+            android:entries="@array/pref_vibrate_entries"
+            android:entryValues="@array/pref_vibrate_values"
+            android:key="@string/pref_vibrate_key"
+            android:title="@string/pref_vibrate_title" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_voice_alarm_key"
+            android:summary="@string/pref_voice_alarm_summary"
+            android:title="@string/pref_voice_alarm_title" />
+
+        <!-- Snooze time. -->
+        <app.tasknearby.yashcreations.com.tasknearby.CustomListPreference
+            android:defaultValue="@string/pref_snooze_time_default"
+            android:entries="@array/pref_snooze_time_entries"
+            android:entryValues="@array/pref_snooze_time_values"
+            android:key="@string/pref_snooze_time_key"
+            android:title="@string/pref_snooze_title" />
+
+    </PreferenceCategory>
+
+    <!--
+    TODO: Add it later. (Take care of metrics).
+    <EditTextPreference
+        android:defaultValue="@string/pref_distance_range_default"
+        android:key="@string/pref_distance_range_key"
+        android:title="@string/pref_distance_range_title" />
+   -->
+
+</PreferenceScreen>

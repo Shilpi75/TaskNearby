@@ -1,75 +1,148 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+
+/**
+ * Displays the about screen for the app.
+ *
+ * @author shilpi
+ */
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private TextView feedbackTv;
+    private FloatingActionButton rateFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
+        setActionBar();
+        initiateViews();
+    }
+
+    public void setActionBar() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.title_about));
+    }
+
+    public void initiateViews() {
+        feedbackTv = findViewById(R.id.text_feedback);
+        rateFab = findViewById(R.id.fab_rate);
+
+        // Set on click listeners.
+        feedbackTv.setOnClickListener(this);
+        rateFab.setOnClickListener(this);
+
+        if (BuildConfig.DEBUG) {
+            findViewById(R.id.image_launcher).setOnClickListener(v -> {
+                togglePremium();
+                startActivity(new Intent(AboutActivity.this, OnboardingActivity.class));
+            });
         }
-        TextView mAppNameView = (TextView) findViewById(R.id.app_name_view_about);
-        TextView mAppDescView = (TextView) findViewById(R.id.app_description_view);
-
-        Typeface mTfRegular = Typeface.createFromAsset(getAssets(), "fonts/Raleway-Regular.ttf");
-        mAppNameView.setTypeface(mTfRegular);
-        mAppDescView.setTypeface(mTfRegular);
-
-        findViewById(R.id.button_star).setOnClickListener(this);
-        ;
-        findViewById(R.id.button_share).setOnClickListener(this);
-        findViewById(R.id.about_card).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-
-        final String appPackageName = getPackageName();
-        final String appUrl = "https://play.google.com/store/apps/details?id=" + appPackageName;
         switch (v.getId()) {
-            case R.id.button_star:
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                } catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl)));
-                }
+            case R.id.text_feedback:
+                AppUtils.sendFeedbackEmail(this);
                 break;
-            case R.id.button_share:
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                String m = getString(R.string.share_base_string) + appUrl;
-                intent.setType("text/plain");
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                intent.putExtra(Intent.EXTRA_TEXT, m);
-                if (intent.resolveActivity(AboutActivity.this.getPackageManager()) != null)
-                    startActivity(intent);
+
+            case R.id.fab_rate:
+                AppUtils.rateApp(this);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_about, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                String packageName = getPackageName();
+                // Generated using GooglePlayUrlBuilder on Google analytics website.
+                String referrer = "&referrer=utm_source%3Dshareapp";
+                String appUrl = getString(R.string.play_store_base_url) + packageName + referrer;
+
+                // Share message.
+                String shareMessage = String.format(getString(R.string.share_message), appUrl);
+                // Share intent.
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+
+                if (shareIntent.resolveActivity(AboutActivity.this.getPackageManager()) != null)
+                    startActivity(shareIntent);
                 else
-                    Toast.makeText(AboutActivity.this, "No app found to share the Details!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AboutActivity.this, "No app found to share the app!", Toast
+                            .LENGTH_SHORT).show();
                 break;
-            case R.id.about_card:
-                Intent eIntent = new Intent(Intent.ACTION_SENDTO);
-                eIntent.setType("text/plain");
-                eIntent.setData(Uri.parse("mailto:"));
-                eIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.developer_email_id)});
-                eIntent.putExtra(Intent.EXTRA_SUBJECT, "Task Nearby App");
-                startActivity(eIntent);
-                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+/*
+    // Needed to make global.
+    BillingManager billingManager;
+
+    private void consumePurchase() {
+        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String purchaseToken = defaultPref.getString(getString(R.string
+                .pref_upgrade_purchase_token), null);
+        BillingManager.BillingUpdatesListener listener = new BillingManager
+                .BillingUpdatesListener() {
+            @Override
+            public void onBillingClientSetupFinished() {
+                Toast.makeText(AboutActivity.this, "Consuming", Toast.LENGTH_SHORT).show();
+                billingManager.consumePurchasedProduct(purchaseToken);
+                AppUtils.setPremium(AboutActivity.this, false);
+            }
+
+            @Override
+            public void onItemPurchased(@Nullable Purchase purchase) {
+            }
+        };
+        billingManager = new BillingManager(this, listener);
+    }
+*/
+    /**
+     * Allows us to toggle the app's premium status for testing. Works only in debug version.
+     */
+    private void togglePremium() {
+        // Toggles premium status on button click.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences
+                (this);
+        boolean currentPremiumStatus = prefs.getBoolean(getString(R.string
+                .pref_is_premium_user_key), false);
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putBoolean(getString(R.string.pref_is_premium_user_key), !currentPremiumStatus);
+        ed.apply();
+        if (currentPremiumStatus) {
+            Toast.makeText(this, "Converted to NON-premium", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Converted to premium", Toast.LENGTH_SHORT).show();
         }
     }
 }

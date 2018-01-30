@@ -33,9 +33,9 @@ public class TasksAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView taskDistance = (TextView) view.findViewById(R.id.task_dist_textView);
-        TextView taskNameView = (TextView) view.findViewById(R.id.task_name_textView);
-        TextView taskLoc = (TextView) view.findViewById(R.id.task_location_textView);
+        TextView taskDistance = (TextView) view.findViewById(R.id.text_last_distance);
+        TextView taskNameView = (TextView) view.findViewById(R.id.text_task_name);
+        TextView taskLoc = (TextView) view.findViewById(R.id.text_location_name);
         LinearLayout listItemLayout = (LinearLayout) view.findViewById(R.id.list_item_layout);
 
         taskDistance.setTypeface(Typeface.DEFAULT_BOLD);

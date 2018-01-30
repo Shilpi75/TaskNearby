@@ -1,129 +1,211 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
-import android.content.Intent;
-import android.graphics.Typeface;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.preference.SwitchPreference;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import app.tasknearby.yashcreations.com.tasknearby.service.FusedLocationService;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
+import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
+
+import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_alarm_tone_key;
+import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_distance_range_key;
+import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_power_saver_key;
+import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_snooze_time_key;
+import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_unit_key;
+import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_vibrate_key;
 
 /**
- * Created by Yash on 01/05/15.
+ * Manages the settings/preferences.
+ *
+ * @author shilpi
  */
 public class SettingsActivity extends AppCompatActivity {
+
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_settings);
+        setContentView(R.layout.activity_settings);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.actionbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        TextView toolbarTV = (TextView) toolbar.findViewById(R.id.settings_title_toolbar);
-        toolbarTV.setText(getString(R.string.action_settings));
-        toolbarTV.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Raleway-SemiBold.ttf"));
+        setActionBar();
 
-        getFragmentManager().beginTransaction().add(R.id.contentFrame, new SettingsFragment(), "F_TAG").commit();
+        getFragmentManager().beginTransaction().add(R.id.contentFrame, new SettingsFragment())
+                .commit();
     }
 
+    /**
+     * Sets the toolbar as actionBar and also sets the up button.
+     */
+    public void setActionBar() {
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (null != actionBar) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
 
-    public static class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
+    /**
+     * It initializes the settings preferences and attaches preference change listener with each.
+     */
+    public static class SettingsFragment extends PreferenceFragment implements Preference
+            .OnPreferenceChangeListener {
+
+        private ListPreference mUnitPreference, mSnoozePreference, mVibratePreference;
+        private RingtonePreference mAlarmTonePreference;
+        private EditTextPreference mDistancePreference;
+        private SwitchPreference mVoiceAlarmPreference, mPowerSaverPreference;
+        private FirebaseAnalytics mFirebaseAnalytics;
+
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+            addPreferencesFromResource(R.xml.preferences);
+            initializeViews();
         }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-            ListPreference mUnitPreference = (ListPreference) getPreferenceManager().findPreference(getString(R.string.pref_units_key));
-            ListPreference mAccuracyPreference = (ListPreference) getPreferenceManager().findPreference(getString(R.string.pref_accuracy_key));
-            ListPreference vibratePreference = (ListPreference) getPreferenceManager().findPreference(getString(R.string.pref_vibrate_key));
-
-            RingtonePreference mRingtonePreference = (RingtonePreference) getPreferenceManager().findPreference(getString(R.string.pref_tone_key));
-
-            bindPreferenceSummaryToValue(mUnitPreference);
-            bindPreferenceSummaryToValue(mAccuracyPreference);
-            bindPreferenceSummaryToValue(mRingtonePreference);
-            bindPreferenceSummaryToValue(vibratePreference);
-
-            return super.onCreateView(inflater, container, savedInstanceState);
-        }
-
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            String stringValue = newValue.toString();
-            if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list (since they have separate labels/values).
-                ListPreference listPreference = (ListPreference) preference;
-                int prefIndex = listPreference.findIndexOfValue(stringValue);
-                if (prefIndex >= 0) {
-                    preference.setSummary(listPreference.getEntries()[prefIndex]);
-                }
-                if (preference.getKey().equals(getString(R.string.pref_accuracy_key))) {
-                    Intent serviceIntent = new Intent(getActivity(), FusedLocationService.class);
-                    getActivity().stopService(serviceIntent);
-                    String appStatus = PreferenceManager.getDefaultSharedPreferences(getActivity())
-                            .getString(getString(R.string.pref_status_key),getString(R.string.pref_status_default));
-                    if(appStatus.equals("enabled"))
-                        getActivity().startService(serviceIntent);
-                }
-            } else if (preference instanceof RingtonePreference) {
-                try {
-                    Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), Uri.parse((String) newValue));
-                    String summary = ringtone.getTitle(getActivity());
-                    preference.setSummary(summary);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // For other preferences, set the summary to the value's simple string representation.
-                preference.setSummary(stringValue);
-            }
-            return true;
-
-        }
         /**
          * Attaches a listener so the summary is always updated with the preference value.
          * Also fires the listener once, to initialize the summary (so it shows up before the value
          * is changed.)
          */
-        private void bindPreferenceSummaryToValue(Preference preference) {
-            // Set the listener to watch for value changes.
+        public void bindPreferenceSummaryToValue(Preference preference) {
+
+            // Attach listener to preference.
             preference.setOnPreferenceChangeListener(this);
 
-            // Trigger the listener immediately with the preference's
-            // current value.
-            String defaultValue = "";
-            if(preference instanceof RingtonePreference)
-                defaultValue = Settings.System.DEFAULT_ALARM_ALERT_URI.getPath();
+            // Initial firing of listener to update summary values.
+            if (preference instanceof SwitchPreference) {
+                onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences
+                        (preference.getContext()).getBoolean(preference.getKey(), false));
 
-            onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.getContext())
-                            .getString(preference.getKey(), defaultValue));
+            } else if (preference instanceof RingtonePreference) {
+                onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences
+                        (preference.getContext()).getString(preference.getKey(), Settings.System
+                        .DEFAULT_ALARM_ALERT_URI.getPath()));
+
+            } else {
+                onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences
+                        (preference.getContext()).getString(preference.getKey(), ""));
+            }
+        }
+
+        /**
+         * Listens to the changes in preference value.
+         */
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object o) {
+            if (preference instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) preference;
+                int index = listPreference.findIndexOfValue(o.toString());
+                if (index >= 0) {
+                    preference.setSummary(listPreference.getEntries()[index]);
+                } else {
+                    preference.setSummary(null);
+                }
+            } else if (preference instanceof EditTextPreference) {
+                if (preference.getKey().equals(getString(pref_distance_range_key))) {
+                    preference.setSummary(o.toString() + " units");
+                } else {
+                    preference.setSummary(o.toString());
+                }
+
+            } else if (preference instanceof RingtonePreference) {
+                Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), Uri.parse(o
+                        .toString()));
+                String summary = ringtone.getTitle(getActivity());
+                preference.setSummary(summary);
+
+            } else if (preference instanceof SwitchPreference) {
+                if (preference.getKey().equals(getString(pref_power_saver_key))) {
+                    // Stop the service.
+                    AppUtils.stopService(getActivity());
+                    // Check if app is enabled.
+                    SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences
+                            (getActivity());
+                    String appStatus = defaultPref.getString(getString(R.string.pref_status_key),
+                            getString(R.string.pref_status_default));
+                    if (appStatus.equals(getString(R.string.pref_status_enabled))) {
+                        // Start the service again.
+                        AppUtils.startService(getActivity());
+                    }
+                }
+
+            } else {
+                preference.setSummary(o.toString());
+            }
+
+            return true;
+        }
+
+        /**
+         * Finds views by id and binds their preference summaries to their values.
+         */
+        public void initializeViews() {
+            mUnitPreference = (ListPreference) getPreferenceManager().findPreference(getString
+                    (pref_unit_key));
+//            mDistancePreference = (EditTextPreference) getPreferenceManager().findPreference
+//                    (getString(pref_distance_range_key));
+            mAlarmTonePreference = (RingtonePreference) getPreferenceManager().findPreference
+                    (getString(pref_alarm_tone_key));
+            mSnoozePreference = (ListPreference) getPreferenceManager().findPreference(getString
+                    (pref_snooze_time_key));
+            mVibratePreference = (ListPreference) getPreferenceManager().findPreference(getString
+                    (pref_vibrate_key));
+            mPowerSaverPreference = (SwitchPreference) getPreferenceManager().findPreference
+                    (getString(pref_power_saver_key));
+            mVoiceAlarmPreference = (SwitchPreference) getPreferenceManager().findPreference
+                    (getString(R.string.pref_voice_alarm_key));
+
+
+            bindPreferenceSummaryToValue(mUnitPreference);
+//            bindPreferenceSummaryToValue(mDistancePreference);
+            bindPreferenceSummaryToValue(mAlarmTonePreference);
+            bindPreferenceSummaryToValue(mSnoozePreference);
+            bindPreferenceSummaryToValue(mVibratePreference);
+            bindPreferenceSummaryToValue(mVoiceAlarmPreference);
+            bindPreferenceSummaryToValue(mPowerSaverPreference);
+
+            // Makes sure that voice alarms can be adjusted only in premium version.
+            mVoiceAlarmPreference.setOnPreferenceClickListener(preference -> {
+                if (!AppUtils.isPremiumUser(getActivity())) {
+                    UpgradeActivity.show(getActivity());
+                    mVoiceAlarmPreference.setChecked(false);
+                }
+                return true;
+            });
+
+            mPowerSaverPreference.setOnPreferenceClickListener(preference -> {
+                SharedPreferences pref = preference.getSharedPreferences();
+                boolean isPowerSaver = pref.getBoolean(getString(R.string.pref_power_saver_key),
+                        false);
+                if (isPowerSaver) {
+                    mFirebaseAnalytics.logEvent(AnalyticsConstants.POWER_SAVER_TURN_ON, new
+                            Bundle());
+                } else {
+                    mFirebaseAnalytics.logEvent(AnalyticsConstants.POWER_SAVER_TURN_OFF, new
+                            Bundle());
+                }
+                return true;
+            });
         }
     }
-
 }
