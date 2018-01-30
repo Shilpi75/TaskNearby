@@ -3,8 +3,6 @@ package app.tasknearby.yashcreations.com.tasknearby;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -16,12 +14,12 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class OnboardingActivity extends AppCompatActivity {
 
@@ -51,9 +49,9 @@ public class OnboardingActivity extends AppCompatActivity {
 
         // Contains images that will be shown on different onoarding screens.
         imageResources = new int[]{
-                R.drawable.ic_onboard_route,
-                R.drawable.ic_onboard_assistant,
-                R.drawable.ic_onboard_productivity,
+                R.drawable.ic_onboard_route_trimmed,
+                R.drawable.ic_onboard_assistant_trimmed,
+                R.drawable.ic_onboard_productivity
         };
         // adding bottom dots
         addBottomDots(0);
@@ -154,17 +152,6 @@ public class OnboardingActivity extends AppCompatActivity {
     };
 
     /**
-     * Making notification bar transparent
-     */
-    private void changeStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        }
-    }
-
-    /**
      * View pager adapter
      */
     public class MyViewPagerAdapter extends PagerAdapter {
@@ -194,7 +181,9 @@ public class OnboardingActivity extends AppCompatActivity {
             TextView titleView = view.findViewById(R.id.titleView);
             TextView descriptionView = view.findViewById(R.id.descriptionView);
             // Set the data on views.
-            imageView.setImageResource(imageResources[position]);
+            Picasso.with(OnboardingActivity.this)
+                    .load(imageResources[position])
+                    .into(imageView);
             titleView.setText(titles[position]);
             descriptionView.setText(descriptions[position]);
 

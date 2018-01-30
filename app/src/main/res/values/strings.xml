@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Task Nearby</string>
-    <string name="app_version">v4.0</string>
+    <string name="app_version">v4.0.1</string>
     <string name="title_add_new_task">Add Task</string>
     <string name="title_edit_task_reminder">Edit Task</string>
     <string name="title_settings">Settings</string>
@@ -143,7 +143,7 @@
     <!-- Feedback -->
     <string name="email_subject">Task Nearby App</string>
     <string-array name="email_ids">
-        <item>vermayash8@gmail.com</item>
+        <item>verma.yash8@gmail.com</item>
         <item>shilpi.c75@gmail.com</item>
     </string-array>
 
