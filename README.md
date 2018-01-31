@@ -1,6 +1,6 @@
 <h2>TaskNearby</h2>
 <h5>Tailor made reminders, just for you.</h5>
-<# [![Build Status](https://travis-ci.org/vermayash8/TaskNearby.svg?branch=master)](https://travis-ci.org/vermayash8/TaskNearby) #>
+<!-- [![Build Status](https://travis-ci.org/vermayash8/TaskNearby.svg?branch=master)](https://travis-ci.org/vermayash8/TaskNearby) -->
 
 <a href="https://play.google.com/store/apps/details?id=app.tasknearby.yashcreations.com.tasknearby"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" height=50px/></a>  
 
