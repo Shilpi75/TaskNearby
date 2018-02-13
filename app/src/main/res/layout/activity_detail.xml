@@ -84,5 +84,5 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:text="Mark Done" />
+        android:text="@string/action_mark_done" />
 </LinearLayout>

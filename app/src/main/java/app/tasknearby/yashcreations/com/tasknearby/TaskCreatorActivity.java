@@ -118,7 +118,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             long taskId = getIntent().getLongExtra(EXTRA_EDIT_MODE_TASK_ID, -1);
             taskBeingEdited = mTaskRepository.getTaskWithId(taskId);
             fillDataForEditing(taskBeingEdited);
-            getSupportActionBar().setTitle(getString(R.string.title_edit_task_reminder));
+            getSupportActionBar().setTitle(getString(R.string.title_edit_task));
         }
     }
 
@@ -439,7 +439,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      */
     private void onImageSelected(Intent data) {
         if (data.getData() == null) {
-            Toast.makeText(this, "Image selection failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.creator_msg_image_selection_failed, Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
         Uri selectedImageUri = data.getData();

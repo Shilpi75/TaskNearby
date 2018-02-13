@@ -16,7 +16,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
-        android:text="You don\'t have any tasks.\nClick the + button to add  new Tasks. "
+        android:text="@string/main_msg_no_tasks"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone"

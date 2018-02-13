@@ -33,7 +33,7 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskActionUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.AlarmRinger;
 import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.AlarmVibrator;
-import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.voice.VoiceAlarmRinger;
+import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.VoiceAlarmRinger;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**

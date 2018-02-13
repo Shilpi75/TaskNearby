@@ -313,8 +313,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
                             }
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            String errorMessage = "Location settings are inadequate, and " +
-                                    "cannot be fixed here. Fix in Settings.";
+                            String errorMessage = getString(R.string.error_fix_location_settings);
                             Log.e(TAG, errorMessage);
                             Toast.makeText(MainActivity.this, errorMessage, Toast
                                     .LENGTH_LONG).show();

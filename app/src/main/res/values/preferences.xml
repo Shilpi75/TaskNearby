@@ -2,7 +2,7 @@
 <resources>
     <!-- Preferences -->
     <!-- Unit-->
-    <string name="pref_unit_key">units</string>
+    <string name="pref_unit_key" translatable="false">units</string>
     <string name="pref_unit_title">Units</string>
     <string-array name="pref_unit_values">
         <item>Metric(m)</item>
@@ -17,16 +17,16 @@
     <string name="pref_unit_default">Metric(m)</string>
 
     <!--Distance Range -->
-    <string name="pref_distance_range_key">distance_range</string>
+    <string name="pref_distance_range_key" translatable="false">distance_range</string>
     <string name="pref_distance_range_title">Distance range (default)</string>
-    <string name="pref_distance_range_default">75</string>
+    <string name="pref_distance_range_default" translatable="false">75</string>
 
     <!-- Alarm Tone -->
-    <string name="pref_alarm_tone_key">alarm_tone</string>
+    <string name="pref_alarm_tone_key" translatable="false">alarm_tone</string>
     <string name="pref_alarm_tone_title">Alarm Tone</string>
 
     <!-- Vibration -->
-    <string name="pref_vibrate_key">vibrate_alarm</string>
+    <string name="pref_vibrate_key" translatable="false">vibrate_alarm</string>
     <string name="pref_vibrate_title">Vibration</string>
     <string-array name="pref_vibrate_values">
         <item>100</item>
@@ -40,15 +40,15 @@
         <item>Vibrate for 3 seconds.</item>
         <item>Don\'t vibrate.</item>
     </string-array>
-    <string name="pref_vibrate_default">100</string>
+    <string name="pref_vibrate_default" translatable="false">100</string>
 
     <!-- Voice Alarm -->
-    <string name="pref_voice_alarm_key">voice_alarm</string>
+    <string name="pref_voice_alarm_key" translatable="false">voice_alarm</string>
     <string name="pref_voice_alarm_title">Voice alerts</string>
     <string name="pref_voice_alarm_summary">App announcing the task details.</string>
 
     <!-- Snooze Time -->
-    <string name="pref_snooze_time_key">snooze_time</string>
+    <string name="pref_snooze_time_key" translatable="false">snooze_time</string>
     <string name="pref_snooze_title">Snooze time</string>
     <string-array name="pref_snooze_time_entries">
         <item>Snooze for 1 minute.</item>
@@ -64,43 +64,39 @@
         <item>600000</item>
         <item>1200000</item>
     </string-array>
-    <string name="pref_snooze_time_default">180000</string>
+    <string name="pref_snooze_time_default" translatable="false">180000</string>
 
     <!-- Power Saver Mode -->
-    <string name="pref_power_saver_key">power_saver</string>
+    <string name="pref_power_saver_key" translatable="false">power_saver</string>
     <string name="pref_power_saver_title">Power saver mode</string>
-    <string name="pref_power_saver_summary">For reduced battery consumption.
-        Turning this on will lower the accuracy.</string>
+    <string name="pref_power_saver_summary">Uses cellular network for reduced battery consumption.
+        Turning this on might lower the accuracy.</string>
 
     <!-- App Enable (Same as previous) -->
-    <string name="pref_status_key">status</string>
-    <string name="pref_status_default">enabled</string>
+    <string name="pref_status_key" translatable="false">status</string>
+    <string name="pref_status_default" translatable="false">enabled</string>
     <string-array name="pref_status_values">
         <item>Enabled</item>
         <item>Disabled(No Reminders)</item>
     </string-array>
-    <string-array name="pref_status_entries">
-        <item>enabled</item>
-        <item>disabled</item>
-    </string-array>
-    <string name="pref_status_enabled">enabled</string>
-    <string name="pref_status_disabled">disabled</string>
+    <string name="pref_status_enabled" translatable="false">enabled</string>
+    <string name="pref_status_disabled" translatable="false">disabled</string>
 
     <!-- Accuracy settings used in previous verion -->
-    <string name="pref_accuracy_key">accuracy_pref</string>
-    <string name="pref_accuracy_default">high</string>
-    <string name="pref_accuracy_balanced">balanced</string>
-    <string name="pref_accuracy_high">high</string>
+    <string name="pref_accuracy_key" translatable="false">accuracy_pref</string>
+    <string name="pref_accuracy_default" translatable="false">high</string>
+    <string name="pref_accuracy_balanced" translatable="false">balanced</string>
+    <string name="pref_accuracy_high" translatable="false">high</string>
 
     <!-- Preference for user upgraded to premium or not. -->
-    <string name="pref_is_premium_user_key">isPremiumUser</string>
-    <string name="pref_upgrade_order_id">order_id</string>
-    <string name="pref_upgrade_purchase_token">purchase_token</string>
+    <string name="pref_is_premium_user_key" translatable="false">isPremiumUser</string>
+    <string name="pref_upgrade_order_id" translatable="false">order_id</string>
+    <string name="pref_upgrade_purchase_token" translatable="false">purchase_token</string>
 
     <!-- Preference for version -->
-    <string name="pref_version_key">app_version</string>
+    <string name="pref_version_key" translatable="false">app_version</string>
 
     <!-- Onboarding shared preference key. -->
-    <string name="pref_has_user_seen_onboarding">hasUserSeenOnboarding</string>
+    <string name="pref_has_user_seen_onboarding" translatable="false">hasUserSeenOnboarding</string>
 
 </resources>

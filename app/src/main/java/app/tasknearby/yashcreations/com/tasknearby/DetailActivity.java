@@ -70,7 +70,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public static Intent getStartingIntent(Context context, long taskId,
-                                           @TaskStateUtil.TaskState int state) {
+            @TaskStateUtil.TaskState int state) {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TASK_ID, taskId);
         intent.putExtra(EXTRA_TASK_STATE, state);
@@ -319,19 +319,18 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private void resetTask(TaskModel task) {
         // These are done so that correct state can be calculated.
         task.setIsDone(0);
-        long taskSoozedAt = task.getSnoozedAt();
+        long taskSnoozedAt = task.getSnoozedAt();
         task.setSnoozedAt(-1L);
 
         int state = TaskStateUtil.getTaskState(this, task);
 
         if (state == TaskStateUtil.STATE_EXPIRED) {
             task.setIsDone(1);
-            task.setSnoozedAt(taskSoozedAt);
-            Toast.makeText(this, "This task has expired. You can edit the dates.", Toast
-                    .LENGTH_SHORT).show();
+            task.setSnoozedAt(taskSnoozedAt);
+            Toast.makeText(this, R.string.detail_msg_expired_cant_reset, Toast.LENGTH_SHORT).show();
         } else {
             task.setLastTriggered(null);
-            Toast.makeText(this, "Task has been reset.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.detail_msg_task_resetted, Toast.LENGTH_SHORT).show();
             setTaskState(state);
             mTaskRepository.updateTask(task);
             setDoneButton(task);
@@ -345,7 +344,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         task.setIsDone(1);
         mTaskRepository.updateTask(task);
         setDoneButton(task);
-        Toast.makeText(this, "Task has been marked done.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.detail_msg_task_marked_done, Toast.LENGTH_SHORT).show();
         // Update the task state.
         setTaskState(TaskStateUtil.STATE_DONE);
     }

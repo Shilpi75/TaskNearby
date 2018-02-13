@@ -1,4 +1,4 @@
-package app.tasknearby.yashcreations.com.tasknearby.utils.alarm.voice;
+package app.tasknearby.yashcreations.com.tasknearby.utils.alarm;
 
 import android.app.Activity;
 import android.content.Context;
@@ -68,8 +68,8 @@ public class VoiceAlarmRinger implements TextToSpeech.OnInitListener {
     private void speakOut() {
         // Text to speak.
         String pause = "... ";
-        String text = "Task NearBy Reminder" + pause + mTask.getTaskName() + pause + " at " +
-                mLocation.getPlaceName() + pause;
+        String text = "Task NearBy " + mContext.getString(R.string.reminder) + pause
+                + mTask.getTaskName() + pause + " at " + mLocation.getPlaceName() + pause;
         // Add note.
         if (mTask.getNote() != null) {
             text += mTask.getNote();

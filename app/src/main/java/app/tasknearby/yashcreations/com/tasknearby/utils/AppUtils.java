@@ -36,6 +36,7 @@ public final class AppUtils {
     public static String getReadableTime(LocalTime localTime) {
         int hourOfDay = localTime.getHourOfDay();
         int minute = localTime.getMinuteOfHour();
+        // TODO: Get strings from string.xml
         String periodSuffix = "AM";
         if (hourOfDay > 12) {
             hourOfDay -= 12;
@@ -56,6 +57,7 @@ public final class AppUtils {
         } else if (DateTimeComparator.getDateOnlyInstance().compare(date, new Date()) == 0) {
             return context.getString(R.string.detail_date_today);
         } else {
+            // TODO: Check if Locale.ENGLISH needs to be changed.
             SimpleDateFormat sdfReadable = new SimpleDateFormat("EEE, d MMM yy", Locale.ENGLISH);
             return sdfReadable.format(date);
         }

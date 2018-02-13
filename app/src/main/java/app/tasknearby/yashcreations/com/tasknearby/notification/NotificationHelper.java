@@ -141,7 +141,7 @@ public class NotificationHelper {
         PendingIntent pi = PendingIntent.getBroadcast(mAppContext, idAsInt, intent, PendingIntent
                 .FLAG_ONE_SHOT);
         return new NotificationCompat.Action
-                .Builder(R.drawable.ic_check_grey_24dp, "Mark Done", pi)
+                .Builder(R.drawable.ic_check_grey_24dp, mAppContext.getString(R.string.action_mark_done), pi)
                 .build();
     }
 
@@ -153,7 +153,7 @@ public class NotificationHelper {
         PendingIntent pi = PendingIntent.getBroadcast(mAppContext, idAsInt, intent, PendingIntent
                 .FLAG_ONE_SHOT);
         return new NotificationCompat.Action
-                .Builder(R.drawable.ic_replay_black_24dp, "Snooze", pi)
+                .Builder(R.drawable.ic_replay_black_24dp, mAppContext.getString(R.string.action_snooze), pi)
                 .build();
     }
 

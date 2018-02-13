@@ -50,9 +50,6 @@ public class TasksFragment extends Fragment {
             }
             processTaskModels(taskModels);
         });
-
-        // For demo. TODO: Remove.
-        // new DbUpdatesSimulator(getActivity().getApplicationContext(), mTaskRepository).start();
         return rootView;
     }
 
