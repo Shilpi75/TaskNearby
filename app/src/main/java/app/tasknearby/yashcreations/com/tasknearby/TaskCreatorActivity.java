@@ -253,8 +253,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         boolean anytime = task.getStartTime().equals(new LocalTime(0, 0))
                 && task.getEndTime().equals(new LocalTime(23, 59));
         anytimeSwitch.setChecked(anytime);
-        startTimeTv.setText(AppUtils.getReadableTime(task.getStartTime()));
-        endTimeTv.setText(AppUtils.getReadableTime(task.getEndTime()));
+        startTimeTv.setText(AppUtils.getReadableTime(this, task.getStartTime()));
+        endTimeTv.setText(AppUtils.getReadableTime(this, task.getEndTime()));
         startTimeTv.setTag(task.getStartTime());
         endTimeTv.setTag(task.getEndTime());
 
@@ -308,7 +308,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                     LocalTime localTime = new LocalTime(hourOfDay, minute);
                     v.setTag(localTime);
                     // set selected Time on textView.
-                    v.setText(AppUtils.getReadableTime(localTime));
+                    v.setText(AppUtils.getReadableTime(TaskCreatorActivity.this, localTime));
                 }, 12, 0, false); // time at which timepicker opens.
         timePickerDialog.show();
     }

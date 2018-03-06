@@ -9,6 +9,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 
 import com.android.billingclient.api.Purchase;
 
@@ -33,16 +34,15 @@ public final class AppUtils {
     /**
      * Returns a formatted time string in 12-hour format.
      */
-    public static String getReadableTime(LocalTime localTime) {
+    public static String getReadableTime(Context context, LocalTime localTime) {
         int hourOfDay = localTime.getHourOfDay();
         int minute = localTime.getMinuteOfHour();
-        // TODO: Get strings from string.xml
-        String periodSuffix = "AM";
+        String periodSuffix = context.getString(R.string.time_format_am);
         if (hourOfDay > 12) {
             hourOfDay -= 12;
-            periodSuffix = "PM";
+            periodSuffix = context.getString(R.string.time_format_pm);
         } else if (hourOfDay == 12) {
-            periodSuffix = "PM";
+            periodSuffix = context.getString(R.string.time_format_am);
         }
         return String.format(Locale.ENGLISH, "%02d:%02d %s", hourOfDay, minute, periodSuffix);
     }

@@ -175,8 +175,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             timeDisplayString = getString(R.string.detail_time_anytime);
         } else {
             timeDisplayString = String.format(getString(R.string.detail_time_format),
-                    AppUtils.getReadableTime(startTime),
-                    AppUtils.getReadableTime(endTime));
+                    AppUtils.getReadableTime(this, startTime),
+                    AppUtils.getReadableTime(this, endTime));
         }
         TextView timeTv = findViewById(R.id.text_time_range);
         timeTv.setText(timeDisplayString);

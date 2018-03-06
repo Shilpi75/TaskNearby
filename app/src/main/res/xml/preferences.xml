@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="General">
+    <PreferenceCategory android:title="@string/preference_category_general">
         <!-- Units preference -->
         <ListPreference
             android:defaultValue="@string/pref_unit_metric"
@@ -18,7 +18,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Alarms">
+    <PreferenceCategory android:title="@string/preference_category_alarms">
 
         <!-- Alarm Tone preference. -->
         <RingtonePreference

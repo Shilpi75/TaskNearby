@@ -21,7 +21,6 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
  * 1. Querying the existing purchases of the user.
  * 2. Initiating the purchase flow for the given in-app product id.
  * 3. Consuming a purchase.
- * 4. After a successful new purchase, it adds it to Firebase too.
  *
  * @author vermayash8
  */
