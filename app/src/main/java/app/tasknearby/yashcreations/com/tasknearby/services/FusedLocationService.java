@@ -259,8 +259,7 @@ public class FusedLocationService extends Service {
         }
         SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean powerSaverMode = defaultPref.getBoolean(context.getString(R.string
-                        .pref_power_saver_key),
-                false);
+                        .pref_power_saver_key), true);
         if (powerSaverMode) {
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         } else {

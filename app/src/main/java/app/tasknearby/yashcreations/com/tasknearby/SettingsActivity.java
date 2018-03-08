@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -29,6 +30,7 @@ import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_power_sa
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_snooze_time_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_unit_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_vibrate_key;
+import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_voice_alarm_key;
 
 /**
  * Manages the settings/preferences.
@@ -36,6 +38,8 @@ import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_vibrate_
  * @author shilpi
  */
 public class SettingsActivity extends AppCompatActivity {
+
+    private static final String TAG = SettingsActivity.class.getSimpleName();
 
     private Toolbar toolbar;
 
@@ -94,9 +98,9 @@ public class SettingsActivity extends AppCompatActivity {
 
             // Initial firing of listener to update summary values.
             if (preference instanceof SwitchPreference) {
-                onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences
-                        (preference.getContext()).getBoolean(preference.getKey(), false));
-
+                // Nothing needs to be done here because the default preferences have already been
+                // set in the preferences xml file and the summary that has been set to these
+                // preferences are static.
             } else if (preference instanceof RingtonePreference) {
                 onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences
                         (preference.getContext()).getString(preference.getKey(), Settings.System
@@ -136,19 +140,8 @@ public class SettingsActivity extends AppCompatActivity {
 
             } else if (preference instanceof SwitchPreference) {
                 if (preference.getKey().equals(getString(pref_power_saver_key))) {
-                    // Stop the service.
-                    AppUtils.stopService(getActivity());
-                    // Check if app is enabled.
-                    SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences
-                            (getActivity());
-                    String appStatus = defaultPref.getString(getString(R.string.pref_status_key),
-                            getString(R.string.pref_status_default));
-                    if (appStatus.equals(getString(R.string.pref_status_enabled))) {
-                        // Start the service again.
-                        AppUtils.startService(getActivity());
-                    }
+                    restartServiceIfEnabled();
                 }
-
             } else {
                 preference.setSummary(o.toString());
             }
@@ -206,6 +199,23 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 return true;
             });
+        }
+
+        /**
+         * Restarts the service after making sure that the user has enabled the app.
+         */
+        private void restartServiceIfEnabled() {
+            // Stop the service.
+            AppUtils.stopService(getActivity());
+            // Check if app is enabled.
+            SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences
+                    (getActivity());
+            String appStatus = defaultPref.getString(getString(R.string.pref_status_key),
+                    getString(R.string.pref_status_default));
+            if (appStatus.equals(getString(R.string.pref_status_enabled))) {
+                // Start the service again.
+                AppUtils.startService(getActivity());
+            }
         }
     }
 }

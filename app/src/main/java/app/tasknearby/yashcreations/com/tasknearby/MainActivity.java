@@ -39,6 +39,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
 import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
+import app.tasknearby.yashcreations.com.tasknearby.fragments.TasksFragment;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
@@ -80,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
         if (!AppUtils.hasUserSeenOnboarding(this)) {
             startActivity(new Intent(this, OnboardingActivity.class));
+            // For preventing multiple instances of MainActivity and permission dialog on
+            // onboarding screen.
+            finish();
         }
 
         setContentView(R.layout.activity_main2);
@@ -93,8 +97,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         setSupportActionBar(toolbar);
         // Initialize SharedPreferences.
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        // To set up the power saver preference if user has updated the app.
-        setPowerSaverPreference();
         setVersionPreference();
         setupNavDrawer();
 
@@ -209,27 +211,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
                 .setCancelable(false)
                 .create();
         permissionsDialog.show();
-    }
-
-    /**
-     * Sets up the power saver preference if user has updated the app.
-     */
-    private void setPowerSaverPreference() {
-        // Set up power/accuracy preferences.
-        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!defaultPref.contains(getString(R.string.pref_power_saver_key))) {
-            // It means user has updated the app and opening this version for the first time.
-            String accuracy = defaultPref.getString(getString(R.string.pref_accuracy_key),
-                    getString(R.string.pref_accuracy_default));
-            SharedPreferences.Editor editor = defaultPref.edit();
-            if (accuracy.equals(getString(R.string.pref_accuracy_balanced))) {
-                // Set power saver mode.
-                editor.putBoolean(getString(R.string.pref_power_saver_key), true);
-            } else {
-                editor.putBoolean(getString(R.string.pref_power_saver_key), false);
-            }
-            editor.apply();
-        }
     }
 
     private void setupNavDrawer() {

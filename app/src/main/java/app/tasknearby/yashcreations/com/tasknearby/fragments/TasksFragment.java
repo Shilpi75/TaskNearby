@@ -1,4 +1,4 @@
-package app.tasknearby.yashcreations.com.tasknearby;
+package app.tasknearby.yashcreations.com.tasknearby.fragments;
 
 import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
@@ -13,6 +13,10 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import app.tasknearby.yashcreations.com.tasknearby.R;
+import app.tasknearby.yashcreations.com.tasknearby.TaskAdapter;
+import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
+import app.tasknearby.yashcreations.com.tasknearby.TaskStateWrapper;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
 

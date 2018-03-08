@@ -12,8 +12,8 @@
         <item>@string/pref_unit_entry_metric</item>
         <item>@string/pref_unit_entry_imperial</item>
     </string-array>
-    <string name="pref_unit_entry_metric">Metric(m/km)</string>
-    <string name="pref_unit_entry_imperial">Imperial(yd/mile)</string>
+    <string name="pref_unit_entry_metric">Metric (m/km)</string>
+    <string name="pref_unit_entry_imperial">Imperial (yd/mile)</string>
     <string name="pref_unit_metric" translatable="false">Metric(m)</string>
     <string name="pref_unit_imperial" translatable="false">Imperial(yd)</string>
     <string name="pref_unit_default" translatable="false">Metric(m)</string>
