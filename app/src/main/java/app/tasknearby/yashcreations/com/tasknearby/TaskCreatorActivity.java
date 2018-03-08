@@ -185,7 +185,6 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * Finds views by id and sets OnClickListener to them.
      */
     private void initializeViews() {
-        //TODO: Use ButterKnife and remove this boilerplate code.
         // These don't have an OnClickListener.
         taskNameInput = findViewById(R.id.edit_text_task_name);
         locationNameInput = findViewById(R.id.edit_text_location_name);
@@ -193,6 +192,12 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         noteInput = findViewById(R.id.edit_text_note);
         coverImageView = findViewById(R.id.image_task_cover);
         alarmSwitch = findViewById(R.id.switch_alarm);
+
+        // Set the default value to reminder range input.
+        String defReminderRange = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.pref_distance_range_key),
+                        getString(R.string.pref_distance_range_default));
+        reminderRangeInput.setText(defReminderRange);
 
         // image choosing FAB and location buttons.
         findViewById(R.id.fab_image).setOnClickListener(this);

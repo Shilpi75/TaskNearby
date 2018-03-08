@@ -20,7 +20,7 @@
 
     <!--Distance Range -->
     <string name="pref_distance_range_key" translatable="false">distance_range</string>
-    <string name="pref_distance_range_title">Distance range (default)</string>
+    <string name="pref_distance_range_title">Default Reminder range</string>
     <string name="pref_distance_range_default" translatable="false">75</string>
 
     <!-- Alarm Tone -->

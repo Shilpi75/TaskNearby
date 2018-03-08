@@ -353,7 +353,6 @@ public class TaskModel {
         private void setReminderRangeFromSettings(Context context) {
             // Setting reminder range from settings (shared preferences).
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
             reminderRange = Integer.parseInt(prefs.getString(context.getString(R.string
                             .pref_distance_range_key),
                     context.getString(R.string.pref_distance_range_default)));

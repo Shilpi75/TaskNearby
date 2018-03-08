@@ -17,7 +17,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -106,6 +108,11 @@ public class SettingsActivity extends AppCompatActivity {
                         (preference.getContext()).getString(preference.getKey(), Settings.System
                         .DEFAULT_ALARM_ALERT_URI.getPath()));
 
+            } else if (preference instanceof EditTextPreference) {
+                // Default reminder distance preference here.
+                EditTextPreference editTextPreference = (EditTextPreference) preference;
+                String value = editTextPreference.getText();
+                onPreferenceChange(preference, value);
             } else {
                 onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences
                         (preference.getContext()).getString(preference.getKey(), ""));
@@ -127,7 +134,11 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             } else if (preference instanceof EditTextPreference) {
                 if (preference.getKey().equals(getString(pref_distance_range_key))) {
-                    preference.setSummary(o.toString() + " units");
+                    if (validateReminderDistance(o.toString())) {
+                        preference.setSummary(o.toString() + " units");
+                    } else {
+                        return false;
+                    }
                 } else {
                     preference.setSummary(o.toString());
                 }
@@ -149,14 +160,32 @@ public class SettingsActivity extends AppCompatActivity {
             return true;
         }
 
+        private boolean validateReminderDistance(String value) {
+            String distance = value.trim();
+            // Check if the user entered an empty string.
+            if (TextUtils.isEmpty(distance)) {
+                Toast.makeText(getActivity(), "Please enter a number", Toast.LENGTH_SHORT).show();
+                return false;
+            } else if (!distance.equals(getString(R.string.pref_distance_range_default))
+                    && !AppUtils.isPremiumUser(getActivity())) {
+                // It can only be saved in the premium version.
+                Toast.makeText(getActivity(), "Please upgrade to access this feature.",
+                        Toast.LENGTH_SHORT).show();
+                UpgradeActivity.show(getActivity());
+                return false;
+            } else {
+                return true;
+            }
+        }
+
         /**
          * Finds views by id and binds their preference summaries to their values.
          */
         public void initializeViews() {
             mUnitPreference = (ListPreference) getPreferenceManager().findPreference(getString
                     (pref_unit_key));
-//            mDistancePreference = (EditTextPreference) getPreferenceManager().findPreference
-//                    (getString(pref_distance_range_key));
+            mDistancePreference = (EditTextPreference) getPreferenceManager().findPreference
+                    (getString(pref_distance_range_key));
             mAlarmTonePreference = (RingtonePreference) getPreferenceManager().findPreference
                     (getString(pref_alarm_tone_key));
             mSnoozePreference = (ListPreference) getPreferenceManager().findPreference(getString
@@ -170,7 +199,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
             bindPreferenceSummaryToValue(mUnitPreference);
-//            bindPreferenceSummaryToValue(mDistancePreference);
+            bindPreferenceSummaryToValue(mDistancePreference);
             bindPreferenceSummaryToValue(mAlarmTonePreference);
             bindPreferenceSummaryToValue(mSnoozePreference);
             bindPreferenceSummaryToValue(mVibratePreference);

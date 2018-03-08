@@ -10,6 +10,13 @@
             android:key="@string/pref_unit_key"
             android:title="@string/pref_unit_title" />
 
+        <EditTextPreference
+            android:defaultValue="@string/pref_distance_range_default"
+            android:key="@string/pref_distance_range_key"
+            android:title="@string/pref_distance_range_title"
+            android:hint="75 distance units"
+            android:inputType="number"/>
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="@string/pref_power_saver_key"
@@ -49,13 +56,5 @@
             android:title="@string/pref_snooze_title" />
 
     </PreferenceCategory>
-
-    <!--
-    TODO: Add it later. (Take care of metrics).
-    <EditTextPreference
-        android:defaultValue="@string/pref_distance_range_default"
-        android:key="@string/pref_distance_range_key"
-        android:title="@string/pref_distance_range_title" />
-   -->
 
 </PreferenceScreen>
