@@ -534,10 +534,10 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 ? DbConstants.REPEAT_DAILY : DbConstants.NO_REPEAT;
         int repeatCode = (int) weekdaysStub.getTag();
 
-        mSelectedLocation.setPlaceName(locationName);
         long locationId;
-        if (mSelectedLocation.getId() != 0) {
-            // Location was selected from saved places.
+        if (mSelectedLocation.getId() != 0
+                && mSelectedLocation.getPlaceName().equals(locationName)) {
+            // Location was selected from saved places and the name was not changed.
             // auto-increment numbering starts from 1.
             // We can also set place picker to return location with id = -1.
             locationId = mSelectedLocation.getId();
@@ -546,6 +546,10 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             mSelectedLocation.setUseCount(mSelectedLocation.getUseCount() + 1);
             mTaskRepository.updateLocation(mSelectedLocation);
         } else {
+            mSelectedLocation.setPlaceName(locationName);
+            // Need to set this id because if it's a location chosen from saved places, it
+            // already has an id that causes problems in inserting it again.
+            mSelectedLocation.setId(0);
             // TODO: Check if place with same name already exists to improve UX.
             // Doing this when place picker gave the location. i.e. new location with use_count = 1.
             locationId = mTaskRepository.saveLocation(mSelectedLocation);
