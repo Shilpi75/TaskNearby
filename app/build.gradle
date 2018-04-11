@@ -76,6 +76,10 @@ dependencies {
     implementation "com.squareup.picasso:picasso:$picassoVersion"
 
     implementation "com.android.billingclient:billing:$billingLibVersion"
+
+    dependencies{
+        compile 'com.github.TouchBoarder:weekdays-buttons-bar:v1.0.2'
+    }
 }
 
 // this has to be kept after the dependency block to avoid dependency collisions.

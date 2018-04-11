@@ -43,6 +43,7 @@ public class UpgradeActivity extends AppCompatActivity implements BillingManager
             R.drawable.ic_pro_date_interval,
             R.drawable.ic_pro_snooze,
             R.drawable.ic_pro_voice_alerts,
+            R.drawable.ic_pro_repeat_40dp,
             R.drawable.ic_pro_route_generate
     };
 

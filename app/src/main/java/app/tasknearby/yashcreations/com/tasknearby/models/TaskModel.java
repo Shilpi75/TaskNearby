@@ -15,8 +15,6 @@ import android.support.annotation.Nullable;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
-import java.util.Date;
-
 import app.tasknearby.yashcreations.com.tasknearby.R;
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.database.converters.DateConverter;
@@ -107,17 +105,23 @@ public class TaskModel {
     @ColumnInfo(name = "date_added")
     private LocalDate dateAdded;
 
+    /**
+     * Repeat code according to the repeat type. The code is to reflect daily repeat pattern for
+     * now.
+     */
+    @ColumnInfo(name = "repeat_code")
+    private int repeatCode;
+
 
     public TaskModel() {
     }
 
     @Ignore
     private TaskModel(String taskName, long locationId, String imageUri, int isDone,
-                      int isAlarmSet, int reminderRange, String note, LocalTime startTime,
-                      LocalTime endTime, LocalDate startDate, LocalDate endDate, LocalDate
-                                  nextStartDate,
-                      int repeatType, int movementType, int activityType, float lastDistance,
-                      LocalDate lastTriggered, Long snoozedAt, LocalDate dateAdded) {
+            int isAlarmSet, int reminderRange, String note, LocalTime startTime,
+            LocalTime endTime, LocalDate startDate, LocalDate endDate, LocalDate nextStartDate,
+            int repeatType, int repeatCode, int movementType, int activityType, float lastDistance,
+            LocalDate lastTriggered, Long snoozedAt, LocalDate dateAdded) {
         this.taskName = taskName;
         this.locationId = locationId;
         this.imageUri = imageUri;
@@ -131,6 +135,7 @@ public class TaskModel {
         this.endDate = endDate;
         this.nextStartDate = nextStartDate;
         this.repeatType = repeatType;
+        this.repeatCode = repeatCode;
         this.movementType = movementType;
         this.activityType = activityType;
         this.lastDistance = lastDistance;
@@ -257,6 +262,14 @@ public class TaskModel {
         this.repeatType = repeatType;
     }
 
+    public int getRepeatCode() {
+        return this.repeatCode;
+    }
+
+    public void setRepeatCode(@NonNull int repeatCode) {
+        this.repeatCode = repeatCode;
+    }
+
     public int getMovementType() {
         return movementType;
     }
@@ -331,6 +344,7 @@ public class TaskModel {
          */
         private LocalDate nextStartDate = null;
         private int repeatType = DbConstants.NO_REPEAT;
+        private int repeatCode = DbConstants.REPEAT_CODE_NONE;
         private int movementType = DbConstants.BOTH_ENTER_EXIT;
         private int activityType = DbConstants.ACTIVITY_ANYTHING;
         private float lastDistance = Integer.MAX_VALUE;
@@ -423,6 +437,11 @@ public class TaskModel {
             return this;
         }
 
+        public Builder setRepeatCode(int repeatCode) {
+            this.repeatCode = repeatCode;
+            return this;
+        }
+
         public Builder setMovementType(@DbConstants.MovementTypes int movementType) {
             this.movementType = movementType;
             return this;
@@ -461,8 +480,9 @@ public class TaskModel {
             // call the private constructor.
             return new TaskModel(taskName, locationId, imageUri, isDone, isAlarmSet,
                     reminderRange, note,
-                    startTime, endTime, startDate, endDate, nextStartDate, repeatType, movementType,
-                    activityType, lastDistance, lastTriggered, snoozedAt, dateAdded);
+                    startTime, endTime, startDate, endDate, nextStartDate, repeatType,
+                    repeatCode, movementType, activityType, lastDistance, lastTriggered,
+                    snoozedAt, dateAdded);
         }
 
     }

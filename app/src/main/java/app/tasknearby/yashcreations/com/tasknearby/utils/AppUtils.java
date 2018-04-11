@@ -9,11 +9,11 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 
 import com.android.billingclient.api.Purchase;
 
 import org.joda.time.DateTimeComparator;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 
 /**
@@ -173,5 +174,52 @@ public final class AppUtils {
     public static boolean hasUserSeenOnboarding(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_has_user_seen_onboarding), false);
+    }
+
+    /**
+     * Returns the display string for a repeatable reminder. Presently, it returns options like:
+     * "Every day", "Every Monday, Tuesday, Sunday"
+     *
+     * @param appContext will be used when getting strings from resources.
+     */
+    public static String getRepeatDisplayString(Context appContext, TaskModel task) {
+        StringBuilder repeatMsgBuilder = new StringBuilder();
+        boolean allDaysFlag = true;
+        for (int i = DateTimeConstants.MONDAY; i <= DateTimeConstants.SUNDAY; ++i) {
+            int dayCode = WeekdayCodeUtils.getDayCodeByIndex(i);
+            if ((task.getRepeatCode() & dayCode) != 0) {
+                if (repeatMsgBuilder.length() != 0) {
+                    repeatMsgBuilder.append(", ");
+                }
+                repeatMsgBuilder.append(getWeekdayNameById(i));
+            } else {
+                allDaysFlag = false;
+            }
+        }
+        return allDaysFlag ? "Every day" : "Every " + repeatMsgBuilder.toString();
+    }
+
+    /**
+     * Returns the weekday's name by getting the index. 1 index is for Monday.
+     */
+    private static String getWeekdayNameById(int index) {
+        switch (index) {
+            case 1:
+                return "Monday";
+            case 2:
+                return "Tuesday";
+            case 3:
+                return "Wednesday";
+            case 4:
+                return "Thursday";
+            case 5:
+                return "Friday";
+            case 6:
+                return "Saturday";
+            case 7:
+                return "Sunday";
+            default:
+                return "";
+        }
     }
 }

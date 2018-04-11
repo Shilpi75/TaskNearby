@@ -46,7 +46,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_task_creator"/>
+    <include layout="@layout/content_task_creator" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_image"

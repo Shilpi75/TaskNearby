@@ -7,6 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Stores all the database related constants
+ *
  * @author shilpi
  */
 
@@ -40,24 +41,36 @@ public class DbConstants {
     public static final int REPEAT_MONTHLY = 3;
 
     /**
+     * Repeat days codes.
+     * The index for the days are chosen as per the {@link java.time.DayOfWeek} enum in Java 8
+     * and Joda Time's {@link org.joda.time.DateTimeConstants} class. Hence, MONDAY is the first
+     * day of the week with index = 1. Please note that these are different from Calendar API
+     * which has SUNDAY as the first day.
+     */
+    public static final int REPEAT_CODE_NONE = 0;
+
+    /**
      * Annotation for Activity Modes.
      */
     @IntDef({ACTIVITY_ANYTHING, WALKING, DRIVING})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface ActivityModes { }
+    public @interface ActivityModes {
+    }
 
     /**
      * Annotation for Movement Types.
      */
     @IntDef({BOTH_ENTER_EXIT, ENTER, EXIT})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface MovementTypes { }
+    public @interface MovementTypes {
+    }
 
     /**
      * Annotation for Repeat Types.
      */
     @IntDef({NO_REPEAT, REPEAT_DAILY, REPEAT_WEEKLY, REPEAT_MONTHLY})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface RepeatTypes { }
+    public @interface RepeatTypes {
+    }
 
 }

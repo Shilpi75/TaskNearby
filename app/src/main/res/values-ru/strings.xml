@@ -70,9 +70,9 @@
     <string name="creator_no_internet_error">Указание местоположения требует доступа в Интернет</string>
     <string name="creator_action_upgrade_to_premium">Получить Премиум доступ</string>
     <string name="creator_msg_image_selection_failed">Ошибка выбора изображения</string>
-    <string name="creator_repeat_default">Не повторять</string>
+    <string name="detail_does_not_repeat">Не повторять</string>
     <string name="creator_repeat_dialog_title">Интервал повторения</string>
-    <string name="detail_alarm_format">звук</string>
+    <string name="detail_alarm_format">звук %1$s</string>
     <string name="detail_alarm_on">включен</string>
     <string name="detail_alarm_off">выключен</string>
     <string name="detail_date_format">%1$s  -  %2$s</string>

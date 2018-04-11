@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -25,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,10 +39,13 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
+import com.touchboarder.weekdaysbuttons.WeekdaysDataItem;
+import com.touchboarder.weekdaysbuttons.WeekdaysDataSource;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
@@ -50,6 +53,7 @@ import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.WeekdayCodeUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
@@ -83,11 +87,12 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private EditText noteInput;
     private TextView startTimeTv, endTimeTv;
     private TextView startDateTv, endDateTv;
-    private TextView repeatTv;
     private TextView unitsTv;
     private ImageView coverImageView;
     private Switch alarmSwitch;
     private Switch anytimeSwitch;
+    private Switch repeatSwitch;
+    private ViewStub weekdaysStub;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -173,9 +178,6 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             case R.id.text_end_date:
                 dateSelectionTriggered((TextView) v);
                 break;
-            case R.id.text_repeat_selection:
-                showRepeatSelection();
-                break;
             default:
                 break;
         }
@@ -228,10 +230,11 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         startDateTv.setTag(new LocalDate());
         endDateTv.setTag(null);
 
-        // textView to repeat reminders.
-        repeatTv = findViewById(R.id.text_repeat_selection);
-        repeatTv.setTag(DbConstants.NO_REPEAT);
-        repeatTv.setOnClickListener(this);
+        repeatSwitch = findViewById(R.id.switch_repeat);
+        weekdaysStub = findViewById(R.id.weekdays_stub);
+        repeatSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+                weekdaysStub.setVisibility(isChecked ? View.VISIBLE : View.GONE));
+        setupWeekdayBar();
 
         // Units text view.
         unitsTv = findViewById(R.id.text_units);
@@ -270,9 +273,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         endDateTv.setTag(task.getEndDate());
 
         // Repeat options.
-        String[] repeatOptions = getResources().getStringArray(R.array.creator_repeat_options);
-        repeatTv.setTag(task.getRepeatType());
-        repeatTv.setText(repeatOptions[task.getRepeatType()]);
+        repeatSwitch.setChecked(task.getRepeatType() == DbConstants.REPEAT_DAILY);
+        // TODO: Setup weekday options while editing(if needed). >>>
 
         // Alarm switch
         alarmSwitch.setChecked(task.getIsAlarmSet() != 0);
@@ -478,6 +480,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             errorMsg = getString(R.string.creator_error_empty_location);
         } else if (TextUtils.isEmpty(reminderRangeInput.getText())) {
             errorMsg = getString(R.string.creator_error_empty_range);
+        } else if (repeatSwitch.isChecked() && (int) weekdaysStub.getTag() == 0) {
+            errorMsg = getString(R.string.creator_error_no_weekday);
         } else {
             return true;
         }
@@ -521,13 +525,14 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         // end date will be stored as null only.
         LocalDate endDate = (LocalDate) endDateTv.getTag();
 
-        // repeat mode.
-        int repeatType = (int) repeatTv.getTag();
-
         String note = noteInput.getText().toString();
         if (TextUtils.isEmpty(note)) {
             note = null;
         }
+
+        int repeatType = repeatSwitch.isChecked()
+                ? DbConstants.REPEAT_DAILY : DbConstants.NO_REPEAT;
+        int repeatCode = (int) weekdaysStub.getTag();
 
         mSelectedLocation.setPlaceName(locationName);
         long locationId;
@@ -556,6 +561,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 .setStartDate(startDate)
                 .setEndDate(endDate)
                 .setRepeatType(repeatType)
+                .setRepeatCode(repeatCode)
                 .build();
 
         if (taskBeingEdited == null) {
@@ -569,38 +575,42 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         }
         // Service is restarted to update tasks distance and accordingly trigger
         // alarm/notification at that instant.
-        // TODO: This is the optimized way. Change this later.
+        // TODO: This is not the optimized way. Change this later.
         restartService();
         finish();
     }
 
-    /**
-     * Shows a list containing categories for repeat.
-     */
-    private void showRepeatSelection() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.creator_repeat_dialog_title);
-        String[] repeatOptions = getResources().getStringArray(R.array.creator_repeat_options);
-        int checkedItem = 0;
-        builder.setSingleChoiceItems(repeatOptions, checkedItem, (dialog, which) -> {
-            repeatTv.setText(repeatOptions[which]);
-            switch (which) {
-                case 0:
-                    repeatTv.setTag(DbConstants.NO_REPEAT);
-                case 1:
-                    repeatTv.setTag(DbConstants.REPEAT_DAILY);
-                    break;
-                case 2:
-                    repeatTv.setTag(DbConstants.REPEAT_WEEKLY);
-                    break;
-                case 3:
-                    repeatTv.setTag(DbConstants.REPEAT_MONTHLY);
-                    break;
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+    private void setupWeekdayBar() {
+        // Assumption: No day is selected initially.
+        weekdaysStub.setTag(0);
+        WeekdaysDataSource wds = new WeekdaysDataSource(this, R.id.weekdays_stub)
+                .setFirstDayOfWeek(Calendar.MONDAY)
+                .setUnselectedColorRes(R.color.dark_grey)
+                .start(new WeekdaysDataSource.Callback() {
+                    /**
+                     * Called every time an item is clicked (selected or deselected).
+                     * @param weekdaysDataItem calling getCalendarDayId() on this returns the
+                     * day's index as in Java Calendar API. Sunday = 1, Monday = 2....
+                     */
+                    @Override
+                    public void onWeekdaysItemClicked(int i, WeekdaysDataItem weekdaysDataItem) {
+                        int dayCode = WeekdayCodeUtils
+                                .getDayCodeByCalendarDayId(weekdaysDataItem.getCalendarDayId());
+                        int selection = (int) weekdaysStub.getTag();
+                        // Doing an XOR here so that if tapped again, then the day is removed.
+                        selection ^= dayCode;
+                        weekdaysStub.setTag(selection);
+                        Log.d(TAG, "Selected days : " + selection);
+                    }
+
+                    @Override
+                    public void onWeekdaysSelected(int i, ArrayList<WeekdaysDataItem> arrayList) {
+                    }
+                });
+        // Need to explicitly make it GONE in code.
+        weekdaysStub.setVisibility(View.GONE);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

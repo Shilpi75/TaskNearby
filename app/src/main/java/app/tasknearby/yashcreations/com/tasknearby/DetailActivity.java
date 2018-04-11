@@ -21,12 +21,18 @@ import android.widget.Toast;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
+import java.util.Date;
+
+import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.TaskActionUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
@@ -214,9 +220,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      * Sets the repeat type of the reminder to the UI.
      */
     private void showRepeatType(TaskModel task) {
-        String[] repeatArray = getResources().getStringArray(R.array.creator_repeat_options);
+        String displayString;
+        if (task.getRepeatType() == DbConstants.NO_REPEAT) {
+            displayString = getString(R.string.detail_does_not_repeat);
+        } else {
+            displayString = AppUtils.getRepeatDisplayString(getApplicationContext(), task);
+        }
         TextView repeatStatusTv = findViewById(R.id.text_repeat);
-        repeatStatusTv.setText(repeatArray[task.getRepeatType()]);
+        repeatStatusTv.setText(displayString);
     }
 
     /**
@@ -236,8 +247,21 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      */
     private void setDoneButton(TaskModel task) {
         if (task.getIsDone() == 0) {
-            Log.i(TAG, "Task has been set as not done.");
-            doneButton.setText(R.string.detail_button_mark_done);
+            LocalDate today = LocalDate.fromDateFields(new Date());
+            // When the done field is 0, it's possible for a repeating task to be done for that
+            // day. Hence, we'll see if the nextStartDate is ahead of today and startDate was
+            // before today => It was done. We need to check for the start date to be before
+            // because it's possible that the user sets a reminder for 10 days ahead. Then both
+            // start and nextStart dates would be 10 days ahead and we'll end up showing done.
+            if (task.getRepeatType() == DbConstants.REPEAT_DAILY
+                    && task.getNextStartDate().compareTo(today) > 0
+                    && task.getStartDate().compareTo(today) <= 0) {
+                Log.i(TAG, "Task has been set as done.");
+                doneButton.setText(getString(R.string.detail_button_reset));
+            } else {
+                Log.i(TAG, "Task has been set as not done.");
+                doneButton.setText(R.string.detail_button_mark_done);
+            }
         } else {
             Log.i(TAG, "Task has been set as done.");
             doneButton.setText(R.string.detail_button_reset);
@@ -322,13 +346,21 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         long taskSnoozedAt = task.getSnoozedAt();
         task.setSnoozedAt(-1L);
 
-        int state = TaskStateUtil.getTaskState(this, task);
+        // Note: This has been added to reset the repeatable reminders that have been marked done
+        // by mistake. It is assumed that we don't need to set the nextStartDate back to what it
+        // was in case of EXPIRED.
+        task.setNextStartDate(LocalDate.fromDateFields(new Date()));
 
+        int state = TaskStateUtil.getTaskState(this, task);
         if (state == TaskStateUtil.STATE_EXPIRED) {
             task.setIsDone(1);
             task.setSnoozedAt(taskSnoozedAt);
             Toast.makeText(this, R.string.detail_msg_expired_cant_reset, Toast.LENGTH_SHORT).show();
         } else {
+            // TODO : If we're showing last triggered, then should we set this to null in
+            // repeatable reminders too? Because a repeatable reminder was anyways validly last
+            // triggered at some point of time. It's being reset only for the day. NOTE: This has
+            // been left for now because we're not showing lastTriggered time currently.
             task.setLastTriggered(null);
             Toast.makeText(this, R.string.detail_msg_task_resetted, Toast.LENGTH_SHORT).show();
             setTaskState(state);
@@ -341,14 +373,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
      * Sets the task as done and sets the Done button.
      */
     private void markTaskAsDone(TaskModel task) {
-        task.setIsDone(1);
-        mTaskRepository.updateTask(task);
+        TaskActionUtils.onTaskMarkedDone(getApplicationContext(), task);
         setDoneButton(task);
         Toast.makeText(this, R.string.detail_msg_task_marked_done, Toast.LENGTH_SHORT).show();
         // Update the task state.
-        setTaskState(TaskStateUtil.STATE_DONE);
+        setTaskState(TaskStateUtil.getTaskState(this, task));
     }
-
 
     private void setTaskState(int state) {
         taskStateTv.setText(TaskStateUtil.stateToString(this, state));

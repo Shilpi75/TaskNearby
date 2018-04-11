@@ -93,12 +93,13 @@
     <string name="creator_error_empty_location">Please pickup a location where you need to be reminded.</string>
     <string name="creator_error_image_permission">Permission is required for adding image.</string>
     <string name="creator_error_empty_range">Please enter a reminder range around your chosen location.</string>
+    <string name="creator_error_no_weekday">Please select the days for reminder to repeat on.</string>
     <string name="creator_already_in_range">You are already within the selected range.</string>
     <string name="creator_no_internet_error">Place picker requires active internet connection.</string>
     <string name="creator_action_upgrade_to_premium">upgrade to premium</string>
     <string name="creator_msg_image_selection_failed">Image selection failed</string>
     <!--Not using these as of now-->
-    <string name="creator_repeat_default">Does not repeat.</string>
+    <string name="detail_does_not_repeat">Does not repeat.</string>
     <string name="creator_repeat_dialog_title">Choose a repeat interval</string>
     <string-array name="creator_repeat_options">
         <item>Does not repeat</item>
@@ -172,6 +173,7 @@
     <string name="upgrade_feature_date">Set Date Intervals</string>
     <string name="upgrade_feature_snooze">Custom Snooze Times</string>
     <string name="upgrade_feature_voice">Voice alerts</string>
+    <string name="upgrade_feature_repeat">Daily/Weekly Repeatable alarms</string>
     <string name="upgrade_feature_route">Generate Route (Coming Soon)</string>
     <string-array name="upgrade_premium_items">
         <item>@string/upgrade_feature_images</item>
@@ -180,6 +182,7 @@
         <item>@string/upgrade_feature_date</item>
         <item>@string/upgrade_feature_snooze</item>
         <item>@string/upgrade_feature_voice</item>
+        <item>@string/upgrade_feature_repeat</item>
         <item>@string/upgrade_feature_route</item>
     </string-array>
     <string name="upgrade_action_purchase">Purchase</string>
