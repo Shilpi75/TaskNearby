@@ -259,7 +259,7 @@ public class FusedLocationService extends Service {
         }
         SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean powerSaverMode = defaultPref.getBoolean(context.getString(R.string
-                        .pref_power_saver_key), true);
+                .pref_power_saver_key), true);
         if (powerSaverMode) {
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         } else {
@@ -277,15 +277,15 @@ public class FusedLocationService extends Service {
         super.onTaskRemoved(rootIntent);
         // Check if app is enabled or not.
         SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isAppEnabled = defaultPref.getString(getString(R.string.pref_status_key), getString
-                (R.string.pref_status_default)).equals(getString(R.string.pref_status_enabled));
+        boolean isAppEnabled = defaultPref.getString(getString(R.string.pref_status_key), getString(
+                R.string.pref_status_default)).equals(getString(R.string.pref_status_enabled));
         if (isAppEnabled) {
             Intent restartServiceTask = new Intent(getApplicationContext(), this.getClass());
             restartServiceTask.setPackage(getPackageName());
             PendingIntent restartPendingIntent = PendingIntent.getService(getApplicationContext(),
                     1, restartServiceTask, PendingIntent.FLAG_ONE_SHOT);
-            AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService
-                    (Context.ALARM_SERVICE);
+            AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(
+                    Context.ALARM_SERVICE);
             alarmManager.set(
                     AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 500,
                     restartPendingIntent);

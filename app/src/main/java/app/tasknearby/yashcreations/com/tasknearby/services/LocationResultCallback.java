@@ -55,8 +55,8 @@ public class LocationResultCallback extends LocationCallback {
     }
 
     private boolean isLocationSame(Location locationA, Location locationB) {
-        return (locationA.getLongitude() == locationB.getLongitude() && locationA.getLatitude() ==
-                locationB.getLatitude());
+        return (locationA.getLongitude() == locationB.getLongitude() && locationA.getLatitude()
+                == locationB.getLatitude());
     }
 
 
@@ -70,19 +70,17 @@ public class LocationResultCallback extends LocationCallback {
 
         @Override
         public void run() {
+            Location currentLocation = mLocationResult.getLastLocation();
 
             // Get all the tasks not marked done and active for today.
             List<TaskModel> tasks = mTaskRepository.getNotDoneTasksForToday();
-            // Get the current location.
-            Location currentLocation = mLocationResult.getLastLocation();
-
-            // A list of tasks to be updated.
             List<TaskModel> tasksToUpdate = new ArrayList<>();
 
-            // Check for each Task:
+            // For each Task:
             // 1. If it is active in the current time
             // 2. Calculate distance form task's location.
             // 3. Check if last distance is less than the reminder range.
+            // 4. If it's a repeatable task, is it valid today.
             // 4. Check for snoozed or not. Proceed accordingly.
             // 5. Update the task.
             for (TaskModel task : tasks) {
@@ -99,20 +97,11 @@ public class LocationResultCallback extends LocationCallback {
                     // Set the last distance.
                     task.setLastDistance(lastDistance);
 
-                    if (lastDistance <= task.getReminderRange()) {
-
-                        if (taskState == TaskStateUtil.STATE_ACTIVE_NOT_SNOOZED) {
-
-                            if (task.getIsAlarmSet() == 1) {
-                                Intent alarmIntent = AlarmActivity.getStartingIntent(mContext,
-                                        task.getId());
-                                alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                mContext.startActivity(alarmIntent);
-                            } else {
-                                mNotificationHelper.showReminderNotification(task);
-                            }
-                        }
+                    if (lastDistance <= task.getReminderRange()
+                            && taskState == TaskStateUtil.STATE_ACTIVE_NOT_SNOOZED) {
+                        alertUser(task);
                     }
+
                     // Add to the tasks to be updated list.
                     tasksToUpdate.add(task);
                 }
@@ -120,6 +109,19 @@ public class LocationResultCallback extends LocationCallback {
             // Batch update tasks.
             mTaskRepository.updateTasks(tasksToUpdate);
             Log.i(TAG, "Tasks updated successfully.");
+        }
+
+        /**
+         * Alerts the user for the particular task after deciding on the basis of user's preference.
+         */
+        private void alertUser(TaskModel task) {
+            if (task.getIsAlarmSet() == 1) {
+                Intent alarmIntent = AlarmActivity.getStartingIntent(mContext, task.getId());
+                alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(alarmIntent);
+            } else {
+                mNotificationHelper.showReminderNotification(task);
+            }
         }
     }
 }
