@@ -18,23 +18,13 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     private static final String PREF_FCM_TOKEN = "pref_fcm_token";
 
-    private static final String[] TOPICS = {
-            "global",
-            "promotion"
-    };
-
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit().putString(PREF_FCM_TOKEN, refreshedToken).apply();
-        subscribeToTopics();
-    }
-
-    private void subscribeToTopics() {
-        for (String topic : TOPICS) {
-            FirebaseMessaging.getInstance().subscribeToTopic(topic);
-        }
+        Log.i(TAG, "Token has been refreshed to : " + refreshedToken);
+        TopicSubscriber.subscribeToAllTopics();
     }
 }

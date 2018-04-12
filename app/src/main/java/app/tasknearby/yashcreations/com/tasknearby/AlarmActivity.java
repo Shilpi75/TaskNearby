@@ -161,7 +161,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
         if (mTask.getImageUri() != null) {
             Picasso.with(this)
                     .load("file://" + mTask.getImageUri())
-                    .error(R.drawable.calendar_bkg_12_dec)
+                    .error(R.drawable.default_task_image)
                     .fit()
                     .centerCrop()
                     .into(coverImageView);

@@ -25,8 +25,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Map<String, String> data = remoteMessage.getData();
         // Check if message contains a data payload.
         if (data.size() > 0) {
-            Log.i(TAG, "Message data payload: " + data);
-
+            Log.d(TAG, "Message data payload: " + data);
             if (FcmConstants.TYPE_DISCOUNT.equals(data.get(FcmConstants.FIELD_TYPE))) {
                 int index = Integer.parseInt(data.get(FcmConstants.FIELD_INDEX));
                 String title = data.get(FcmConstants.FIELD_TITLE);

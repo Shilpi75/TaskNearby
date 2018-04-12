@@ -35,7 +35,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/calendar_bkg_12_dec" />
+                app:srcCompat="@drawable/default_task_image" />
 
             <TextView
                 android:id="@+id/text_task_name"

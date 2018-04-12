@@ -155,7 +155,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             ImageView imageView = findViewById(R.id.image_task_cover);
             Picasso.with(this)
                     .load("file://" + task.getImageUri())
-                    .error(R.drawable.calendar_bkg_12_dec)
+                    .error(R.drawable.default_task_image)
                     .fit()
                     .centerCrop()
                     .into(imageView);

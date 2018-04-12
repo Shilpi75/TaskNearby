@@ -39,6 +39,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
 import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
+import app.tasknearby.yashcreations.com.tasknearby.fcm.TopicSubscriber;
 import app.tasknearby.yashcreations.com.tasknearby.fragments.TasksFragment;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setVersionPreference();
         setupNavDrawer();
+        setupFcm();
 
         findViewById(R.id.fab).setOnClickListener(view ->
                 startActivity(new Intent(MainActivity.this, TaskCreatorActivity.class)));
@@ -233,6 +235,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.pref_version_key), getString(R.string.app_version));
         editor.apply();
+    }
+
+    /**
+     * It's fine to subscribe on app start, see this: https://stackoverflow.com/a/40055267/4857588
+     */
+    private void setupFcm() {
+        TopicSubscriber.subscribeToAllTopics();
     }
 
     @Override

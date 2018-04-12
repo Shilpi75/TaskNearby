@@ -2,7 +2,7 @@
 
     <!--App level string constants-->
     <string name="app_name" translatable="false">Task Nearby</string>
-    <string name="app_version" translatable="false">v4.0.1</string>
+    <string name="app_version" translatable="false">v4.0.2</string>
 
 
     <!--Activity titles-->

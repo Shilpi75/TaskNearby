@@ -29,6 +29,8 @@
 
 # As per crashlytics documentation
 -keepattributes *Annotation*
+# Use this if our app is easier to reverse engineer.
+#-renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 # The following 2 provide faster proguard builds.
 -keep class com.crashlytics.** { *; }
