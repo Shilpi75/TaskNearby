@@ -153,7 +153,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private void showCoverImage(TaskModel task) {
         if (task.getImageUri() != null) {
             ImageView imageView = findViewById(R.id.image_task_cover);
-            // TODO: Check if loading placeholder is needed.
             Picasso.with(this)
                     .load("file://" + task.getImageUri())
                     .error(R.drawable.calendar_bkg_12_dec)

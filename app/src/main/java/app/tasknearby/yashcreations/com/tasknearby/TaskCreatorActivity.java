@@ -364,12 +364,12 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             return;
         PlacePicker.IntentBuilder placePickerIntent = new PlacePicker.IntentBuilder();
         try {
-            startActivityForResult(placePickerIntent.build(this),
-                    REQUEST_CODE_PLACE_PICKER);
+            startActivityForResult(placePickerIntent.build(this), REQUEST_CODE_PLACE_PICKER);
         } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle this repairable exception.
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.PLACE_PICKER_EXCEPTION, new Bundle());
             e.printStackTrace();
         } catch (GooglePlayServicesNotAvailableException e) {
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.PLACE_PICKER_FATAL, new Bundle());
             e.printStackTrace();
         }
     }

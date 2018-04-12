@@ -20,6 +20,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
 import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
+import app.tasknearby.yashcreations.com.tasknearby.notification.NotificationConstants;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
@@ -71,6 +72,9 @@ public class UpgradeActivity extends AppCompatActivity implements BillingManager
         });
 
         analytics.logEvent(AnalyticsConstants.PREMIUM_DIALOG_SHOWN, new Bundle());
+        if (getIntent().hasExtra(NotificationConstants.EXTRA_DISCOUNT_NOTIFICATION)) {
+            analytics.logEvent(AnalyticsConstants.NOTIFICATION_DISCOUNT_CLICK, new Bundle());
+        }
     }
 
     /**

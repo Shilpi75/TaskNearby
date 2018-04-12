@@ -140,9 +140,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
             editor.putString(getString(R.string.pref_status_key),
                     getString(R.string.pref_status_enabled));
             mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_ENABLED, new Bundle());
-            // TODO: The startService method calls the onStartCommand method and doesn't start a
-            // new instance of the service. So, is there any check needed before doing this?
-            // Or should we keep an Application class which takes care of isServiceRunning etc.
             AppUtils.startService(this);
         } else {
             // Put disabled string in shared preferences.

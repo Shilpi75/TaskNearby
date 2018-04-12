@@ -1,12 +1,10 @@
 apply plugin: 'com.android.application'
 // Firebase performance monitoring plugin.
 apply plugin: 'com.google.firebase.firebase-perf'
-// For Crashlytics
-apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.0"
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId 'app.tasknearby.yashcreations.com.tasknearby'
         minSdkVersion 17
@@ -48,7 +46,7 @@ def crashlyticsVersion = "2.9.1"
 def lifecycleExtVersion = "1.1.1"
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
@@ -62,6 +60,8 @@ dependencies {
 
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
     implementation "com.google.firebase:firebase-perf:$playServicesVersion"
+    implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
+
     // Room
     implementation "android.arch.persistence.room:runtime:$archRoomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$archRoomVersion"
@@ -83,9 +83,8 @@ dependencies {
 
     implementation "com.android.billingclient:billing:$billingLibVersion"
 
-    implementation "com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion"
-    dependencies{
-        compile 'com.github.TouchBoarder:weekdays-buttons-bar:v1.0.2'
+    dependencies {
+        implementation 'com.github.TouchBoarder:weekdays-buttons-bar:v1.0.2'
     }
 }
 

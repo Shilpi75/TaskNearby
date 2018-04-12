@@ -225,7 +225,6 @@ public class BillingManager implements PurchasesUpdatedListener {
 
     /**
      * This is here just for testing purposes.
-     * TODO: Make sure that it is not used in the production build.
      */
     public void consumePurchasedProduct(String purchaseToken) {
         mBillingClient.consumeAsync(purchaseToken, (responseCode, purchaseToken1) -> {
