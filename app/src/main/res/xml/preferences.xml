@@ -15,7 +15,8 @@
             android:key="@string/pref_distance_range_key"
             android:title="@string/pref_distance_range_title"
             android:hint="75 distance units"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:maxLength="6"/>
 
         <SwitchPreference
             android:defaultValue="true"
@@ -31,7 +32,7 @@
         <RingtonePreference
             android:key="@string/pref_alarm_tone_key"
             android:ringtoneType="all"
-            android:title="@string/creator_alarm_title" />
+            android:title="@string/pref_alarm_tone_title" />
 
         <!-- Vibrate preference. -->
         <ListPreference

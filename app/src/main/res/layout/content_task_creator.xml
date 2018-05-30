@@ -162,6 +162,7 @@
             android:hint="@string/creator_reminder_range_default"
             android:inputType="number"
             android:text="@string/creator_reminder_range_default"
+            android:maxLength="6"
             app:layout_constraintBaseline_toBaselineOf="@+id/text_reminder_range"
             app:layout_constraintStart_toEndOf="@+id/text_reminder_range" />
 

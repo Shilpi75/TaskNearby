@@ -214,4 +214,13 @@
     <string name="preference_category_general">General</string>
     <string name="preference_category_alarms">Alarms</string>
 
+    <!-- These are to be added in other language -->
+    <string name="error_range_zero">Please select reminder range greater than zero.</string>
+    <string name="error_range_max">Please select reminder range less than 50,000.</string>
+    <string name="error_range_empty">Please enter a valid reminder range.</string>
+
+    <string name="app_enabled">Task Nearby has been turned on.</string>
+    <string name="app_disabled">Task Nearby has been turned off.</string>
+    <string name="feature_upgrade_to_premium">Please upgrade to access this feature.</string>
+
 </resources>

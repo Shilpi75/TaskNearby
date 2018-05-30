@@ -93,6 +93,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private Switch anytimeSwitch;
     private Switch repeatSwitch;
     private ViewStub weekdaysStub;
+    private WeekdaysDataSource wds;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -131,7 +132,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * This will be used to get the intent to start this activity when we need to edit the task.
      *
      * @param context context of the calling activity.
-     * @param taskId taskId of the task to be edited.
+     * @param taskId  taskId of the task to be edited.
      * @return intent that can be used in startActivity.
      */
     public static Intent getEditModeIntent(Context context, long taskId) {
@@ -274,7 +275,15 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
 
         // Repeat options.
         repeatSwitch.setChecked(task.getRepeatType() == DbConstants.REPEAT_DAILY);
-        // TODO: Setup weekday options while editing(if needed). >>>
+        if (wds != null) {
+            int repeatCode = task.getRepeatCode();
+            weekdaysStub.setTag(repeatCode);
+            // Get the day indices to repeat.
+            ArrayList<Integer> dayIndices = WeekdayCodeUtils.getDayIndexListToRepeat(repeatCode);
+            for (int day : dayIndices) {
+                wds.setSelectedDays(day - 1);
+            }
+        }
 
         // Alarm switch
         alarmSwitch.setChecked(task.getIsAlarmSet() != 0);
@@ -327,7 +336,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         Calendar calendar = Calendar.getInstance();
         // what to do when date is set.
         DatePickerDialog.OnDateSetListener onDateSetListener = (view, year, month,
-                dayOfMonth) -> {
+                                                                dayOfMonth) -> {
             calendar.set(year, month, dayOfMonth);
             v.setTag(LocalDate.fromCalendarFields(calendar));
             v.setText(AppUtils.getReadableDate(this, calendar.getTime()));
@@ -342,7 +351,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_STORAGE_PERMISSION:
                 if (grantResults.length > 0
@@ -473,7 +482,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * Validates the input entered by the user.
      */
     private boolean isInputValid() {
-        String errorMsg;
+        String errorMsg = null;
         if (TextUtils.isEmpty(taskNameInput.getText())) {
             errorMsg = getString(R.string.creator_error_empty_taskname);
         } else if (TextUtils.isEmpty(locationNameInput.getText()) || !hasSelectedLocation) {
@@ -482,10 +491,15 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             errorMsg = getString(R.string.creator_error_empty_range);
         } else if (repeatSwitch.isChecked() && (int) weekdaysStub.getTag() == 0) {
             errorMsg = getString(R.string.creator_error_no_weekday);
+        } else if (!AppUtils.isReminderRangeValid(this, reminderRangeInput.getText().toString())) {
+
         } else {
             return true;
         }
-        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+        // If reminder range is not valid, no toast has to be shown. In that case, error msg will
+        // be empty.
+        if (errorMsg != null && !errorMsg.isEmpty())
+            Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
         return false;
     }
 
@@ -587,7 +601,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private void setupWeekdayBar() {
         // Assumption: No day is selected initially.
         weekdaysStub.setTag(0);
-        WeekdaysDataSource wds = new WeekdaysDataSource(this, R.id.weekdays_stub)
+        wds = new WeekdaysDataSource(this, R.id.weekdays_stub)
                 .setFirstDayOfWeek(Calendar.MONDAY)
                 .setUnselectedColorRes(R.color.dark_grey)
                 .start(new WeekdaysDataSource.Callback() {
