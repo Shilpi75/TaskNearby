@@ -13,6 +13,12 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Billing permission -->
     <uses-permission android:name="com.android.vending.BILLING" />
+    <!-- Google play services adds the READ_PHONE_STATE permission by default for InstanceId generation
+     on older devices. This might not be needed. However, please confirm this by testing.
+     If READ_PHONE_STATE permission is present, then we need to provide a privacy policy. -->
+    <uses-permission xmlns:tools="http://schemas.android.com/tools"
+        android:name="android.permission.READ_PHONE_STATE"
+        tools:node="remove" />
 
     <!-- To stop from being distributed on non-GPS enabled devices. -->
     <uses-feature android:name="android.hardware.location.gps" />
@@ -24,6 +30,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -36,6 +43,7 @@
         </activity>
         <activity
             android:name=".TaskCreatorActivity"
+            android:exported="true"
             android:label="@string/title_add_new_task"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -81,9 +89,10 @@
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".OnboardingActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:exported="true"/>
+        <activity
+            android:name=".OnboardingActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".services.ActivityDetectionService"
@@ -104,7 +113,21 @@
         </receiver>
         <receiver android:name=".notification.NotificationClickHandler" />
 
+        <!-- FCM services.. -->
+        <service
+            android:name=".fcm.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
 
+        <service
+            android:name=".fcm.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+      
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />

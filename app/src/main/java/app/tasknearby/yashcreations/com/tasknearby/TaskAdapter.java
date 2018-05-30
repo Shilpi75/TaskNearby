@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
+import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
@@ -59,6 +61,7 @@ public final class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomVi
         private TextView locationNameTv;
         private TextView lastDistanceTv;
         private TextView stateTv;
+        private ImageView repeatableIconView;
 
         CustomViewHolder(View v) {
             super(v);
@@ -66,6 +69,7 @@ public final class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomVi
             locationNameTv = v.findViewById(R.id.text_location_name);
             lastDistanceTv = v.findViewById(R.id.text_last_distance);
             stateTv = v.findViewById(R.id.text_state);
+            repeatableIconView = v.findViewById(R.id.icon_repeatable);
             v.setOnClickListener(v1 -> {
                 // Get the view position.
                 int pos = getLayoutPosition();
@@ -88,6 +92,11 @@ public final class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.CustomVi
                 bindLastDistance(task.getLastDistance());
             } else {
                 bindTaskState(listItem);
+            }
+            if (task.getRepeatType() == DbConstants.NO_REPEAT) {
+                repeatableIconView.setVisibility(View.GONE);
+            } else {
+                repeatableIconView.setVisibility(View.VISIBLE);
             }
         }
 

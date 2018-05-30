@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TODO: The arabic strings are present below. However, these have not been used because of the following reasons:
+        1. Formatting error. String.format() doesn't work in the usual way. We need to fix this.
+        2. RTL layout is not supported correctly by our app. Fix the layout at multiple places.
+        3. Don't know if the transactions are comprehendable when added to the views.
+    -->
+    <!--<string name="title_home_screen">المهام القريبة</string>-->
+    <!--<string name="title_add_new_task">إضافة مهمة</string>-->
+    <!--<string name="title_edit_task">تعديل المهمة</string>-->
+    <!--<string name="title_task_detail">تفاصيل المهمة</string>-->
+    <!--<string name="title_saved_places">الأماكن المحفوظة</string>-->
+    <!--<string name="title_settings">الإعدادات</string>-->
+    <!--<string name="title_about">معلومات</string>-->
+    <!--    -->
+    <!--<string name="unit_metres">متر</string>-->
+    <!--<string name="unit_yards">ياردة</string>-->
+    <!--         -->
+    <!--&lt;!&ndash; TODO: Fix these formats &ndash;&gt;-->
+    <!--<string name="time_format_am">AM</string>-->
+    <!--<string name="time_format_pm">PM</string>-->
+
+    <!--<string name="msg_notif_foreground_service">تذكيرات الموقع قيد التشغيل.</string>-->
+    <!--<string name="main_msg_no_tasks">ليس لديك أية مهام. انقر على الزر + لإضافة مهام جديدة.</string>-->
+    <!--<string name="nav_header_tagline">تذكيرات الموقع البسيطة، فقط لأجلك.</string>-->
+    <!--<string name="nav_title_all_tasks">كل المهام</string>-->
+    <!--<string name="nav_title_settings">الإعدادات</string>-->
+    <!--<string name="nav_title_about">حول</string>-->
+    <!--<string name="nav_title_rate_us">مراجعة</string>-->
+    <!--<string name="nav_title_send_feedback">إرسال تعليقات</string>-->
+    <!--<string name="nav_title_premium">بريميوم</string>-->
+    <!--<string name="nav_title_unlock_premium">إفتح قسط</string>-->
+    <!--<string name="navigation_drawer_open">فتح درج التنقل</string>-->
+    <!--<string name="navigation_drawer_close">إغلاق درج التنقل</string>-->
+    <!--<string name="action_settings">الإعدادات</string>-->
+    <!--    -->
+    <!--<string name="dialog_permission_title">الأذونات المرفوضة</string>-->
+    <!--<string name="dialog_permission_message">إذن الموقع ضروري لهذا التطبيق للعمل، يرجى منح هذا الإذن.</string>-->
+    <!--<string name="dialog_grant_permission_button">أذونات المنحة</string>-->
+    <!--<string name="error_fix_location_settings">إعدادات الموقع غير كافية، ولا يمكن إصلاحها هنا. إصلاح   في الإعدادات.</string>-->
+
+    <!--<string name="task_state_snoozed">مؤجل</string>-->
+    <!--<string name="task_state_active">نشط</string>-->
+    <!--<string name="task_state_upcoming">القادمة</string>-->
+    <!--<string name="task_state_expired">منتهية الصلاحية</string>-->
+    <!--<string name="task_state_done">اكتمل</string>-->
+    <!--<string name="task_state_invalid">غير صالح</string>-->
+
+    <!--<string name="creator_task_name_hint">ذكرني حول</string>-->
+    <!--<string name="creator_location_title">الموقع</string>-->
+    <!--<string name="creator_saved_place_button">الأماكن المحفوظة</string>-->
+    <!--<string name="creator_or_string">أو</string>-->
+    <!--<string name="creator_pick_place_button">اختيار مكان</string>-->
+    <!--<string name="creator_location_name_hint">name الموقع</string>-->
+    <!--<string name="creator_reminder_range">نطاق التذكير:</string>-->
+    <!--<string name="creator_alarm_title">إنذار</string>-->
+    <!--<string name="creator_note_hint">إضافة ملاحظة</string>-->
+    <!--<string name="creator_time_title">في أي وقت</string>-->
+    <!--<string name="creator_time_start_title">من</string>-->
+    <!--<string name="creator_time_end_title">إلى</string>-->
+    <!--<string name="creator_date_title">الفاصل الزمني للتاريخ</string>-->
+    <!--<string name="creator_date_start_title">بدء من</string>-->
+    <!--<string name="creator_date_start_default">اليوم</string>-->
+    <!--<string name="creator_date_end_title">انتهاء مدة الصلاحية على</string>-->
+    <!--<string name="creator_date_end_default">لا الموعد النهائي</string>-->
+    <!--<string name="creator_menu_action_save">حفظ</string>-->
+    <!--<string name="creator_error_empty_taskname">الرجاء إدخال اسم المهمة</string>-->
+    <!--<string name="creator_error_empty_location">يرجى التقاط موقع حيث يجب تذكيرك به.</string>-->
+    <!--<string name="creator_error_image_permission">يلزم الإذن لإضافة صورة.</string>-->
+    <!--<string name="creator_error_empty_range">الرجاء إدخال نطاق تذكير حول الموقع الذي تختاره.</string>-->
+    <!--<string name="creator_already_in_range">أنت بالفعل ضمن النطاق المحدد.</string>-->
+    <!--<string name="creator_no_internet_error">يتطلب منتقي الأماكن اتصالا نشطا بالإنترنت.</string>-->
+    <!--<string name="creator_action_upgrade_to_premium">الترقية إلى بريميوم</string>-->
+    <!--<string name="creator_msg_image_selection_failed">فشل اختيار الصورة</string>-->
+    <!--<string name="creator_repeat_default">لا يكرر.</string>-->
+    <!--<string name="creator_repeat_dialog_title">اختر الفاصل الزمني المتكرر</string>-->
+
+    <!--<string name="detail_alarm_format">%s التنبيه هو</string>-->
+    <!--<string name="detail_alarm_on">على</string>-->
+    <!--<string name="detail_alarm_off">إيقاف</string>-->
+    <!--<string name="detail_time_format">%2$s - %1$s</string>-->
+    <!--<string name="detail_time_anytime">في أي وقت خلال اليوم</string>-->
+    <!--<string name="detail_date_format">%2$s - %1$s</string>-->
+    <!--<string name="detail_date_no_deadline">لا يوجد مهلة</string>-->
+    <!--<string name="detail_date_today">اليوم</string>-->
+    <!--<string name="detail_button_mark_done">إضافة إلى الانتهاء</string>-->
+    <!--<string name="detail_button_reset">إعادة الضبط</string>-->
+    <!--<string name="detail_menu_item_delete">حذف</string>-->
+    <!--<string name="detail_menu_item_edit">تعديل</string>-->
+    <!--<string name="detail_delete_dialog_message">هل تريد حذف هذا التذكير؟</string>-->
+    <!--<string name="detail_msg_expired_cant_reset">انتهت صلاحية هذه المهمة. يمكنك تعديل التواريخ.</string>-->
+    <!--<string name="detail_msg_task_resetted">تمت إعادة تعيين المهمة.</string>-->
+    <!--<string name="detail_msg_task_marked_done">تم وضع علامة مهمة القيام به.</string>-->
+    <!--<string name="error_no_app">لم يتم العثور على تطبيق دعم.</string>-->
+    <!--<string name="dialog_action_delete">حذف</string>-->
+    <!--<string name="dialog_cancel">إلغاء</string>-->
+
+    <!--<string name="alarm_action_set_as_notification"><u>إضافة إلى إعلام فقط</u></string>-->
+    <!--<string name="alarm_show_map">إظهار الخريطة</string>-->
+    <!--<string name="alarm_show_image">إظهار الصورة</string>-->
+    <!--<string name="error_tts">يرجى التحقق من إعدادات النص إلى كلام جهازك.</string>-->
+    <!--<string name="action_mark_done">اكتمل</string>-->
+    <!--<string name="action_snooze">غفوة</string>-->
+    <!--<string name="alarm_action_show_map">إظهار الخريطة</string>-->
+    <!--&lt;!&ndash; This share message has been stripped off. And left like this. &ndash;&gt;-->
+    <!--<string name="share_message">%s</string>-->
+    <!--<string name="action_share">مشاركة</string>-->
+    <!--<string name="feedback_text"><u>ساعدنا في تحسين؟</u></string>-->
+
+    <!--<string name="upgrade_feature_images">إضافة صور</string>-->
+    <!--<string name="upgrade_feature_notes">إضافة ملاحظات</string>-->
+    <!--<string name="upgrade_feature_time">تعيين فترات زمنية</string>-->
+    <!--<string name="upgrade_feature_date">التاريخ فترات</string>-->
+    <!--<string name="upgrade_feature_snooze">غفوة مخصصة تايمز</string>-->
+    <!--<string name="upgrade_feature_voice">التنبيهات الصوتية</string>-->
+    <!--<string name="upgrade_feature_route">إنشاء مسار (قريبا)</string>-->
+    <!--<string name="upgrade_action_purchase">شراء</string>-->
+    <!--<string name="msg_thanks_for_buying">شكرا للشراء!</string>-->
+    <!--<string name="flavor_name_premium">بريميوم</string>-->
+
+    <!--<string name="onboarding_skip">تخطي</string>-->
+    <!--<string name="onboarding_got_it">حصلت عليه</string>-->
+    <!--<string name="onboarding_next">التالي</string>-->
+    <!--<string name="onboarding_title_pa">مساعد شخصي</string>-->
+    <!--<string name="onboarding_title_productive">الإنتاجية</string>-->
+    <!--<string name="onboarding_descriptions_1">تذكيرات موقع مصممة خصيصا لك.</string>-->
+    <!--<string name="onboarding_descriptions_2">تلقائيا يعتني بكل شيء: مسافة التذكير، توقيت التنبيه وأكثر من ذلك بكثير.</string>-->
+    <!--<string name="onboarding_descriptions_3">لا مزيد من نسيان المهام التي كان عليك القيام بها فيطريقك. يكون التوتر مجانا والتمتع بها.</string>-->
+    <!--    -->
+    <!--<string name="preference_category_general">عام</string>    -->
+    <!--<string name="preference_category_alarms">إنذار</string>-->
+
+    <!--<string name="pref_unit_title"> وحدات المسافة </string>-->
+    <!--<string name="pref_unit_entry_metric"> متري (متر) </string>-->
+    <!--<string name="pref_unit_entry_imperial"> إمبريال (يارد) </string>-->
+    <!--<string name="pref_distance_range_title"> نطاق المسافة (افتراضي) </string>-->
+    <!--<string name="pref_alarm_tone_title"> نغمة التنبيه </string>-->
+    <!--<string name="pref_vibrate_title"> الاهتزاز </string>-->
+    <!--<string name="pref_vibrate_entry_forever"> يهتز حتى يتم رفض التنبيه. </string>-->
+    <!--<string name="pref_vibrate_entry_5_sec"> الاهتزاز لمدة 5 ثوان. </string>-->
+    <!--<string name="pref_vibrate_entry_3_sec"> اهتزاز لمدة 3 ثوان. </string>-->
+    <!--<string name="pref_vibrate_entry_never"> لا تهتز. </string>-->
+    <!--<string name="pref_voice_alarm_title"> التنبيهات الصوتية </string>-->
+    <!--<string name="pref_voice_alarm_summary"> التطبيق الذي يعلن تفاصيل المهمة. </string>-->
+    <!--<string name="pref_snooze_title">وقت قيلولة بعد الظهر</string>-->
+    <!--<string name="pref_snooze_entry_1min">غفوة لمدة 1 دقيقة.</string>-->
+    <!--<string name="pref_snooze_entry_3min"> غفوة لمدة 3 دقائق. </string>-->
+    <!--<string name="pref_snooze_entry_5min"> غفوة لمدة 5 دقائق. </string>-->
+    <!--<string name="pref_snooze_entry_10min"> غفوة لمدة 10 دقائق. </string>-->
+    <!--<string name="pref_snooze_entry_20min"> غفوة لمدة 20 دقيقة. </string>-->
+    <!--<string name="pref_power_saver_title"> وضع توفير الطاقة </string>-->
+    <!--<string name="pref_power_saver_summary"> يستخدم الشبكة الخلوية لتقليل استهلاك البطارية. تحول هذا على قد خفض دقة. </string>-->
+    <!--<string name="reminder">تذكير</string>-->
+    <!--<string name="detail_format_reminder_range">%s في غضون</string>-->
+    <!--<string name="saved_places_msg_empty">لم تحفظ أي مكان. انقر على هذا الزر لاختيار مكان من الخريطة.</string>-->
+
+    <!-- TODO: With Arabic, we're facing a bug with these formats. One way to fix these is by using
+     BidiFormatter class. Find correct method and fix ASAP. -->
+    <!--<string name="saved_places_dialog_msg_delete_place">هل تريد حذف الموقع المحفوظ "\s%"\؟</string>-->
+
+</resources>

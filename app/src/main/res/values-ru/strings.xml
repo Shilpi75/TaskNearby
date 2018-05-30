@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_home_screen">Задачи Поблизости</string>
+    <string name="title_add_new_task">Добавить задачу</string>
+    <string name="title_edit_task">Изменить задачу</string>
+    <string name="title_task_detail">Подробности задачи</string>
+    <string name="title_saved_places">Сохранённые места</string>
+    <string name="title_settings">Настройки</string>
+    <string name="title_about">О приложении</string>
+    <string name="unit_metres">м</string>
+    <string name="unit_yards">ярд</string>
+    <string name="reminder">Напоминание</string>
+    <string name="time_format_am">дп</string>
+    <string name="time_format_pm">пп</string>
+    <string name="distance_format_m">%d м</string>
+    <string name="distance_format_yd">%d ярд</string>
+    <string name="distance_format_km">%.2f км</string>
+    <string name="distance_format_mi">%.2f миль</string>
+
+    <string name="msg_notif_foreground_service">Напоминания по местоположению включены.</string>
+    <string name="main_msg_no_tasks">У вас нет задач. Нажмите кнопку + для создания.</string>
+    <string name="nav_header_tagline">Простые напоминания о местоположении.</string>
+    <string name="nav_title_all_tasks">Все задачи</string>
+    <string name="nav_title_settings">Настройки</string>
+    <string name="nav_title_about">О приложении</string>
+    <string name="nav_title_rate_us">Оцените нас</string>
+    <!-- The one below says "post a review", hence check. -->
+    <string name="nav_title_send_feedback">Отправить отзыв</string>
+    <string name="nav_title_premium">Премиум</string>
+    <string name="nav_title_unlock_premium">Разблокировать Премиум</string>
+    <string name="action_settings">Настройки</string>
+    <string name="dialog_permission_title">В доступе отказано</string>
+    <string name="dialog_permission_message">Для этого приложения требуется доступ к текущему местоположению. Разрешите доступ.</string>
+    <string name="dialog_grant_permission_button">Разрешить доступ</string>
+    <string name="error_fix_location_settings">Неправильные настройки местоположения. Исправить их в настройках</string>
+    <!-- task states -->
+    <string name="task_state_snoozed">Отложено</string>
+    <string name="task_state_active">активный</string>
+    <string name="task_state_upcoming">предстоящий</string>
+    <string name="task_state_expired">Истекший</string>
+    <string name="task_state_done">Готово</string>
+    <string name="task_state_invalid">неизвестный</string>
+
+    <string name="creator_task_name_hint">Напомнить о</string>
+    <string name="creator_location_title">Местоположение</string>
+    <string name="creator_saved_place_button">Сохранённые места</string>
+    <string name="creator_or_string">или</string>
+    <!-- Can be replaced with "Выбор места" -->
+    <!-- OlegKum said "Выбрать местоположение" -->
+    <string name="creator_pick_place_button">Выбор места</string>
+    <string name="creator_location_name_hint">Наименование местоположения</string>
+    <string name="creator_reminder_range">Ассортимент :</string>
+    <string name="creator_alarm_title">звук</string>
+    <string name="creator_time_title">В любой момент</string>
+    <string name="creator_note_hint">Добавить примечание</string>
+    <!-- These are modified and taken from google translate -->
+    <string name="creator_time_start_title">Начало</string>
+    <string name="creator_time_end_title">концы</string>
+    <string name="creator_date_title">Период</string>
+    <string name="creator_date_start_title">Начать от</string>
+    <string name="creator_date_start_default">Сегодня</string>
+    <string name="creator_date_end_title">Истекает</string>
+    <string name="creator_date_end_default">Бессрочно</string>
+    <string name="creator_menu_action_save">сохранить</string>
+    <string name="creator_error_empty_taskname">Пожалуйста задайте наименование задачи</string>
+    <string name="creator_error_empty_location">Задайте местоположение возле которого напоминать</string>
+    <string name="creator_error_image_permission">Требуется разрешение для добавления изображения</string>
+    <string name="creator_error_empty_range">Задайте дистанцию до местоположения для  напоминания</string>
+    <string name="creator_already_in_range">Вы уже на заданной дистанции</string>
+    <string name="creator_no_internet_error">Указание местоположения требует доступа в Интернет</string>
+    <string name="creator_action_upgrade_to_premium">Получить Премиум доступ</string>
+    <string name="creator_msg_image_selection_failed">Ошибка выбора изображения</string>
+    <string name="detail_does_not_repeat">Не повторять</string>
+    <string name="creator_repeat_dialog_title">Интервал повторения</string>
+    <string name="detail_alarm_format">звук %1$s</string>
+    <string name="detail_alarm_on">включен</string>
+    <string name="detail_alarm_off">выключен</string>
+    <string name="detail_date_format">%1$s  -  %2$s</string>
+    <string name="detail_time_format">%s до %s</string>
+    <string name="detail_time_anytime">В любое время дня</string>
+    <string name="detail_date_no_deadline">Бессрочно</string>
+    <string name="detail_date_today">Сегодня</string>
+    <string name="detail_format_reminder_range">В пределах %s</string>
+    <string name="detail_button_mark_done">Выполнено</string>
+    <string name="detail_button_reset">Сбросить</string>
+    <string name="detail_menu_item_delete">Удалить</string>
+    <string name="detail_menu_item_edit">Редактировать</string>
+    <string name="detail_delete_dialog_message">Удалить это напоминание?</string>
+    <string name="detail_msg_expired_cant_reset">Эта задача истекла. Измените дату.</string>
+    <string name="detail_msg_task_resetted">Задача сброшена.</string>
+    <!-- Says mission accomplished, but liked it. -->
+    <string name="detail_msg_task_marked_done">Задача выполнена.</string>
+    <string name="error_no_app">Поддерживаемые приложения не обнаружены.</string>
+    <string name="dialog_action_delete">Удалить</string>
+    <string name="dialog_cancel">Отмена</string>
+    <string name="saved_places_msg_empty">У Вас нет сохранённых мест. Нажмите кнопку для выбора.</string>
+    <string name="saved_places_dialog_msg_delete_place">Удалить сохранённое местоположение \"%s\"?</string>
+    <string name="alarm_action_set_as_notification"><u>только уведомление</u></string>
+    <string name="alarm_show_map">Показать карту</string>
+    <string name="alarm_show_image">Показать изображение</string>
+    <string name="error_tts">Проверьте синтезатор речи в настройках</string>
+    <!-- This says completed -->
+    <string name="action_mark_done">Завершено</string>
+    <string name="action_snooze">Отложить</string>
+    <string name="alarm_action_show_map">Показать карту</string>
+    <string name="share_message">Здравствуйте! Попробуйте приложение. Это полезное приложение для напоминаний о местоположении. Загрузите его из Google Play здесь: %s</string>
+    <string name="action_share">Поделиться</string>
+    <string name="feedback_text"><u>Хотите помочь улучшить?</u></string>
+
+    <string name="upgrade_feature_images">Добавить изображения</string>
+    <string name="upgrade_feature_notes">Добавить заметки</string>
+    <string name="upgrade_feature_time">Установите временной интервал</string>
+    <string name="upgrade_feature_date">Установка интервала даты</string>
+    <string name="upgrade_feature_snooze">изменять вздремнуть время</string>
+    <string name="upgrade_feature_voice">Голосовое напоминание</string>
+    <string name="upgrade_feature_route">Создать маршрут (Скоро)</string>
+    <string name="upgrade_action_purchase">Купить</string>
+    <string name="msg_thanks_for_buying">Спасибо за покупку!</string>
+    <string name="flavor_name_premium">Премиум</string>
+
+    <string name="onboarding_skip">Пропустить</string>
+    <string name="onboarding_got_it">понял</string>
+    <string name="onboarding_next">далее</string>
+    <string name="onboarding_title_pa">Личный ассистент</string>
+    <string name="onboarding_title_productive">быть продуктивным</string>
+    <string name="onboarding_descriptions_1">Настраиваемые напоминания о местоположении для вас</string>
+    <string name="onboarding_descriptions_2">волшебно заботится обо всем: диапазон напоминаний, время будильника и т. д.</string>
+    <string name="onboarding_descriptions_3">Не забывайте о задачах, которые вы должны выполнять на своем пути. Оставайтесь свободными от напряжения и наслаждайтесь.</string>
+
+    <!-- Preferences -->
+    <string name="pref_unit_title">единицы измерения</string>
+    <string name="pref_unit_entry_metric">Метрические(метр)</string>
+    <string name="pref_unit_entry_imperial">Имперские(ярд)</string>
+    <string name="pref_distance_range_title">Дистанция по умолчанию</string>
+    <string name="pref_alarm_tone_title">Звук</string>
+    <string name="pref_vibrate_title">Вибрация</string>
+    <string name="pref_vibrate_entry_forever">Вибрация навсегда.</string>
+    <string name="pref_vibrate_entry_5_sec">Вибрация в течение 5 секунд.</string>
+    <string name="pref_vibrate_entry_3_sec">Вибрация в течение 3 секунд.</string>
+    <string name="pref_vibrate_entry_never">Не вибрировать.</string>
+
+    <string name="pref_voice_alarm_title">Голосовые оповещения</string>
+    <string name="pref_voice_alarm_summary">Приложение говорит подробности напоминания.</string>
+    <string name="pref_snooze_title">На какое время отложить</string>
+    <string name="pref_snooze_entry_1min">Отложить на 1 минуту.</string>
+    <string name="pref_snooze_entry_3min">Отложить на 3 минуты.</string>
+    <string name="pref_snooze_entry_5min">Отложить на 5 минуты.</string>
+    <string name="pref_snooze_entry_10min">Отложить на 10 минуты.</string>
+    <string name="pref_snooze_entry_20min">Отложить на 20 минуты.</string>
+
+    <string name="pref_power_saver_title">Режим сохранения энергии</string>
+    <string name="pref_power_saver_summary">Использовать сотовую сеть вместо GPS, потребляет меньше энергии. Включение этого режима приведет к снижению точности.</string>
+    <string name="preference_category_general">"общий "</string>
+    <string name="preference_category_alarms">сигнализация</string>
+</resources>

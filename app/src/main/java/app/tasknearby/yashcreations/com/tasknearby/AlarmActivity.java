@@ -33,7 +33,7 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskActionUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.AlarmRinger;
 import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.AlarmVibrator;
-import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.voice.VoiceAlarmRinger;
+import app.tasknearby.yashcreations.com.tasknearby.utils.alarm.VoiceAlarmRinger;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
@@ -161,7 +161,7 @@ public class AlarmActivity extends AppCompatActivity implements OnMapReadyCallba
         if (mTask.getImageUri() != null) {
             Picasso.with(this)
                     .load("file://" + mTask.getImageUri())
-                    .error(R.drawable.calendar_bkg_12_dec)
+                    .error(R.drawable.default_task_image)
                     .fit()
                     .centerCrop()
                     .into(coverImageView);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="General">
+    <PreferenceCategory android:title="@string/preference_category_general">
         <!-- Units preference -->
         <ListPreference
             android:defaultValue="@string/pref_unit_metric"
@@ -10,15 +10,22 @@
             android:key="@string/pref_unit_key"
             android:title="@string/pref_unit_title" />
 
+        <EditTextPreference
+            android:defaultValue="@string/pref_distance_range_default"
+            android:key="@string/pref_distance_range_key"
+            android:title="@string/pref_distance_range_title"
+            android:hint="75 distance units"
+            android:inputType="number"/>
+
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="@string/pref_power_saver_key"
             android:summary="@string/pref_power_saver_summary"
             android:title="@string/pref_power_saver_title" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Alarms">
+    <PreferenceCategory android:title="@string/preference_category_alarms">
 
         <!-- Alarm Tone preference. -->
         <RingtonePreference
@@ -49,13 +56,5 @@
             android:title="@string/pref_snooze_title" />
 
     </PreferenceCategory>
-
-    <!--
-    TODO: Add it later. (Take care of metrics).
-    <EditTextPreference
-        android:defaultValue="@string/pref_distance_range_default"
-        android:key="@string/pref_distance_range_key"
-        android:title="@string/pref_distance_range_title" />
-   -->
 
 </PreferenceScreen>

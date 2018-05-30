@@ -39,6 +39,8 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import app.tasknearby.yashcreations.com.tasknearby.billing.BillingManager;
 import app.tasknearby.yashcreations.com.tasknearby.billing.ProductIdConstants;
+import app.tasknearby.yashcreations.com.tasknearby.fcm.TopicSubscriber;
+import app.tasknearby.yashcreations.com.tasknearby.fragments.TasksFragment;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
@@ -80,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
         if (!AppUtils.hasUserSeenOnboarding(this)) {
             startActivity(new Intent(this, OnboardingActivity.class));
+            // For preventing multiple instances of MainActivity and permission dialog on
+            // onboarding screen.
+            finish();
         }
 
         setContentView(R.layout.activity_main2);
@@ -93,10 +98,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         setSupportActionBar(toolbar);
         // Initialize SharedPreferences.
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        // To set up the power saver preference if user has updated the app.
-        setPowerSaverPreference();
         setVersionPreference();
         setupNavDrawer();
+        setupFcm();
 
         findViewById(R.id.fab).setOnClickListener(view ->
                 startActivity(new Intent(MainActivity.this, TaskCreatorActivity.class)));
@@ -138,9 +142,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
             editor.putString(getString(R.string.pref_status_key),
                     getString(R.string.pref_status_enabled));
             mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_ENABLED, new Bundle());
-            // TODO: The startService method calls the onStartCommand method and doesn't start a
-            // new instance of the service. So, is there any check needed before doing this?
-            // Or should we keep an Application class which takes care of isServiceRunning etc.
             AppUtils.startService(this);
         } else {
             // Put disabled string in shared preferences.
@@ -211,27 +212,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         permissionsDialog.show();
     }
 
-    /**
-     * Sets up the power saver preference if user has updated the app.
-     */
-    private void setPowerSaverPreference() {
-        // Set up power/accuracy preferences.
-        SharedPreferences defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!defaultPref.contains(getString(R.string.pref_power_saver_key))) {
-            // It means user has updated the app and opening this version for the first time.
-            String accuracy = defaultPref.getString(getString(R.string.pref_accuracy_key),
-                    getString(R.string.pref_accuracy_default));
-            SharedPreferences.Editor editor = defaultPref.edit();
-            if (accuracy.equals(getString(R.string.pref_accuracy_balanced))) {
-                // Set power saver mode.
-                editor.putBoolean(getString(R.string.pref_power_saver_key), true);
-            } else {
-                editor.putBoolean(getString(R.string.pref_power_saver_key), false);
-            }
-            editor.apply();
-        }
-    }
-
     private void setupNavDrawer() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, findViewById(R.id
@@ -255,6 +235,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.pref_version_key), getString(R.string.app_version));
         editor.apply();
+    }
+
+    /**
+     * It's fine to subscribe on app start, see this: https://stackoverflow.com/a/40055267/4857588
+     */
+    private void setupFcm() {
+        TopicSubscriber.subscribeToAllTopics();
     }
 
     @Override
@@ -313,8 +300,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
                             }
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            String errorMessage = "Location settings are inadequate, and " +
-                                    "cannot be fixed here. Fix in Settings.";
+                            String errorMessage = getString(R.string.error_fix_location_settings);
                             Log.e(TAG, errorMessage);
                             Toast.makeText(MainActivity.this, errorMessage, Toast
                                     .LENGTH_LONG).show();

@@ -23,6 +23,7 @@ import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView feedbackTv;
+    private TextView versionTv;
     private FloatingActionButton rateFab;
 
     @Override
@@ -43,10 +44,12 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     public void initiateViews() {
         feedbackTv = findViewById(R.id.text_feedback);
         rateFab = findViewById(R.id.fab_rate);
+        versionTv = findViewById(R.id.text_app_version);
 
         // Set on click listeners.
         feedbackTv.setOnClickListener(this);
         rateFab.setOnClickListener(this);
+        versionTv.setText("v" + BuildConfig.VERSION_NAME);
 
         if (BuildConfig.DEBUG) {
             findViewById(R.id.image_launcher).setOnClickListener(v -> {

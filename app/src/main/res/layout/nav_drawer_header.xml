@@ -41,6 +41,6 @@ f
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingStart="8dp"
-        android:text="Simple location reminders, Just for you." />
+        android:text="@string/nav_header_tagline" />
 
 </LinearLayout>

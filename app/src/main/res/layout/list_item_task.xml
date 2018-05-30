@@ -39,6 +39,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_marker_red_a400_36dp" />
 
+    <ImageView
+        android:id="@+id/icon_repeatable"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="@+id/text_location_name"
+        app:layout_constraintStart_toStartOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/text_task_name"
+        app:srcCompat="@drawable/ic_repeat_light_blue_500_18dp" />
+
     <TextView
         android:id="@+id/text_location_name"
         android:layout_width="0dp"
@@ -81,15 +92,15 @@
     <TextView
         android:id="@+id/text_state"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
         android:background="@drawable/background_state_badge"
+        android:fontFamily="sans-serif-light"
+        android:paddingBottom="2dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:paddingTop="2dp"
-        android:paddingBottom="2dp"
         android:text="Upcoming"
         android:textColor="#000000"
-        android:fontFamily="sans-serif-light"
         android:textSize="12sp"
         android:visibility="visible"
         app:layout_constraintBaseline_toBaselineOf="@+id/text_task_name"

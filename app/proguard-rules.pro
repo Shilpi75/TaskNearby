@@ -26,3 +26,12 @@
 # Proguard warns about okhttp being used in Picasso. As the github page of picasso suggests, we've
 # added this to proguard rules to suppress the warnings.
 -dontwarn com.squareup.okhttp.**
+
+# As per crashlytics documentation
+-keepattributes *Annotation*
+# Use this if our app is easier to reverse engineer.
+#-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+# The following 2 provide faster proguard builds.
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**

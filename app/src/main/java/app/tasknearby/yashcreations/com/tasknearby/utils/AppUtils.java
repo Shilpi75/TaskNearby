@@ -11,8 +11,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.android.billingclient.api.Purchase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.joda.time.DateTimeComparator;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -21,6 +23,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import app.tasknearby.yashcreations.com.tasknearby.R;
+import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.services.FusedLocationService;
 
 /**
@@ -33,15 +36,15 @@ public final class AppUtils {
     /**
      * Returns a formatted time string in 12-hour format.
      */
-    public static String getReadableTime(LocalTime localTime) {
+    public static String getReadableTime(Context context, LocalTime localTime) {
         int hourOfDay = localTime.getHourOfDay();
         int minute = localTime.getMinuteOfHour();
-        String periodSuffix = "AM";
+        String periodSuffix = context.getString(R.string.time_format_am);
         if (hourOfDay > 12) {
             hourOfDay -= 12;
-            periodSuffix = "PM";
+            periodSuffix = context.getString(R.string.time_format_pm);
         } else if (hourOfDay == 12) {
-            periodSuffix = "PM";
+            periodSuffix = context.getString(R.string.time_format_am);
         }
         return String.format(Locale.ENGLISH, "%02d:%02d %s", hourOfDay, minute, periodSuffix);
     }
@@ -56,6 +59,7 @@ public final class AppUtils {
         } else if (DateTimeComparator.getDateOnlyInstance().compare(date, new Date()) == 0) {
             return context.getString(R.string.detail_date_today);
         } else {
+            // TODO: Check if Locale.ENGLISH needs to be changed.
             SimpleDateFormat sdfReadable = new SimpleDateFormat("EEE, d MMM yy", Locale.ENGLISH);
             return sdfReadable.format(date);
         }
@@ -171,5 +175,52 @@ public final class AppUtils {
     public static boolean hasUserSeenOnboarding(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_has_user_seen_onboarding), false);
+    }
+
+    /**
+     * Returns the display string for a repeatable reminder. Presently, it returns options like:
+     * "Every day", "Every Monday, Tuesday, Sunday"
+     *
+     * @param appContext will be used when getting strings from resources.
+     */
+    public static String getRepeatDisplayString(Context appContext, TaskModel task) {
+        StringBuilder repeatMsgBuilder = new StringBuilder();
+        boolean allDaysFlag = true;
+        for (int i = DateTimeConstants.MONDAY; i <= DateTimeConstants.SUNDAY; ++i) {
+            int dayCode = WeekdayCodeUtils.getDayCodeByIndex(i);
+            if ((task.getRepeatCode() & dayCode) != 0) {
+                if (repeatMsgBuilder.length() != 0) {
+                    repeatMsgBuilder.append(", ");
+                }
+                repeatMsgBuilder.append(getWeekdayNameById(i));
+            } else {
+                allDaysFlag = false;
+            }
+        }
+        return allDaysFlag ? "Every day" : "Every " + repeatMsgBuilder.toString();
+    }
+
+    /**
+     * Returns the weekday's name by getting the index. 1 index is for Monday.
+     */
+    private static String getWeekdayNameById(int index) {
+        switch (index) {
+            case 1:
+                return "Monday";
+            case 2:
+                return "Tuesday";
+            case 3:
+                return "Wednesday";
+            case 4:
+                return "Thursday";
+            case 5:
+                return "Friday";
+            case 6:
+                return "Saturday";
+            case 7:
+                return "Sunday";
+            default:
+                return "";
+        }
     }
 }

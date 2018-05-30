@@ -18,6 +18,7 @@ import app.tasknearby.yashcreations.com.tasknearby.DetailActivity;
 import app.tasknearby.yashcreations.com.tasknearby.MainActivity;
 import app.tasknearby.yashcreations.com.tasknearby.R;
 import app.tasknearby.yashcreations.com.tasknearby.TaskRepository;
+import app.tasknearby.yashcreations.com.tasknearby.UpgradeActivity;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.TaskStateUtil;
@@ -34,6 +35,7 @@ public class NotificationHelper {
 
     private static final String CHANNEL_REMINDER = "Reminders";
     private static final String CHANNEL_SERVICE_RUNNING = "Foreground Service";
+    private static final String CHANNEL_DISCOUNT = "Discount Channel";
 
     private Context mAppContext;
     private NotificationManager mNotificationManager;
@@ -141,7 +143,8 @@ public class NotificationHelper {
         PendingIntent pi = PendingIntent.getBroadcast(mAppContext, idAsInt, intent, PendingIntent
                 .FLAG_ONE_SHOT);
         return new NotificationCompat.Action
-                .Builder(R.drawable.ic_check_grey_24dp, "Mark Done", pi)
+                .Builder(R.drawable.ic_check_grey_24dp, mAppContext.getString(R.string
+                .action_mark_done), pi)
                 .build();
     }
 
@@ -153,7 +156,8 @@ public class NotificationHelper {
         PendingIntent pi = PendingIntent.getBroadcast(mAppContext, idAsInt, intent, PendingIntent
                 .FLAG_ONE_SHOT);
         return new NotificationCompat.Action
-                .Builder(R.drawable.ic_replay_black_24dp, "Snooze", pi)
+                .Builder(R.drawable.ic_replay_black_24dp, mAppContext.getString(R.string
+                .action_snooze), pi)
                 .build();
     }
 
@@ -162,7 +166,6 @@ public class NotificationHelper {
     private void createNotificationChannels() {
         NotificationChannel remindersChannel = new NotificationChannel(CHANNEL_REMINDER,
                 "Task Reminders", NotificationManager.IMPORTANCE_HIGH);
-        // TODO: Check on O and uncomment.
         // remindersChannel.setShowBadge(true);
         remindersChannel.enableLights(true);
         remindersChannel.enableVibration(true);
@@ -173,5 +176,46 @@ public class NotificationHelper {
         NotificationChannel appForegroundChannel = new NotificationChannel
                 (CHANNEL_SERVICE_RUNNING, "App Status", NotificationManager.IMPORTANCE_NONE);
         mNotificationManager.createNotificationChannel(appForegroundChannel);
+
+        NotificationChannel discountChannel = new NotificationChannel(
+                CHANNEL_DISCOUNT, "Discounts", NotificationManager.IMPORTANCE_DEFAULT);
+        discountChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        discountChannel.enableVibration(true);
+        mNotificationManager.createNotificationChannel(discountChannel);
+    }
+
+    public void notifyAboutDiscount(String title, String message) {
+        NotificationCompat.Builder nb = new NotificationCompat
+                .Builder(mAppContext, CHANNEL_DISCOUNT)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setContentIntent(getDiscountPi())
+                .setColor(ContextCompat.getColor(mAppContext, R.color.colorAccent))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(true)
+                .setShowWhen(true)
+                .setOnlyAlertOnce(true)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(""))
+                // These are deprecated in O. (Using notification channels for them.)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(Notification.PRIORITY_DEFAULT);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            nb.setSmallIcon(R.drawable.ic_stat_notification_small)
+                    .setCategory(Notification.CATEGORY_PROMO);
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            nb.setBadgeIconType(R.drawable.ic_stat_notification_small);
+        }
+
+        mNotificationManager.notify(1000091, nb.build());
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.NOTIFICATION_DISCOUNT_SHOWN, new Bundle());
+    }
+
+    private PendingIntent getDiscountPi() {
+        Intent intent = new Intent(mAppContext, UpgradeActivity.class);
+        intent.putExtra(NotificationConstants.EXTRA_DISCOUNT_NOTIFICATION, true);
+        return PendingIntent.getActivity(mAppContext, 1000090, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -25,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,10 +39,13 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
+import com.touchboarder.weekdaysbuttons.WeekdaysDataItem;
+import com.touchboarder.weekdaysbuttons.WeekdaysDataSource;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import app.tasknearby.yashcreations.com.tasknearby.database.DbConstants;
@@ -50,6 +53,7 @@ import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 import app.tasknearby.yashcreations.com.tasknearby.models.TaskModel;
 import app.tasknearby.yashcreations.com.tasknearby.utils.AppUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.DistanceUtils;
+import app.tasknearby.yashcreations.com.tasknearby.utils.WeekdayCodeUtils;
 import app.tasknearby.yashcreations.com.tasknearby.utils.firebase.AnalyticsConstants;
 
 /**
@@ -83,11 +87,12 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private EditText noteInput;
     private TextView startTimeTv, endTimeTv;
     private TextView startDateTv, endDateTv;
-    private TextView repeatTv;
     private TextView unitsTv;
     private ImageView coverImageView;
     private Switch alarmSwitch;
     private Switch anytimeSwitch;
+    private Switch repeatSwitch;
+    private ViewStub weekdaysStub;
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -118,7 +123,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             long taskId = getIntent().getLongExtra(EXTRA_EDIT_MODE_TASK_ID, -1);
             taskBeingEdited = mTaskRepository.getTaskWithId(taskId);
             fillDataForEditing(taskBeingEdited);
-            getSupportActionBar().setTitle(getString(R.string.title_edit_task_reminder));
+            getSupportActionBar().setTitle(getString(R.string.title_edit_task));
         }
     }
 
@@ -173,9 +178,6 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             case R.id.text_end_date:
                 dateSelectionTriggered((TextView) v);
                 break;
-            case R.id.text_repeat_selection:
-                showRepeatSelection();
-                break;
             default:
                 break;
         }
@@ -185,7 +187,6 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * Finds views by id and sets OnClickListener to them.
      */
     private void initializeViews() {
-        //TODO: Use ButterKnife and remove this boilerplate code.
         // These don't have an OnClickListener.
         taskNameInput = findViewById(R.id.edit_text_task_name);
         locationNameInput = findViewById(R.id.edit_text_location_name);
@@ -193,6 +194,12 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         noteInput = findViewById(R.id.edit_text_note);
         coverImageView = findViewById(R.id.image_task_cover);
         alarmSwitch = findViewById(R.id.switch_alarm);
+
+        // Set the default value to reminder range input.
+        String defReminderRange = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.pref_distance_range_key),
+                        getString(R.string.pref_distance_range_default));
+        reminderRangeInput.setText(defReminderRange);
 
         // image choosing FAB and location buttons.
         findViewById(R.id.fab_image).setOnClickListener(this);
@@ -223,10 +230,11 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         startDateTv.setTag(new LocalDate());
         endDateTv.setTag(null);
 
-        // textView to repeat reminders.
-        repeatTv = findViewById(R.id.text_repeat_selection);
-        repeatTv.setTag(DbConstants.NO_REPEAT);
-        repeatTv.setOnClickListener(this);
+        repeatSwitch = findViewById(R.id.switch_repeat);
+        weekdaysStub = findViewById(R.id.weekdays_stub);
+        repeatSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+                weekdaysStub.setVisibility(isChecked ? View.VISIBLE : View.GONE));
+        setupWeekdayBar();
 
         // Units text view.
         unitsTv = findViewById(R.id.text_units);
@@ -253,8 +261,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         boolean anytime = task.getStartTime().equals(new LocalTime(0, 0))
                 && task.getEndTime().equals(new LocalTime(23, 59));
         anytimeSwitch.setChecked(anytime);
-        startTimeTv.setText(AppUtils.getReadableTime(task.getStartTime()));
-        endTimeTv.setText(AppUtils.getReadableTime(task.getEndTime()));
+        startTimeTv.setText(AppUtils.getReadableTime(this, task.getStartTime()));
+        endTimeTv.setText(AppUtils.getReadableTime(this, task.getEndTime()));
         startTimeTv.setTag(task.getStartTime());
         endTimeTv.setTag(task.getEndTime());
 
@@ -265,9 +273,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         endDateTv.setTag(task.getEndDate());
 
         // Repeat options.
-        String[] repeatOptions = getResources().getStringArray(R.array.creator_repeat_options);
-        repeatTv.setTag(task.getRepeatType());
-        repeatTv.setText(repeatOptions[task.getRepeatType()]);
+        repeatSwitch.setChecked(task.getRepeatType() == DbConstants.REPEAT_DAILY);
+        // TODO: Setup weekday options while editing(if needed). >>>
 
         // Alarm switch
         alarmSwitch.setChecked(task.getIsAlarmSet() != 0);
@@ -308,7 +315,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                     LocalTime localTime = new LocalTime(hourOfDay, minute);
                     v.setTag(localTime);
                     // set selected Time on textView.
-                    v.setText(AppUtils.getReadableTime(localTime));
+                    v.setText(AppUtils.getReadableTime(TaskCreatorActivity.this, localTime));
                 }, 12, 0, false); // time at which timepicker opens.
         timePickerDialog.show();
     }
@@ -357,12 +364,12 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             return;
         PlacePicker.IntentBuilder placePickerIntent = new PlacePicker.IntentBuilder();
         try {
-            startActivityForResult(placePickerIntent.build(this),
-                    REQUEST_CODE_PLACE_PICKER);
+            startActivityForResult(placePickerIntent.build(this), REQUEST_CODE_PLACE_PICKER);
         } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle this repairable exception.
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.PLACE_PICKER_EXCEPTION, new Bundle());
             e.printStackTrace();
         } catch (GooglePlayServicesNotAvailableException e) {
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.PLACE_PICKER_FATAL, new Bundle());
             e.printStackTrace();
         }
     }
@@ -439,7 +446,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      */
     private void onImageSelected(Intent data) {
         if (data.getData() == null) {
-            Toast.makeText(this, "Image selection failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.creator_msg_image_selection_failed, Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
         Uri selectedImageUri = data.getData();
@@ -472,6 +480,8 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             errorMsg = getString(R.string.creator_error_empty_location);
         } else if (TextUtils.isEmpty(reminderRangeInput.getText())) {
             errorMsg = getString(R.string.creator_error_empty_range);
+        } else if (repeatSwitch.isChecked() && (int) weekdaysStub.getTag() == 0) {
+            errorMsg = getString(R.string.creator_error_no_weekday);
         } else {
             return true;
         }
@@ -515,18 +525,19 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         // end date will be stored as null only.
         LocalDate endDate = (LocalDate) endDateTv.getTag();
 
-        // repeat mode.
-        int repeatType = (int) repeatTv.getTag();
-
         String note = noteInput.getText().toString();
         if (TextUtils.isEmpty(note)) {
             note = null;
         }
 
-        mSelectedLocation.setPlaceName(locationName);
+        int repeatType = repeatSwitch.isChecked()
+                ? DbConstants.REPEAT_DAILY : DbConstants.NO_REPEAT;
+        int repeatCode = (int) weekdaysStub.getTag();
+
         long locationId;
-        if (mSelectedLocation.getId() != 0) {
-            // Location was selected from saved places.
+        if (mSelectedLocation.getId() != 0
+                && mSelectedLocation.getPlaceName().equals(locationName)) {
+            // Location was selected from saved places and the name was not changed.
             // auto-increment numbering starts from 1.
             // We can also set place picker to return location with id = -1.
             locationId = mSelectedLocation.getId();
@@ -535,6 +546,10 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
             mSelectedLocation.setUseCount(mSelectedLocation.getUseCount() + 1);
             mTaskRepository.updateLocation(mSelectedLocation);
         } else {
+            mSelectedLocation.setPlaceName(locationName);
+            // Need to set this id because if it's a location chosen from saved places, it
+            // already has an id that causes problems in inserting it again.
+            mSelectedLocation.setId(0);
             // TODO: Check if place with same name already exists to improve UX.
             // Doing this when place picker gave the location. i.e. new location with use_count = 1.
             locationId = mTaskRepository.saveLocation(mSelectedLocation);
@@ -550,6 +565,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
                 .setStartDate(startDate)
                 .setEndDate(endDate)
                 .setRepeatType(repeatType)
+                .setRepeatCode(repeatCode)
                 .build();
 
         if (taskBeingEdited == null) {
@@ -563,38 +579,42 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         }
         // Service is restarted to update tasks distance and accordingly trigger
         // alarm/notification at that instant.
-        // TODO: This is the optimized way. Change this later.
+        // TODO: This is not the optimized way. Change this later.
         restartService();
         finish();
     }
 
-    /**
-     * Shows a list containing categories for repeat.
-     */
-    private void showRepeatSelection() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.creator_repeat_dialog_title);
-        String[] repeatOptions = getResources().getStringArray(R.array.creator_repeat_options);
-        int checkedItem = 0;
-        builder.setSingleChoiceItems(repeatOptions, checkedItem, (dialog, which) -> {
-            repeatTv.setText(repeatOptions[which]);
-            switch (which) {
-                case 0:
-                    repeatTv.setTag(DbConstants.NO_REPEAT);
-                case 1:
-                    repeatTv.setTag(DbConstants.REPEAT_DAILY);
-                    break;
-                case 2:
-                    repeatTv.setTag(DbConstants.REPEAT_WEEKLY);
-                    break;
-                case 3:
-                    repeatTv.setTag(DbConstants.REPEAT_MONTHLY);
-                    break;
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+    private void setupWeekdayBar() {
+        // Assumption: No day is selected initially.
+        weekdaysStub.setTag(0);
+        WeekdaysDataSource wds = new WeekdaysDataSource(this, R.id.weekdays_stub)
+                .setFirstDayOfWeek(Calendar.MONDAY)
+                .setUnselectedColorRes(R.color.dark_grey)
+                .start(new WeekdaysDataSource.Callback() {
+                    /**
+                     * Called every time an item is clicked (selected or deselected).
+                     * @param weekdaysDataItem calling getCalendarDayId() on this returns the
+                     * day's index as in Java Calendar API. Sunday = 1, Monday = 2....
+                     */
+                    @Override
+                    public void onWeekdaysItemClicked(int i, WeekdaysDataItem weekdaysDataItem) {
+                        int dayCode = WeekdayCodeUtils
+                                .getDayCodeByCalendarDayId(weekdaysDataItem.getCalendarDayId());
+                        int selection = (int) weekdaysStub.getTag();
+                        // Doing an XOR here so that if tapped again, then the day is removed.
+                        selection ^= dayCode;
+                        weekdaysStub.setTag(selection);
+                        Log.d(TAG, "Selected days : " + selection);
+                    }
+
+                    @Override
+                    public void onWeekdaysSelected(int i, ArrayList<WeekdaysDataItem> arrayList) {
+                    }
+                });
+        // Need to explicitly make it GONE in code.
+        weekdaysStub.setVisibility(View.GONE);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
