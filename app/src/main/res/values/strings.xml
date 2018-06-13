@@ -2,7 +2,7 @@
 
     <!--App level string constants-->
     <string name="app_name" translatable="false">Task Nearby</string>
-    <string name="app_version" translatable="false">v4.0.2</string>
+    <string name="app_version" translatable="false">v4.0.3</string>
 
 
     <!--Activity titles-->
@@ -68,14 +68,14 @@
 
     <!--#### Task Creator screen constants ####-->
     <string name="creator_task_name_hint">Remind me about</string>
-    <string name="creator_location_title">Location</string>
+    <string name="creator_location_title">Select Location</string>
     <string name="creator_saved_place_button">Saved Places</string>
     <string name="creator_or_string">OR</string>
     <string name="creator_pick_place_button">Pick a Place</string>
     <string name="creator_location_name_hint">Location Name</string>
     <string name="creator_reminder_range">Reminder range :</string>
     <string name="creator_reminder_range_default" translatable="false">75</string>
-    <string name="creator_alarm_title">Alarm</string>
+    <string name="creator_alarm_title">Ring Alarm</string>
     <string name="creator_note_hint">Add a note</string>
     <string name="creator_time_title">Anytime</string>
     <string name="creator_time_start_title">From</string>
@@ -214,7 +214,15 @@
     <string name="preference_category_general">General</string>
     <string name="preference_category_alarms">Alarms</string>
 
+
     <!-- These are to be added in other language -->
+    <!--Added in task creator -->
+    <string name="title_attachment">Attachment</string>
+    <string name="title_schedule">Schedule</string>
+    <string name="creator_action_save">Save</string>
+    <string name="creator_select_image">Select image</string>
+    <string name="creator_repeat_title">Repeat</string>
+
     <string name="error_range_zero">Please select reminder range greater than zero.</string>
     <string name="error_range_max">Please select reminder range less than 50,000.</string>
     <string name="error_range_empty">Please enter a valid reminder range.</string>
@@ -223,4 +231,6 @@
     <string name="app_disabled">Task Nearby has been turned off.</string>
     <string name="feature_upgrade_to_premium">Please upgrade to access this feature.</string>
 
+    <string name="about_privacy_policy_title"><u>Privacy Policy</u></string>
+    <string name="privacy_policy_url">https://sites.google.com/view/tasknearby/privacypolicy</string>
 </resources>

@@ -12,15 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.util.Collections;
 import java.util.List;
 
 import app.tasknearby.yashcreations.com.tasknearby.models.LocationModel;
 
 /**
- * Responsible for showing the user a list of saved locations to allow him to pick one. The
+ * Responsible for showing the user a list of saved mLocations to allow him to pick one. The
  * location selected by the user is returned to the calling activity. The user can also choose to
- * delete locations.
+ * delete mLocations.
  *
  * @author vermayash8
  */
@@ -35,11 +34,6 @@ public class SavedPlacesActivity extends AppCompatActivity {
     public static final String EXTRA_LOCATION_ID = "locationId";
 
     /**
-     * Used when no saved locations are present and user decides to use place picker.
-     */
-    public static final int RESULT_USE_PLACE_PICKER = 1234;
-
-    /**
      * Adapter for RecyclerView.
      */
     private SavedPlacesAdapter mSavedPlacesAdapter;
@@ -49,29 +43,22 @@ public class SavedPlacesActivity extends AppCompatActivity {
      */
     private TaskRepository mTaskRepository;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved_places);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        // Get the list of saved locations.
+
         mTaskRepository = new TaskRepository(getApplicationContext());
         List<LocationModel> locations = mTaskRepository.getAllLocations();
-        // Sort in descending order of use count.
-        Collections.sort(locations, (o1, o2) -> o2.getUseCount() - o1.getUseCount());
         // Create the RecyclerView adapter.
         mSavedPlacesAdapter = new SavedPlacesAdapter(locations);
         // Set the adapter to the recyclerView.
         RecyclerView recyclerView = findViewById(R.id.recycler_saved_places);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mSavedPlacesAdapter);
-        // Initial setting of empty location view.
-        setEmptyView(locations.size());
-        // set the place picker button when no locations.
-        findViewById(R.id.button_pick_from_map).setOnClickListener(v -> {
-            this.setResult(RESULT_USE_PLACE_PICKER, getIntent());
-            finish();
-        });
+
     }
 
     /**
@@ -129,7 +116,7 @@ public class SavedPlacesActivity extends AppCompatActivity {
             .LocationViewHolder> {
 
         /**
-         * List containing all saved locations.
+         * List containing all saved mLocations.
          */
         private List<LocationModel> mLocations;
 

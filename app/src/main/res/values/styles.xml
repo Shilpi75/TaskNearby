@@ -20,9 +20,28 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
-    <style name="taskCreatorItemStyle">
+    <style name="itemStyle">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
         <item name="android:textColor">@color/black</item>
     </style>
+
+    <style name="taskCreatorItemStyle">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:textColor">@color/darker_grey</item>
+    </style>
+
+    <style name="subtitlesStyle">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:textColor">@color/light_grey</item>
+    </style>
+
+    <style name="titleItemStyle">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:textColor">@color/darker_grey</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+
 
 </resources>

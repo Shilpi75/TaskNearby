@@ -65,7 +65,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/text_location_name"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="@+id/text_location_name"
-                app:srcCompat="@drawable/ic_location_on_grey_700_24dp" />
+                app:srcCompat="@drawable/ic_round_location_24" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline2"
@@ -97,7 +97,7 @@
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="@+id/text_note"
                 app:layout_constraintVertical_bias="0.0"
-                app:srcCompat="@drawable/ic_list_grey_700_24dp" />
+                app:srcCompat="@drawable/ic_round_note_add_24px" />
 
             <TextView
                 android:id="@+id/text_note"
@@ -129,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:srcCompat="@drawable/ic_replay_black_24dp"
+                app:srcCompat="@drawable/ic_round_repeat_24px"
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="401dp" />
 

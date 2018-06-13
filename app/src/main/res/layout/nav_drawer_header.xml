@@ -33,7 +33,6 @@
 
         android:text="Task Nearby"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
-f
 
     <TextView
         android:id="@+id/textView"
