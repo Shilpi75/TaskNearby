@@ -42,9 +42,9 @@
         <item>@string/pref_vibrate_entry_3_sec</item>
         <item>@string/pref_vibrate_entry_never</item>
     </string-array>
-    <string name="pref_vibrate_entry_forever">Vibrate until alarm is dismissed.</string>
-    <string name="pref_vibrate_entry_5_sec">Vibrate for 5 seconds.</string>
-    <string name="pref_vibrate_entry_3_sec">Vibrate for 3 seconds.</string>
+    <string name="pref_vibrate_entry_forever">Until alarm is dismissed.</string>
+    <string name="pref_vibrate_entry_5_sec">5 seconds.</string>
+    <string name="pref_vibrate_entry_3_sec">3 seconds.</string>
     <string name="pref_vibrate_entry_never">Don\'t vibrate.</string>
     <string name="pref_vibrate_default" translatable="false">100</string>
 
@@ -63,11 +63,11 @@
         <item>@string/pref_snooze_entry_10min</item>
         <item>@string/pref_snooze_entry_20min</item>
     </string-array>
-    <string name="pref_snooze_entry_1min">Snooze for 1 minute.</string>
-    <string name="pref_snooze_entry_3min">Snooze for 3 minutes.</string>
-    <string name="pref_snooze_entry_5min">Snooze for 5 minutes.</string>
-    <string name="pref_snooze_entry_10min">Snooze for 10 minutes.</string>
-    <string name="pref_snooze_entry_20min">Snooze for 20 minutes.</string>
+    <string name="pref_snooze_entry_1min">1 minute.</string>
+    <string name="pref_snooze_entry_3min">3 minutes.</string>
+    <string name="pref_snooze_entry_5min">5 minutes.</string>
+    <string name="pref_snooze_entry_10min">10 minutes.</string>
+    <string name="pref_snooze_entry_20min">20 minutes.</string>
     <string-array name="pref_snooze_time_values">
         <item>60000</item>
         <item>180000</item>

@@ -37,16 +37,16 @@ public class AlarmRinger {
     private void setRingtone() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         String tonePath = prefs.getString(mContext.getString(R.string.pref_alarm_tone_key),
-                Settings.System.DEFAULT_ALARM_ALERT_URI.getPath());
-        if (tonePath == null) {
+                Settings.System.DEFAULT_ALARM_ALERT_URI.toString());
+        if (tonePath == null || tonePath.isEmpty()) {
             // Will use the ringtone now instead of AlarmTone or the preferred tone.
             Log.i(TAG, "Alarm tone uri was null. Will use the Ringtone now.");
-            tonePath = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).getPath();
+            tonePath = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString();
             // Do we need to resort to the old MediaPlayer method or is it always != null.
             // throw new IllegalArgumentException("There's no default AlarmTone supplied.");
         }
         Uri alarmToneUri = Uri.parse(tonePath);
-        ringtone = RingtoneManager.getRingtone(mContext, alarmToneUri);
+        ringtone = RingtoneManager.getRingtone(mContext,alarmToneUri);
     }
 
     public void startRinging() {

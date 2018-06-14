@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.android.billingclient.api.Purchase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -19,6 +21,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -185,42 +188,32 @@ public final class AppUtils {
      */
     public static String getRepeatDisplayString(Context appContext, TaskModel task) {
         StringBuilder repeatMsgBuilder = new StringBuilder();
-        boolean allDaysFlag = true;
-        for (int i = DateTimeConstants.MONDAY; i <= DateTimeConstants.SUNDAY; ++i) {
-            int dayCode = WeekdayCodeUtils.getDayCodeByIndex(i);
-            if ((task.getRepeatCode() & dayCode) != 0) {
+        boolean allDaysFlag = false;
+        ArrayList<Integer> dayIndices = WeekdayCodeUtils.getDayIndexListToRepeat(task.getRepeatCode());
+        if(dayIndices.size() == 7) {
+            allDaysFlag = true;
+        } else {
+            for (int day : dayIndices) {
                 if (repeatMsgBuilder.length() != 0) {
                     repeatMsgBuilder.append(", ");
                 }
-                repeatMsgBuilder.append(getWeekdayNameById(i));
-            } else {
-                allDaysFlag = false;
+                repeatMsgBuilder.append(WeekdayCodeUtils.getWeekdayNameById(day));
             }
         }
         return allDaysFlag ? "Every day" : "Every " + repeatMsgBuilder.toString();
     }
 
-    /**
-     * Returns the weekday's name by getting the index. 1 index is for Monday.
-     */
-    private static String getWeekdayNameById(int index) {
-        switch (index) {
-            case 1:
-                return "Monday";
-            case 2:
-                return "Tuesday";
-            case 3:
-                return "Wednesday";
-            case 4:
-                return "Thursday";
-            case 5:
-                return "Friday";
-            case 6:
-                return "Saturday";
-            case 7:
-                return "Sunday";
-            default:
-                return "";
+
+    public static boolean isReminderRangeValid(Context context, String input) {
+        if (input.equals(null) || input.isEmpty()) {
+            Toast.makeText(context, R.string.error_range_empty, Toast.LENGTH_SHORT).show();
+            return false;
         }
+        int value = Integer.parseInt(input);
+        if (value == 0) {
+            Toast.makeText(context, R.string.error_range_zero, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 }

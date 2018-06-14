@@ -47,6 +47,9 @@ public class AlarmVibrator {
      * Starts the vibration as per the user's preferences.
      */
     public void startVibrating() {
+        // If the settings is 'Don't Vibrate'.
+        if (mPattern.length == 0)
+            return;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             mVibrator.vibrate(mPattern, mRepeat);
         } else {

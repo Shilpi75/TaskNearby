@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
+    private boolean isAppInitialized = false;
+
     /**
      * Stores the types of location services the client is interested in using. Used for checking
      * settings to determine if the device has optimal location settings.
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         if (!AppUtils.hasUserSeenOnboarding(this)) {
             startActivity(new Intent(this, OnboardingActivity.class));
@@ -141,15 +144,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView
             // Put enabled string in SharedPreferences.
             editor.putString(getString(R.string.pref_status_key),
                     getString(R.string.pref_status_enabled));
+            if(isAppInitialized) {
+                Toast.makeText(this, R.string.app_enabled, Toast.LENGTH_SHORT).show();
+            }
             mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_ENABLED, new Bundle());
             AppUtils.startService(this);
         } else {
             // Put disabled string in shared preferences.
             editor.putString(getString(R.string.pref_status_key),
                     getString(R.string.pref_status_disabled));
+            if(isAppInitialized) {
+                Toast.makeText(this, R.string.app_disabled, Toast.LENGTH_SHORT).show();
+            }
             mFirebaseAnalytics.logEvent(AnalyticsConstants.ANALYTICS_APP_DISABLED, new Bundle());
             AppUtils.stopService(this);
         }
+        isAppInitialized = true;
         editor.apply();
     }
 

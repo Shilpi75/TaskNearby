@@ -32,7 +32,6 @@ import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_power_sa
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_snooze_time_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_unit_key;
 import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_vibrate_key;
-import static app.tasknearby.yashcreations.com.tasknearby.R.string.pref_voice_alarm_key;
 
 /**
  * Manages the settings/preferences.
@@ -104,9 +103,18 @@ public class SettingsActivity extends AppCompatActivity {
                 // set in the preferences xml file and the summary that has been set to these
                 // preferences are static.
             } else if (preference instanceof RingtonePreference) {
-                onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences
-                        (preference.getContext()).getString(preference.getKey(), Settings.System
-                        .DEFAULT_ALARM_ALERT_URI.getPath()));
+                String tonePath = PreferenceManager.getDefaultSharedPreferences(preference
+                        .getContext()).getString(preference.getKey(), Settings.System
+                        .DEFAULT_ALARM_ALERT_URI.toString());
+                if (tonePath == null || tonePath.isEmpty()) {
+                    // Will use the ringtone now instead of AlarmTone or the preferred tone.
+                    Log.i(TAG, "Alarm tone uri was null. Will use the Ringtone now.");
+                    tonePath = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+                            .toString();
+                    // Do we need to resort to the old MediaPlayer method or is it always != null.
+                    // throw new IllegalArgumentException("There's no default AlarmTone supplied.");
+                }
+                onPreferenceChange(preference, tonePath);
 
             } else if (preference instanceof EditTextPreference) {
                 // Default reminder distance preference here.
@@ -169,9 +177,11 @@ public class SettingsActivity extends AppCompatActivity {
             } else if (!distance.equals(getString(R.string.pref_distance_range_default))
                     && !AppUtils.isPremiumUser(getActivity())) {
                 // It can only be saved in the premium version.
-                Toast.makeText(getActivity(), "Please upgrade to access this feature.",
+                Toast.makeText(getActivity(), R.string.feature_upgrade_to_premium,
                         Toast.LENGTH_SHORT).show();
                 UpgradeActivity.show(getActivity());
+                return false;
+            } else if (!AppUtils.isReminderRangeValid(getActivity(), distance)) {
                 return false;
             } else {
                 return true;

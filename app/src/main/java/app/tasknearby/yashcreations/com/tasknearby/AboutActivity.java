@@ -2,6 +2,7 @@ package app.tasknearby.yashcreations.com.tasknearby;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +26,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     private TextView feedbackTv;
     private TextView versionTv;
     private FloatingActionButton rateFab;
+    private TextView privacyPolicyTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +47,12 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         feedbackTv = findViewById(R.id.text_feedback);
         rateFab = findViewById(R.id.fab_rate);
         versionTv = findViewById(R.id.text_app_version);
+        privacyPolicyTv = findViewById(R.id.text_privacy_policy);
 
         // Set on click listeners.
         feedbackTv.setOnClickListener(this);
         rateFab.setOnClickListener(this);
+        privacyPolicyTv.setOnClickListener(this);
         versionTv.setText("v" + BuildConfig.VERSION_NAME);
 
         if (BuildConfig.DEBUG) {
@@ -68,6 +72,10 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.fab_rate:
                 AppUtils.rateApp(this);
+                break;
+
+            case R.id.text_privacy_policy :
+                showPrivacyPolicy();
                 break;
         }
     }
@@ -147,5 +155,13 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         } else {
             Toast.makeText(this, "Converted to premium", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Allows user to view privacy policy of task nearby in a browser.
+     */
+    private void showPrivacyPolicy() {
+        Intent privacyPolicyIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_url)));
+        startActivity(privacyPolicyIntent);
     }
 }
