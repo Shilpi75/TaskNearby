@@ -85,6 +85,10 @@ public class DistanceUtils {
         return yards * 0.9144;
     }
 
+    public static double metersToYards(double meters) {
+        return meters * 1.09361;
+    }
+
     /**
      * Returns the distance of given Location from the task location.
      */
@@ -94,5 +98,4 @@ public class DistanceUtils {
         taskLocation.setLongitude(locationModel.getLongitude());
         return currentLocation.distanceTo(taskLocation);
     }
-
 }

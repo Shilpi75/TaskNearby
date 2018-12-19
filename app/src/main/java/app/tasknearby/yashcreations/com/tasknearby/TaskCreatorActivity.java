@@ -793,7 +793,13 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
         onLocationSelected();
         hasSelectedLocation = true;
         // Set reminder range
-        reminderRangeInput.setText(String.valueOf(task.getReminderRange()));
+        int reminderRange = task.getReminderRange();
+        String unitsPref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.pref_unit_key), getString(R.string.pref_unit_default));
+        if (!unitsPref.equals(getString(R.string.pref_unit_default))) {
+            reminderRange = (int) Math.ceil(DistanceUtils.metersToYards(reminderRange));
+        }
+        reminderRangeInput.setText(String.valueOf(reminderRange));
         // Set note
         noteInput.setText(task.getNote());
         // Setup time.

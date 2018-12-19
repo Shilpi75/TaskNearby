@@ -5,14 +5,14 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId 'app.tasknearby.yashcreations.com.tasknearby'
         minSdkVersion 17
-        targetSdkVersion 27
-        versionCode 16
-        versionName "4.0.3"
+        targetSdkVersion 28
+        versionCode 17
+        versionName "4.0.4"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -41,14 +41,17 @@ android {
     }
 }
 
-def supportLibVersion = "27.1.0"
-def playServicesVersion = "12.0.0"
-def archRoomVersion = "1.0.0"
+def supportLibVersion = "28.0.0"
+def playServicesVersion = "16.0.0"
+def firebaseCoreVersion = "16.0.6"
+def firebasePerfVersion = "16.2.2"
+def firebaseMessagingVersion = "17.3.4"
+def archRoomVersion = "1.1.1"
 def jodaTimeVersion = "2.9.9.1"
-def constraintLayoutVersion = "1.1.0-beta6"
+def constraintLayoutVersion = "2.0.0-alpha2"
 def picassoVersion = "2.5.2"
 def billingLibVersion = "1.0"
-def crashlyticsVersion = "2.9.1"
+def crashlyticsVersion = "2.9.7"
 def lifecycleExtVersion = "1.1.1"
 
 dependencies {
@@ -64,9 +67,9 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
     implementation "com.google.android.gms:play-services-places:$playServicesVersion"
 
-    implementation "com.google.firebase:firebase-core:$playServicesVersion"
-    implementation "com.google.firebase:firebase-perf:$playServicesVersion"
-    implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
+    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
+    implementation "com.google.firebase:firebase-perf:$firebasePerfVersion"
+    implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
 
     implementation "com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion"
 
