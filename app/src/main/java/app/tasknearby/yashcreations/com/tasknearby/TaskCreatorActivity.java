@@ -15,13 +15,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -470,6 +470,9 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
     private void setupWeekdayBar() {
         // Assumption: No day is selected initially.
         weekdaysStub.setTag(0);
+        // Note: WeekdaysDataSource requires an android.support.v7.app.AppCompatActivity to be passed,
+        // but since we're using androidx components, it shows an error. On testing it was found that
+        // the build completed successfully and no issues were observed while using the app.
         wds = new WeekdaysDataSource(this, R.id.viewStub_repeat)
                 .setFirstDayOfWeek(Calendar.MONDAY)
                 .setUnselectedColorRes(R.color.dark_grey)

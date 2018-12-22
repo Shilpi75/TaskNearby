@@ -3,7 +3,7 @@ package app.tasknearby.yashcreations.com.tasknearby.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;

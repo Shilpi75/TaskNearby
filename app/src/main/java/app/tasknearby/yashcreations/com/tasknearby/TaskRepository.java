@@ -1,6 +1,6 @@
 package app.tasknearby.yashcreations.com.tasknearby;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.content.Context;
 
 import org.joda.time.LocalDate;

@@ -7,16 +7,14 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntegerRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.widget.Toast;
 
 import com.android.billingclient.api.Purchase;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.joda.time.DateTimeComparator;
-import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
