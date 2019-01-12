@@ -1,16 +1,16 @@
 package app.tasknearby.yashcreations.com.tasknearby.models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -22,7 +22,7 @@ import app.tasknearby.yashcreations.com.tasknearby.database.converters.TimeConve
 
 /**
  * Models the 'Task' object. Each tasks has the attributes present in this class. It serves as an
- * entity that will be stored by {@link android.arch.persistence.room.Room} into the SQLite
+ * entity that will be stored by {@link androidx.room.Room} into the SQLite
  * database.
  *
  * @author shilpi

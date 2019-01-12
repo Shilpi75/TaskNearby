@@ -1,7 +1,7 @@
 package app.tasknearby.yashcreations.com.tasknearby.utils;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.joda.time.LocalDate;
 

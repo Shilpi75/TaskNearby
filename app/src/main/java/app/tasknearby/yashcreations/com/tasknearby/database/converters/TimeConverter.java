@@ -1,6 +1,6 @@
 package app.tasknearby.yashcreations.com.tasknearby.database.converters;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
 import org.joda.time.LocalTime;
 

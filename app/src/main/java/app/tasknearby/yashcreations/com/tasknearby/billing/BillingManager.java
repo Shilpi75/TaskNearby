@@ -1,7 +1,7 @@
 package app.tasknearby.yashcreations.com.tasknearby.billing;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
