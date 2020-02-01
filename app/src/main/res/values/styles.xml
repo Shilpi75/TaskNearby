@@ -41,7 +41,9 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-
-
+    <style name="searchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:editTextColor">@color/darker_grey</item>
+    </style>
 
 </resources>

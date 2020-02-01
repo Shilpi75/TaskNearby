@@ -3,9 +3,12 @@ package app.tasknearby.yashcreations.com.tasknearby.utils.alarm;
 import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import android.util.Log;
 
 import java.util.HashMap;
@@ -30,11 +33,13 @@ public class VoiceAlarmRinger implements TextToSpeech.OnInitListener {
     private Context mContext;
     private MediaPlayer mediaPlayer;
     private HashMap<String,String> ttsParams;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     public VoiceAlarmRinger(Context context, TaskModel task, LocationModel location) {
         mContext = context;
         mTask = task;
         mLocation = location;
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(context.getApplicationContext());
     }
 
     private void startSpeaking() {
@@ -86,6 +91,9 @@ public class VoiceAlarmRinger implements TextToSpeech.OnInitListener {
 
         } else {
             Log.e(TAG, "Initialization Failed!");
+            Bundle statusBundle = new Bundle();
+            statusBundle.putInt("statusResult", status);
+            mFirebaseAnalytics.logEvent("voicealarm_initializationFailed", statusBundle);
             showSnackbar();
         }
         speakOut();
@@ -100,7 +108,9 @@ public class VoiceAlarmRinger implements TextToSpeech.OnInitListener {
         if (mTask.getNote() != null) {
             text += mTask.getNote();
         }
-        mTts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams);
+        if (mTts != null) {
+            mTts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams);
+        }
     }
 
     /**

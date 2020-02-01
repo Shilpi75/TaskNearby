@@ -152,4 +152,16 @@
     <string name="pref_power_saver_summary">Использовать сотовую сеть вместо GPS, потребляет меньше энергии. Включение этого режима приведет к снижению точности.</string>
     <string name="preference_category_general">"общий "</string>
     <string name="preference_category_alarms">сигнализация</string>
+
+    <string name="place_picker_dialog_change_location_text">изменить местоположение</string>
+    <string name="place_picker_dialog_desc_message">Выбранное место будет сохранено под следующим именем:</string>
+    <string name="place_picker_dialog_heading">Подтвердите название места</string>
+    <string name="place_picker_dialog_name_input_hint">Название местоположения</string>
+    <string name="place_picker_dialog_proceed_text">проследовать</string>
+    <string name="place_picker_search_bar_hint">Поиск места или адреса</string>
+    <string name="place_picker_select_button_text">Выберите это место</string>
+    <string name="place_picker_dialog_default_name_format">Расположение:(%.6f,%.6f)</string>
+
+    <string name="search_tasks_hint">Введите название задачи или местоположение</string>
+    <string name="search_tasks_no_tasks_found">Задачи с указанным именем или местоположением не найдены. Пожалуйста, попробуйте ввести что-нибудь еще.</string>
 </resources>

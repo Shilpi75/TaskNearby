@@ -45,7 +45,7 @@ public final class AppUtils {
             hourOfDay -= 12;
             periodSuffix = context.getString(R.string.time_format_pm);
         } else if (hourOfDay == 12) {
-            periodSuffix = context.getString(R.string.time_format_am);
+            periodSuffix = context.getString(R.string.time_format_pm);
         }
         return String.format(Locale.ENGLISH, "%02d:%02d %s", hourOfDay, minute, periodSuffix);
     }

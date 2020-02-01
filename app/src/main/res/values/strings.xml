@@ -2,7 +2,7 @@
 
     <!--App level string constants-->
     <string name="app_name" translatable="false">Task Nearby</string>
-    <string name="app_version" translatable="false">v4.0.5</string>
+    <string name="app_version" translatable="false">v4.0.6-beta</string>
 
 
     <!--Activity titles-->
@@ -108,6 +108,14 @@
         <item>Repeats monthly</item>
     </string-array>
 
+    <string name="place_picker_search_bar_hint">Search for a place or an address</string>
+    <string name="place_picker_select_button_text">Select this place</string>
+    <string name="place_picker_dialog_heading">Confirm location name</string>
+    <string name="place_picker_dialog_desc_message">The selected location will be saved with the following name:</string>
+    <string name="place_picker_dialog_name_input_hint">Enter location nickname</string>
+    <string name="place_picker_dialog_default_name_format">Location:(%.6f, %.6f)</string>
+    <string name="place_picker_dialog_proceed_text">Proceed</string>
+    <string name="place_picker_dialog_change_location_text">Change location</string>
 
     <!-- #### Detail activity ####-->
     <string name="detail_alarm_format">Alarm is %s</string>
@@ -233,4 +241,7 @@
 
     <string name="about_privacy_policy_title"><u>Privacy Policy</u></string>
     <string name="privacy_policy_url">https://sites.google.com/view/tasknearby/privacypolicy</string>
+
+    <string name="search_tasks_hint">Enter task name or location</string>
+    <string name="search_tasks_no_tasks_found">No tasks found with given name or location. Please try typing something else.</string>
 </resources>

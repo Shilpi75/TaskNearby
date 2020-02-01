@@ -42,8 +42,9 @@ public class AnalyticsConstants {
     public static final String ANALYTICS_EDIT_TASK = "task_edit";
     public static final String ANALYTICS_ADD_IMAGE = "add_image_button";
 
-    public static final String PLACE_PICKER_EXCEPTION = "place_picker_exception";
-    public static final String PLACE_PICKER_FATAL = "place_picker_fatal";
+    public static final String PLACE_PICKER_DIALOG_EDIT_BUTTON = "place_picker_dialog_edit_button";
+    public static final String PLACE_PICKER_AUTOCOMPLETE_ERROR = "place_picker_autocomple_error";
+    public static final String PLACE_PICKER_MAP_LOAD_RETURNED_NULL = "place_picker_map_load_returned_null";
 
     /**
      * Constants for app start.
@@ -76,4 +77,15 @@ public class AnalyticsConstants {
      */
     public static final String POWER_SAVER_TURN_ON = "power_saver_turn_on";
     public static final String POWER_SAVER_TURN_OFF = "power_saver_turn_off";
+
+    /**
+     * Metrics that are logged in application class.
+     */
+    public static final String APPLICATION_CLASS_INIT = "application_class_init";
+    public static final String PARAM_DEVICE_DEFAULT_LANGUAGE = "device_language_code";
+
+    /**
+     * Search tasks constants.
+     */
+    public static final String TASK_SEARCH_CLICK = "task_search_clicked";
 }

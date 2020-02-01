@@ -16,6 +16,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.ActionBar;
@@ -38,10 +42,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 import com.touchboarder.weekdaysbuttons.WeekdaysDataItem;
@@ -540,18 +540,18 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * Triggered when the user clicks on the Pick Place button.
      */
     private void onPlacePickerRequested() {
-        if (!isInternetConnected())
+        if (!isInternetConnected()) {
             return;
-        PlacePicker.IntentBuilder placePickerIntent = new PlacePicker.IntentBuilder();
-        try {
-            startActivityForResult(placePickerIntent.build(this), REQUEST_CODE_PLACE_PICKER);
-        } catch (GooglePlayServicesRepairableException e) {
-            mFirebaseAnalytics.logEvent(AnalyticsConstants.PLACE_PICKER_EXCEPTION, new Bundle());
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            mFirebaseAnalytics.logEvent(AnalyticsConstants.PLACE_PICKER_FATAL, new Bundle());
-            e.printStackTrace();
         }
+        Intent placePickerIntent;
+        if (null != mSelectedLocation) {
+            placePickerIntent = PlacePickerActivity.createStartingIntent(this,
+                    new LatLng(mSelectedLocation.getLatitude(), mSelectedLocation.getLongitude()),
+                    mSelectedLocation.getPlaceName());
+        } else {
+            placePickerIntent = PlacePickerActivity.createStartingIntent(this);
+        }
+        startActivityForResult(placePickerIntent, REQUEST_CODE_PLACE_PICKER);
     }
 
     /**
@@ -576,7 +576,7 @@ public class TaskCreatorActivity extends AppCompatActivity implements View.OnCli
      * Initializes the location with place picker returned data. Also sets that to the UI.
      */
     private void onPlacePickerSuccess(Intent data) {
-        Place place = PlacePicker.getPlace(this, data);
+        Place place = data.getParcelableExtra(PlacePickerActivity.KEY_RESULT_SELECTED_PLACE);
         // Create a new location object with use count = 1
         mSelectedLocation = new LocationModel(place.getName().toString(),
                 place.getLatLng().latitude,

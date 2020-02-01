@@ -50,13 +50,13 @@ public class AlarmRinger {
     }
 
     public void startRinging() {
-        if (!ringtone.isPlaying()) {
+        if (ringtone != null && !ringtone.isPlaying()) {
             ringtone.play();
         }
     }
 
     public void stopRinging() {
-        if (ringtone.isPlaying()) {
+        if (ringtone != null && ringtone.isPlaying()) {
             ringtone.stop();
         }
     }

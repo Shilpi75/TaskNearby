@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         if (!AppUtils.hasUserSeenOnboarding(this)) {
             startActivity(new Intent(this, OnboardingActivity.class));
             // For preventing multiple instances of MainActivity and permission dialog on
@@ -107,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView
 
         findViewById(R.id.fab).setOnClickListener(view ->
                 startActivity(new Intent(MainActivity.this, TaskCreatorActivity.class)));
+        findViewById(R.id.image_search_tasks).setOnClickListener(view-> {
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.TASK_SEARCH_CLICK, new Bundle());
+            startActivity(new Intent(MainActivity.this, TaskSearchActivity.class));
+        });
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -192,7 +195,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView
                 // 1. Deny case:
                 // shouldShowRequestPermissionRationale tells us if the user clicked deny and
                 // hence we should show an explanation for the permission request.
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
+                if (permissions.length > 0 &&
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                     // Permissions were denied, so asking again (Ideally we should show an
                     // explanation).
                     checkPermissions();
